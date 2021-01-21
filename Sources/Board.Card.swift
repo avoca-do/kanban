@@ -1,7 +1,7 @@
 import Foundation
 
 public extension Board {
-    struct Card: Codable {
+    struct Card: Codable, Hashable {
         public var content = ""
     }
 }
