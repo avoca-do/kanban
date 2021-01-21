@@ -5,6 +5,10 @@ public extension Board {
         public var name: String
         public var cards = [Card]()
         
+        public init(name: String) {
+            self.name = name
+        }
+        
         public func hash(into: inout Hasher) {
             into.combine(name)
             into.combine(cards)
