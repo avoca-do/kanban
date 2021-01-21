@@ -1,3 +1,3 @@
 # Kanban
 
-A description of this package.
+Avocado Kanban
