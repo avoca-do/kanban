@@ -6,12 +6,30 @@ extension Data {
         append(UInt8())
     }
     
+    var user: User? {
+        nil
+    }
+    
+    func add(_ date: Date) -> Self {
+        add(date.timestamp)
+    }
+    
     func add(_ string: String) -> Self {
-        self + {
-            Swift.withUnsafeBytes(of: UInt16($0.count)) {
-                .init(bytes: $0.bindMemory(to: UInt8.self).baseAddress!, count: 2)
-            } + $0
+        {
+            add(UInt16($0.count)) + $0
         } (Data(string.utf8))
+    }
+    
+    func add(_ number: UInt16) -> Self {
+        self + Swift.withUnsafeBytes(of: number) {
+            .init(bytes: $0.bindMemory(to: UInt8.self).baseAddress!, count: 2)
+        }
+    }
+    
+    func add(_ number: UInt32) -> Self {
+        self + Swift.withUnsafeBytes(of: number) {
+            .init(bytes: $0.bindMemory(to: UInt8.self).baseAddress!, count: 4)
+        }
     }
     
     private var compressed: Data? {

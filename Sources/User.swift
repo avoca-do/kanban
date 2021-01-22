@@ -1,10 +1,10 @@
 import Foundation
 
 public struct User {
-    var id = ""
     public internal(set) var boards = [Board]()
+    var id = ""
     var deleted = [Int]()
-    private(set) var counter = Int()
+    var counter = Int()
     
     public mutating func new() -> Int {
         boards.append(.init(id: counter))
