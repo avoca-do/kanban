@@ -17,11 +17,17 @@ extension Data {
             if $1.0 % 8 == 0 {
                 $0.append(.init())
             }
-            if $1.1 {
-                print("add \(($1.0 % 8 < 5 ? 1 : 127))")
-                $0[$0.count - 1] |= (($1.0 % 8 < 5 ? 1 : 127) << $1.0 % 8)
-            }
+            guard $1.1 else { return }
+            $0[$0.count - 1] += 1 << ($1.0 % 8)
         }
+    }
+    
+    func add(_ string: String) -> Self {
+        self + {
+            Swift.withUnsafeBytes(of: UInt16($0.count)) {
+                .init(bytes: $0.bindMemory(to: UInt8.self).baseAddress!, count: 2)
+            } + $0
+        } (Data(string.utf8))
     }
     
     private var compressed: Data? {
