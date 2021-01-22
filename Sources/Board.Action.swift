@@ -4,6 +4,9 @@ extension Board {
     enum Action: Equatable {
         case
         create,
-        rename(String)
+        card,
+        rename(String),
+        move(Card.Position, Card.Position),
+        recontent(Card.Position, String)
     }
 }

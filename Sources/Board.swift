@@ -12,7 +12,11 @@ public struct Board: Identifiable, Hashable {
     }
     
     mutating func add(_ action: Action) {
-        edit.append(.init(actions: [action], date: .init()))
+        if Calendar.current.dateComponents([.minute], from: edit.last!.date, to: .init()).minute! > 4 {
+            edit.append(.init(actions: [action], date: .init()))
+        } else {
+            edit[edit.count - 1].actions.append(action)
+        }
         
         switch action {
         case let .rename(name):

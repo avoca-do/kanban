@@ -29,8 +29,8 @@ final class BoardTests: XCTestCase {
         
         user.rename(board, "Pink Floyd")
         XCTAssertEqual("Pink Floyd", user.boards.first!.name)
-        XCTAssertEqual(2, user.boards.first!.edit.count)
-        if case let .rename(name) = user.boards.first!.edit.last!.actions.first! {
+        XCTAssertEqual(1, user.boards.first!.edit.count)
+        if case let .rename(name) = user.boards.first!.edit.first!.actions.last! {
             XCTAssertEqual("Pink Floyd", name)
         } else {
             XCTFail()
