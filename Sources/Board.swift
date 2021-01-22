@@ -4,15 +4,15 @@ public struct Board: Identifiable, Hashable {
     public private(set) var name = ""
     public private(set) var columns = [Column]()
     public let id: Int
-    private(set) var actions: [Action]
+    var edit: [Edit]
     
     init(id: Int) {
         self.id = id
-        actions = [.init(list: [.create], date: .init())]
+        edit = [.init(actions: [.create], date: .init())]
     }
     
-    mutating func add(_ action: Action.Do) {
-        actions.append(.init(list: [action], date: .init()))
+    mutating func add(_ action: Action) {
+        edit.append(.init(actions: [action], date: .init()))
         
         switch action {
         case let .rename(name):

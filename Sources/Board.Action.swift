@@ -1,8 +1,9 @@
 import Foundation
 
 extension Board {
-    struct Action {
-        let list: [Do]
-        let date: Date
+    enum Action: Equatable {
+        case
+        create,
+        rename(String)
     }
 }
