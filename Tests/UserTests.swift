@@ -18,7 +18,6 @@ final class UserTests: XCTestCase {
         let date = Date()
         
         Memory.shared.save.sink {
-            XCTAssertEqual("Some", $0.name)
             XCTAssertEqual(0, $0.id)
             expectBoard.fulfill()
         }.store(in: &subs)
@@ -29,14 +28,15 @@ final class UserTests: XCTestCase {
             expectUser.fulfill()
         }.store(in: &subs)
         
-        let board = user.board("Some")
-        
-        XCTAssertEqual(board.id, user.boards.first!.id)
-        XCTAssertGreaterThanOrEqual(user.boards.first!.update, .init(date.timeIntervalSince1970))
+        let board = user.new()
+        XCTAssertEqual(board, user.boards.first!.id)
+        XCTAssertEqual(1, user.boards.first!.actions.count)
+        XCTAssertEqual(1, user.boards.first!.actions.first!.list.count)
+        XCTAssertEqual(.create, user.boards.first!.actions.first!.list.first!)
+        XCTAssertGreaterThanOrEqual(user.boards.first!.actions.first!.date, date)
         XCTAssertEqual(1, user.boards.count)
         XCTAssertEqual(1, user.counter)
-        XCTAssertEqual("Some", board.name)
-        XCTAssertEqual(0, board.id)
+        XCTAssertEqual(0, board)
         waitForExpectations(timeout: 1)
     }
 }

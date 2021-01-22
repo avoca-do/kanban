@@ -2,16 +2,30 @@ import Foundation
 
 public struct User {
     var id = ""
-    public internal(set) var boards = [Order]()
-    var deleted = [UInt16]()
-    private(set) var counter = UInt16()
+    public internal(set) var boards = [Board]()
+    var deleted = [Int]()
+    private(set) var counter = Int()
     
-    public mutating func board(_ name: String) -> Board {
-        let board = Board(name: name, id: counter)
-        boards.append(.init(id: counter, update: Date().timestamp))
+    public mutating func new() -> Int {
+        boards.append(.init(id: counter))
         counter += 1
         Memory.shared.update.send(self)
-        Memory.shared.save.send(board)
-        return board
+        Memory.shared.save.send(boards.last!)
+        return boards.last!.id
+    }
+    
+    public mutating func rename(_ id: Int, _ name: String) {
+        self[id].add(.rename(name))
+        Memory.shared.update.send(self)
+        Memory.shared.save.send(self[id])
+    }
+    
+    private subscript(_ id: Int) -> Board {
+        get {
+            boards[boards.firstIndex { $0.id == id }!]
+        }
+        set {
+            boards[boards.firstIndex { $0.id == id }!] = newValue
+        }
     }
 }
