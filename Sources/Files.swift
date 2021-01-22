@@ -19,7 +19,7 @@ public extension FileManager {
                 try? url.setResourceValues(resources)
                 try? instance.createDirectory(at: url, withIntermediateDirectories: true)
             }
-            try? JSONEncoder().encode(board).write(to: url.appendingPathComponent(board.id), options: .atomic)
+            try? JSONEncoder().encode(board).write(to: url.appendingPathComponent(.init(board.id)), options: .atomic)
         }
     }
     
