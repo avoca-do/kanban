@@ -13,18 +13,28 @@ final class UserTests: XCTestCase {
     }
     
     func testMakeBoard() {
-        let expect = expectation(description: "")
+        let expectBoard = expectation(description: "")
+        let expectUser = expectation(description: "")
+        let date = Date()
         
         Memory.shared.save.sink {
             XCTAssertEqual("Some", $0.name)
             XCTAssertEqual(0, $0.id)
-            expect.fulfill()
+            expectBoard.fulfill()
+        }.store(in: &subs)
+        
+        Memory.shared.update.sink {
+            XCTAssertEqual(1, $0.boards.count)
+            XCTAssertEqual(1, $0.counter)
+            expectUser.fulfill()
         }.store(in: &subs)
         
         let board = user.board("Some")
         
-        XCTAssertTrue(user.boards.first!)
+        XCTAssertEqual(board.id, user.boards.first!.id)
+        XCTAssertGreaterThanOrEqual(user.boards.first!.update, .init(date.timeIntervalSince1970))
         XCTAssertEqual(1, user.boards.count)
+        XCTAssertEqual(1, user.counter)
         XCTAssertEqual("Some", board.name)
         XCTAssertEqual(0, board.id)
         waitForExpectations(timeout: 1)

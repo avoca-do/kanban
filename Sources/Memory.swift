@@ -4,6 +4,7 @@ import Combine
 final class Memory {
     static var shared = Memory()
     let save = PassthroughSubject<Board, Never>()
+    let update = PassthroughSubject<User, Never>()
     private let queue = DispatchQueue(label: "", qos: .utility)
     
     var user: Future<User, Never> {
