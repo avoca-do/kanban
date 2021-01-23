@@ -7,6 +7,10 @@ extension User {
         let date: Date
         let boards: [Board]
         
+        var described: User {
+            .init(descriptor: self)
+        }
+        
         init?(data: Data) {
             nil
         }
@@ -15,12 +19,11 @@ extension User {
             id = describe.id
             counter = describe.counter
             date = describe.date
-            boards = []
+            boards = describe.boards.map(Board.init(board:))
         }
         
         var data: Data {
             .init()
         }
-        
     }
 }

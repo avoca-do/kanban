@@ -10,6 +10,10 @@ public struct User: Synchable {
         nil
     }
     
+    init(descriptor: Descriptor) {
+        fatalError()
+    }
+    
     init() {
         id = ""
         date = .init()
