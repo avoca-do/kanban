@@ -15,7 +15,9 @@ final class BoardTests: XCTestCase {
     func testRename() {
         let expectBoard = expectation(description: "")
         let expectUser = expectation(description: "")
+        let date = Date()
         let board = user.new()
+        user.date = .distantPast
         
         Memory.shared.save.sink {
             XCTAssertEqual("Pink Floyd", $0.name)
@@ -24,12 +26,14 @@ final class BoardTests: XCTestCase {
         
         Memory.shared.update.sink {
             XCTAssertEqual("Pink Floyd", $0.boards.first!.name)
+            XCTAssertGreaterThanOrEqual($0.date, date)
             expectUser.fulfill()
         }.store(in: &subs)
         
         user.rename(board, "Pink Floyd")
         XCTAssertEqual("Pink Floyd", user.boards.first!.name)
         XCTAssertEqual(1, user.boards.first!.edit.count)
+        XCTAssertGreaterThanOrEqual(user.date, date)
         if case let .rename(name) = user.boards.first!.edit.first!.actions.last! {
             XCTAssertEqual("Pink Floyd", name)
         } else {

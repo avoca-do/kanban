@@ -1,15 +1,6 @@
 import Foundation
 
 extension Data {
-    init(user: User) {
-        self.init()
-        append(UInt8())
-    }
-    
-    var user: User? {
-        nil
-    }
-    
     func add(_ date: Date) -> Self {
         add(date.timestamp)
     }
