@@ -4,10 +4,10 @@ import XCTest
 final class DataTests: XCTestCase {
     func testUser() {
         var boardA = Board(id: 0)
-        boardA.edit[boardA.edit.count - 1].date = .distantPast
+        boardA.edit[boardA.edit.count - 1].date = .init(timeIntervalSince1970: 300)
         var boardB = Board(id: 8000)
-        boardB.edit[0].date = .distantPast
-        boardB.edit.append(.init(actions: [], date: .distantFuture))
+        boardB.edit[0].date = .init(timeIntervalSince1970: 500)
+        boardB.edit.append(.init(actions: [], date: .init(timeIntervalSince1970: 800)))
         var user = User()
         user.counter = 99
         user.id = "hello world"
@@ -18,8 +18,8 @@ final class DataTests: XCTestCase {
         XCTAssertEqual(user.counter, User.Descriptor(data: user.descriptor.data).counter)
         XCTAssertEqual(2, User.Descriptor(data: user.descriptor.data).boards.count)
         XCTAssertEqual(8000, User.Descriptor(data: user.descriptor.data).boards.first?.id)
-        XCTAssertEqual(.distantFuture, User.Descriptor(data: user.descriptor.data).boards.first?.date)
+        XCTAssertEqual(Int(Date(timeIntervalSince1970: 800).timeIntervalSince1970), .init(User.Descriptor(data: user.descriptor.data).boards.first!.date.timeIntervalSince1970))
         XCTAssertEqual(0, User.Descriptor(data: user.descriptor.data).boards.last?.id)
-        XCTAssertEqual(.distantPast, User.Descriptor(data: user.descriptor.data).boards.last?.date)
+        XCTAssertEqual(Int(Date(timeIntervalSince1970: 300).timeIntervalSince1970), .init(User.Descriptor(data: user.descriptor.data).boards.last!.date.timeIntervalSince1970))
     }
 }

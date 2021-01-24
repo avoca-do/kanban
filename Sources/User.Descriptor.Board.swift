@@ -1,21 +1,18 @@
 import Foundation
 
 extension User.Descriptor {
-    struct Board: Datable {
+    struct Board {
         let id: Int
         let date: Date
-        
-        var data: Data {
-            .init()
-        }
-        
-        init(data: Data) {
-            fatalError()
-        }
         
         init(board: Kanban.Board) {
             id = board.id
             date = board.edit.last!.date
+        }
+        
+        init(id: Int, date: Date) {
+            self.id = id
+            self.date = date
         }
     }
 }

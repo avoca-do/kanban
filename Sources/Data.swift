@@ -3,8 +3,8 @@ import Foundation
 extension Data {
     mutating func string() -> String {
         let size = Int(uInt16())
-        let result = String(decoding: subdata(in: 0 ..< size ), as: UTF8.self)
-        self = advanced(by: size)
+        let result = String(decoding: subdata(in: 0 ..< size), as: UTF8.self)
+        self = remove(size)
         return result
     }
     
@@ -12,7 +12,7 @@ extension Data {
         let result = withUnsafeBytes {
             $0.baseAddress!.bindMemory(to: UInt16.self, capacity: 1)[0]
         }
-        self = advanced(by: 2)
+        self = remove(2)
         return result
     }
     
@@ -20,7 +20,7 @@ extension Data {
         let result = withUnsafeBytes {
             $0.baseAddress!.bindMemory(to: UInt32.self, capacity: 1)[0]
         }
-        self = advanced(by: 4)
+        self = remove(4)
         return result
     }
     
@@ -44,6 +44,10 @@ extension Data {
         self + Swift.withUnsafeBytes(of: number) {
             .init(bytes: $0.bindMemory(to: UInt8.self).baseAddress!, count: 4)
         }
+    }
+    
+    private mutating func remove(_ amount: Int) -> Self {
+        count > amount ? advanced(by: amount) : .init()
     }
     
     private var compressed: Self {

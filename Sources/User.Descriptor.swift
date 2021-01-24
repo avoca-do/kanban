@@ -16,7 +16,9 @@ extension User {
             id = data.string()
             counter = .init(data.uInt16())
             date = .init(timestamp: data.uInt32())
-            boards = []
+            boards = (0 ..< .init(data.removeFirst())).map { _ in
+                .init(id: .init(data.uInt16()), date: .init(timestamp: data.uInt32()))
+            }
         }
         
         init(describe: User) {
@@ -32,7 +34,11 @@ extension User {
                 .add(UInt16(counter))
                 .add(date.timestamp)
                 .add(UInt8(boards.count))
-                + boards.flatMap(\.data)
+                + boards.flatMap {
+                    Data()
+                        .add(UInt16($0.id))
+                        .add($0.date.timestamp)
+                }
         }
     }
 }
