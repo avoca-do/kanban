@@ -23,7 +23,12 @@ extension User {
         }
         
         var data: Data {
-            .init()
+            Data()
+                .add(id)
+                .add(UInt16(counter))
+                .add(date.timestamp)
+                .add(UInt8(boards.count))
+                + boards.flatMap(\.data)
         }
     }
 }

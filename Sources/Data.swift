@@ -11,6 +11,10 @@ extension Data {
         } (Data(string.utf8))
     }
     
+    func add(_ number: UInt8) -> Self {
+        self + [number]
+    }
+    
     func add(_ number: UInt16) -> Self {
         self + Swift.withUnsafeBytes(of: number) {
             .init(bytes: $0.bindMemory(to: UInt8.self).baseAddress!, count: 2)
