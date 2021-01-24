@@ -6,8 +6,8 @@ public struct User: Synchable {
     var date: Date
     var counter = Int()
     
-    init?(data: Data) {
-        nil
+    init(data: Data) {
+        fatalError()
     }
     
     init(descriptor: Descriptor) {

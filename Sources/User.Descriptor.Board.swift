@@ -9,8 +9,8 @@ extension User.Descriptor {
             .init()
         }
         
-        init?(data: Data) {
-            nil
+        init(data: Data) {
+            fatalError()
         }
         
         init(board: Kanban.Board) {

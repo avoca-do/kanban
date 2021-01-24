@@ -11,8 +11,8 @@ extension User {
             .init(descriptor: self)
         }
         
-        init?(data: Data) {
-            nil
+        init(data: Data) {
+            fatalError()
         }
         
         init(describe: User) {

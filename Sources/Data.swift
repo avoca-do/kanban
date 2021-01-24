@@ -1,6 +1,13 @@
 import Foundation
 
 extension Data {
+    var string: String {
+        .init(decoding: subdata(in: 2 ..< 2 + .init(
+                                    withUnsafeBytes {
+                                        $0.baseAddress!.bindMemory(to: UInt16.self, capacity: 1)[0]
+                                    })), as: UTF8.self)
+    }
+    
     func add(_ date: Date) -> Self {
         add(date.timestamp)
     }
@@ -27,11 +34,11 @@ extension Data {
         }
     }
     
-    private var compressed: Data? {
-        try? (self as NSData).compressed(using: .lzfse) as Data
+    private var compressed: Self {
+        try! (self as NSData).compressed(using: .lzfse) as Self
     }
     
-    private var decompressed: Data? {
-        try? (self as NSData).decompressed(using: .lzfse) as Data
+    private var decompressed: Self {
+        try! (self as NSData).decompressed(using: .lzfse) as Self
     }
 }
