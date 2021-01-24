@@ -1,11 +1,19 @@
 import Foundation
 
 extension Data {
-    var string: String {
-        .init(decoding: subdata(in: 2 ..< 2 + .init(
-                                    withUnsafeBytes {
-                                        $0.baseAddress!.bindMemory(to: UInt16.self, capacity: 1)[0]
-                                    })), as: UTF8.self)
+    mutating func string() -> String {
+        let size = Int(uInt16())
+        let result = String(decoding: subdata(in: 0 ..< size ), as: UTF8.self)
+        self = advanced(by: size)
+        return result
+    }
+    
+    mutating func uInt16() -> UInt16 {
+        let result = withUnsafeBytes {
+            $0.baseAddress!.bindMemory(to: UInt16.self, capacity: 1)[0]
+        }
+        self = advanced(by: 2)
+        return result
     }
     
     func add(_ date: Date) -> Self {
