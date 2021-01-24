@@ -13,7 +13,7 @@ final class DataTests: XCTestCase {
         user.id = "hello world"
         user.boards = [boardB, boardA]
         user.date = .init(timeIntervalSinceNow: 100)
-        XCTAssertEqual(user.date, User.Descriptor(data: user.descriptor.data).date)
+        XCTAssertEqual(Int(user.date.timeIntervalSince1970), .init(User.Descriptor(data: user.descriptor.data).date.timeIntervalSince1970))
         XCTAssertEqual(user.id, User.Descriptor(data: user.descriptor.data).id)
         XCTAssertEqual(user.counter, User.Descriptor(data: user.descriptor.data).counter)
         XCTAssertEqual(2, User.Descriptor(data: user.descriptor.data).boards.count)

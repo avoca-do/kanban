@@ -12,7 +12,11 @@ extension User {
         }
         
         init(data: Data) {
-            fatalError()
+            var data = data
+            id = data.string()
+            counter = .init(data.uInt16())
+            date = .init(timestamp: data.uInt32())
+            boards = []
         }
         
         init(describe: User) {

@@ -16,8 +16,12 @@ extension Data {
         return result
     }
     
-    func add(_ date: Date) -> Self {
-        add(date.timestamp)
+    mutating func uInt32() -> UInt32 {
+        let result = withUnsafeBytes {
+            $0.baseAddress!.bindMemory(to: UInt32.self, capacity: 1)[0]
+        }
+        self = advanced(by: 4)
+        return result
     }
     
     func add(_ string: String) -> Self {
