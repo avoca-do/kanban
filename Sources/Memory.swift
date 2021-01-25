@@ -3,13 +3,12 @@ import Combine
 
 final class Memory {
     static var shared = Memory()
-    let save = PassthroughSubject<Board, Never>()
-    let update = PassthroughSubject<User, Never>()
+    let save = PassthroughSubject<Archive, Never>()
     private let queue = DispatchQueue(label: "", qos: .utility)
     
-    var user: Future<User, Never> {
-        .init { [weak self] result in
-            self?.queue.async {
+//    var user: Future<User, Never> {
+//        .init { [weak self] result in
+//            self?.queue.async {
 //                guard instance.fileExists(atPath: folder.path) else { return result(.success([])) }
 //                result(
 //                    .success(
@@ -21,7 +20,7 @@ final class Memory {
 //                            }?.sorted { $0.date > $1.date } ?? []
 //                    )
 //                )
-            }
-        }
-    }
+//            }
+//        }
+//    }
 }

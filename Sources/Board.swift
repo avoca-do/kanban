@@ -1,17 +1,23 @@
 import Foundation
 
-public struct Board: Identifiable, Hashable {
+public struct Board: Hashable {
     public private(set) var name = ""
     public private(set) var columns = [Column]()
-    public let id: Int
     var edit: [Edit]
     
-    init(id: Int) {
-        self.id = id
+    init() {
         edit = [.init(actions: [.create], date: .init())]
     }
     
-    mutating func add(_ action: Action) {
+    public mutating func card() {
+        add(.card)
+    }
+    
+    public mutating func rename(_ name: String) {
+        add(.rename(name))
+    }
+    
+    private mutating func add(_ action: Action) {
         if Calendar.current.dateComponents([.minute], from: edit.last!.date, to: .init()).minute! > 4 {
             edit.append(.init(actions: [action], date: .init()))
         } else {
@@ -27,12 +33,11 @@ public struct Board: Identifiable, Hashable {
     }
     
     public func hash(into: inout Hasher) {
-        into.combine(id)
         into.combine(name)
         into.combine(columns)
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id && lhs.name == rhs.name && lhs.columns == rhs.columns
+        lhs.name == rhs.name && lhs.columns == rhs.columns
     }
 }
