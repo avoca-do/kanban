@@ -48,5 +48,10 @@ final class DataTests: XCTestCase {
         XCTAssertEqual(.create, archived[1].edit.first!.actions.first!)
         XCTAssertEqual(300, Int(archived[1].edit.first!.date.timeIntervalSince1970))
         XCTAssertEqual(.init(boardA.edit[0].date.timeIntervalSince1970), Int(archived[1].edit.last!.date.timeIntervalSince1970))
+        
+        XCTAssertEqual(3, archived[0].count)
+        XCTAssertEqual("Do", archived[0][0].title)
+        XCTAssertEqual("Doing", archived[0][1].title)
+        XCTAssertEqual("Done", archived[0][2].title)
     }
 }

@@ -2,11 +2,16 @@ import Foundation
 
 public extension Board {
     struct Column: Hashable {
-        public var name: String
-        public var cards = [Card]()
+        public internal(set) var title: String
+        private var cards: [String]
         
-        public init(name: String) {
-            self.name = name
+        init() {
+            title = ""
+            cards = []
+        }
+        
+        public subscript(_ index: Int) -> String {
+            cards[index]
         }
     }
 }

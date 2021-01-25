@@ -5,14 +5,16 @@ extension Board.Edit {
         case
         create,
         card,
+        column,
         rename(String),
+        title(Int, String),
         move(Position, Position),
         content(Position, String)
         
         var data: Data {
             Data()
                 .add(key.rawValue)
-                .add(content)
+                .add(value)
         }
         
         init(data: inout Data) {
@@ -21,8 +23,12 @@ extension Board.Edit {
                 self = .create
             case .card:
                 self = .card
+            case .column:
+                self = .column
             case .rename:
                 self = .rename(data.string())
+            case .title:
+                self = .title(.init(data.removeFirst()), data.string())
             case .move:
                 self = .move(.init(data: &data), .init(data: &data))
             case .content:
@@ -30,15 +36,17 @@ extension Board.Edit {
             }
         }
         
-        private var content: Data {
+        private var value: Data {
             switch self {
-            case .create:
-                return .init()
-            case .card:
+            case .create, .card, .column:
                 return .init()
             case let .rename(name):
                 return Data()
                     .add(name)
+            case let .title(index, title):
+                return Data()
+                    .add(UInt8(index))
+                    .add(title)
             case let .move(from, to):
                 return from.data
                     + to.data
@@ -52,7 +60,9 @@ extension Board.Edit {
             switch self {
             case .create: return .create
             case .card: return .card
+            case .column: return .column
             case .rename: return .rename
+            case .title: return .title
             case .move: return .move
             case .content: return .content
             }
@@ -64,7 +74,9 @@ private enum Key: UInt8 {
     case
     create,
     card,
+    column,
     rename,
+    title,
     move,
     content
 }

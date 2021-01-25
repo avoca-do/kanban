@@ -2,8 +2,13 @@ import Foundation
 
 public struct Board: Hashable, Archivable {
     public private(set) var name: String
-    public private(set) var columns: [Column]
+    
+    public var count: Int {
+        columns.count
+    }
+    
     var edit: [Edit]
+    private var columns: [Column]
     
     var data: Data {
         Data()
@@ -15,7 +20,8 @@ public struct Board: Hashable, Archivable {
     init() {
         name = ""
         columns = []
-        edit = [.init(action: .create)]
+        edit = []
+        add(.create)
     }
     
     init(data: inout Data) {
@@ -25,6 +31,13 @@ public struct Board: Hashable, Archivable {
             .map { _ in
                 .init(data: &data)
             }
+        edit.flatMap(\.actions).forEach {
+            perform($0)
+        }
+    }
+    
+    public subscript(_ index: Int) -> Column {
+        columns[index]
     }
     
     public mutating func card() {
@@ -36,16 +49,39 @@ public struct Board: Hashable, Archivable {
     }
     
     private mutating func add(_ action: Edit.Action) {
-        if Calendar.current.dateComponents([.minute], from: edit.last!.date, to: .init()).minute! > 4 {
-            edit.append(.init(action: action))
+        if let last = edit.last {
+            if Calendar.current.dateComponents([.minute], from: last.date, to: .init()).minute! > 4 {
+                edit.append(.init(action: action))
+            } else {
+                edit[edit.count - 1].actions.append(action)
+            }
         } else {
-            edit[edit.count - 1].actions.append(action)
+            edit.append(.init(action: action))
         }
         
+        perform(action)
+    }
+    
+    private mutating func perform(_ action: Edit.Action) {
         switch action {
+        case .create:
+            perform(.column)
+            perform(.title(0, "Do"))
+            perform(.column)
+            perform(.title(1, "Doing"))
+            perform(.column)
+            perform(.title(2, "Done"))
+        case .card:
+            break
+        case .column:
+            columns.append(.init())
         case let .rename(name):
             self.name = name
-        default:
+        case let .title(index, title):
+            columns[index].title = title
+        case .move:
+            break
+        case .content:
             break
         }
     }

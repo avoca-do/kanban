@@ -8,6 +8,13 @@ final class EditTests: XCTestCase {
         board = .init()
     }
     
+    func testCreate() {
+        XCTAssertEqual(3, board.count)
+        XCTAssertEqual("Do", board[0].title)
+        XCTAssertEqual("Doing", board[1].title)
+        XCTAssertEqual("Done", board[2].title)
+    }
+    
     func testGroup() {
         board.card()
         board.card()
