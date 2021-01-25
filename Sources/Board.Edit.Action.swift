@@ -1,7 +1,7 @@
 import Foundation
 
 extension Board.Edit {
-    enum Action: Equatable {
+    enum Action: Equatable, Archivable {
         case
         create,
         card,
@@ -9,7 +9,35 @@ extension Board.Edit {
         move(Position, Position),
         content(Position, String)
         
-        var value: UInt8 {
+        var data: Data {
+            Data()
+                .add(value)
+                + content
+        }
+        
+        init(data: inout Data) {
+            fatalError()
+        }
+        
+        private var content: Data {
+            switch self {
+            case .create:
+                return .init()
+            case .card:
+                return .init()
+            case let .rename(name):
+                return Data()
+                    .add(name)
+            case let .move(from, to):
+                return from.data
+                    + to.data
+            case let .content(position, content):
+                return position.data
+                    .add(content)
+            }
+        }
+        
+        private var value: UInt8 {
             switch self {
             case .create: return 0
             case .card: return 1

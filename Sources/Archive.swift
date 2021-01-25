@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Archive {
+public struct Archive: Archivable {
     public var count: Int {
         boards.count
     }
@@ -17,28 +17,14 @@ public struct Archive {
         Data()
             .add(id)
             .add(UInt8(boards.count))
-            + boards.flatMap {
-                Data()
-                    .add($0.name)
-                    .add(UInt16($0.edit.count))
-                    + $0.edit.flatMap {
-                        Data()
-                            .add($0.date.timestamp)
-                            .add(UInt8($0.actions.count))
-                            + $0.actions.flatMap {
-                                Data()
-                                    .add($0.value)
-                                
-                            }
-                    }
-            }
+            + boards.flatMap(\.data)
     }
     
     init() {
         id = ""
     }
     
-    init(data: Data) {
+    init(data: inout Data) {
         id = ""
     }
     

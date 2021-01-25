@@ -17,34 +17,37 @@ final class DataTests: XCTestCase {
         var archive = Archive()
         archive.id = "hello world"
         archive.boards = [boardB, boardA]
-        XCTAssertEqual("hello world", Archive(data: archive.data).id)
-        XCTAssertEqual(2, Archive(data: archive.data).boards.count)
         
-        XCTAssertEqual(2, Archive(data: archive.data)[0].edit.count)
-        XCTAssertEqual(1, Archive(data: archive.data)[0].edit.first!.actions.count)
-        XCTAssertEqual(.create, Archive(data: archive.data)[0].edit.first!.actions.first!)
-        XCTAssertEqual(3, Archive(data: archive.data)[0].edit.last!.actions.count)
-        XCTAssertEqual(.create, Archive(data: archive.data)[0].edit.last!.actions.first!)
-        XCTAssertEqual(500, Int(Archive(data: archive.data)[0].edit.first!.date.timeIntervalSince1970))
-        XCTAssertEqual(.init(boardB.edit[1].date.timeIntervalSince1970), Int(Archive(data: archive.data)[0].edit.last!.date.timeIntervalSince1970))
-        XCTAssertEqual("total recall", Archive(data: archive.data)[0].name)
+        var data = archive.data
+        let archived = Archive(data: &data)
+        XCTAssertEqual("hello world", archived.id)
+        XCTAssertEqual(2, archived.boards.count)
         
-        if case let .rename(name) = Archive(data: archive.data)[0].edit.last!.actions[1] {
+        XCTAssertEqual(2, archived[0].edit.count)
+        XCTAssertEqual(1, archived[0].edit.first!.actions.count)
+        XCTAssertEqual(.create, archived[0].edit.first!.actions.first!)
+        XCTAssertEqual(3, archived[0].edit.last!.actions.count)
+        XCTAssertEqual(.create, archived[0].edit.last!.actions.first!)
+        XCTAssertEqual(500, Int(archived[0].edit.first!.date.timeIntervalSince1970))
+        XCTAssertEqual(.init(boardB.edit[1].date.timeIntervalSince1970), Int(archived[0].edit.last!.date.timeIntervalSince1970))
+        XCTAssertEqual("total recall", archived[0].name)
+        
+        if case let .rename(name) = archived[0].edit.last!.actions[1] {
             XCTAssertEqual("lorem ipsum", name)
         } else {
             XCTFail()
         }
         
-        if case let .rename(name) = Archive(data: archive.data)[0].edit.last!.actions.last! {
+        if case let .rename(name) = archived[0].edit.last!.actions.last! {
             XCTAssertEqual("total recall", name)
         } else {
             XCTFail()
         }
 
-        XCTAssertEqual(1, Archive(data: archive.data)[1].edit.count)
-        XCTAssertEqual(1, Archive(data: archive.data)[1].edit.first!.actions.count)
-        XCTAssertEqual(.create, Archive(data: archive.data)[1].edit.first!.actions.first!)
-        XCTAssertEqual(300, Int(Archive(data: archive.data)[1].edit.first!.date.timeIntervalSince1970))
-        XCTAssertEqual(.init(boardA.edit[0].date.timeIntervalSince1970), Int(Archive(data: archive.data)[1].edit.last!.date.timeIntervalSince1970))
+        XCTAssertEqual(1, archived[1].edit.count)
+        XCTAssertEqual(1, archived[1].edit.first!.actions.count)
+        XCTAssertEqual(.create, archived[1].edit.first!.actions.first!)
+        XCTAssertEqual(300, Int(archived[1].edit.first!.date.timeIntervalSince1970))
+        XCTAssertEqual(.init(boardA.edit[0].date.timeIntervalSince1970), Int(archived[1].edit.last!.date.timeIntervalSince1970))
     }
 }

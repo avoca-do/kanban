@@ -1,12 +1,23 @@
 import Foundation
 
-public struct Board: Hashable {
+public struct Board: Hashable, Archivable {
     public private(set) var name = ""
     public private(set) var columns = [Column]()
     var edit: [Edit]
     
+    var data: Data {
+        Data()
+            .add(name)
+            .add(UInt16(edit.count))
+            + edit.flatMap(\.data)
+    }
+    
     init() {
-        edit = [.init(date: .init(), actions: [.create])]
+        edit = [.init(action: .create)]
+    }
+    
+    init(data: inout Data) {
+        fatalError()
     }
     
     public mutating func card() {
@@ -19,7 +30,7 @@ public struct Board: Hashable {
     
     private mutating func add(_ action: Edit.Action) {
         if Calendar.current.dateComponents([.minute], from: edit.last!.date, to: .init()).minute! > 4 {
-            edit.append(.init(date: .init(), actions: [action]))
+            edit.append(.init(action: action))
         } else {
             edit[edit.count - 1].actions.append(action)
         }
