@@ -3,8 +3,8 @@ import Foundation
 public struct User: Synchable {
     public internal(set) var boards = [Board]()
     var id: String
-    var date: Date
     var counter = Int()
+    var date: Date
     
     init(data: Data) {
         fatalError()
@@ -20,7 +20,11 @@ public struct User: Synchable {
     }
     
     var data: Data {
-        .init()
+        Data()
+            .add(id)
+            .add(UInt16(counter))
+            .add(date.timestamp)
+            
     }
     
     var descriptor: Descriptor {

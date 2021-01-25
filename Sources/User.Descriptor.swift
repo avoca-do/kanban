@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 extension User {
     struct Descriptor: Describe {
@@ -7,8 +8,10 @@ extension User {
         let date: Date
         let boards: [Board]
         
-        var described: User {
-            .init(descriptor: self)
+        var described: Future<User, Never> {
+            .init { result in
+                
+            }
         }
         
         init(data: Data) {
