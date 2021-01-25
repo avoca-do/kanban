@@ -1,6 +1,14 @@
 import Foundation
 
 extension Data {
+    var compressed: Self {
+        try! (self as NSData).compressed(using: .lzfse) as Self
+    }
+    
+    var decompressed: Self {
+        try! (self as NSData).decompressed(using: .lzfse) as Self
+    }
+    
     mutating func string() -> String {
         let size = Int(uInt16())
         let result = String(decoding: subdata(in: 0 ..< size), as: UTF8.self)
@@ -48,13 +56,5 @@ extension Data {
     
     private mutating func remove(_ amount: Int) -> Self {
         count > amount ? advanced(by: amount) : .init()
-    }
-    
-    private var compressed: Self {
-        try! (self as NSData).compressed(using: .lzfse) as Self
-    }
-    
-    private var decompressed: Self {
-        try! (self as NSData).decompressed(using: .lzfse) as Self
     }
 }

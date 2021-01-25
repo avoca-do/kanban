@@ -14,7 +14,24 @@ public struct Archive {
     }
     
     var data: Data {
-        .init()
+        Data()
+            .add(id)
+            .add(UInt8(boards.count))
+            + boards.flatMap {
+                Data()
+                    .add($0.name)
+                    .add(UInt16($0.edit.count))
+                    + $0.edit.flatMap {
+                        Data()
+                            .add($0.date.timestamp)
+                            .add(UInt8($0.actions.count))
+                            + $0.actions.flatMap {
+                                Data()
+                                    .add($0.value)
+                                
+                            }
+                    }
+            }
     }
     
     init() {
@@ -22,7 +39,7 @@ public struct Archive {
     }
     
     init(data: Data) {
-        fatalError()
+        id = ""
     }
     
     public subscript(_ index: Int) -> Board {

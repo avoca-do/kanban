@@ -6,7 +6,7 @@ public struct Board: Hashable {
     var edit: [Edit]
     
     init() {
-        edit = [.init(actions: [.create], date: .init())]
+        edit = [.init(date: .init(), actions: [.create])]
     }
     
     public mutating func card() {
@@ -17,9 +17,9 @@ public struct Board: Hashable {
         add(.rename(name))
     }
     
-    private mutating func add(_ action: Action) {
+    private mutating func add(_ action: Edit.Action) {
         if Calendar.current.dateComponents([.minute], from: edit.last!.date, to: .init()).minute! > 4 {
-            edit.append(.init(actions: [action], date: .init()))
+            edit.append(.init(date: .init(), actions: [action]))
         } else {
             edit[edit.count - 1].actions.append(action)
         }
