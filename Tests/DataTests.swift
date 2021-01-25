@@ -26,13 +26,12 @@ final class DataTests: XCTestCase {
         XCTAssertEqual(2, archived[0].edit.count)
         XCTAssertEqual(1, archived[0].edit.first!.actions.count)
         XCTAssertEqual(.create, archived[0].edit.first!.actions.first!)
-        XCTAssertEqual(3, archived[0].edit.last!.actions.count)
-        XCTAssertEqual(.create, archived[0].edit.last!.actions.first!)
+        XCTAssertEqual(2, archived[0].edit.last!.actions.count)
         XCTAssertEqual(500, Int(archived[0].edit.first!.date.timeIntervalSince1970))
         XCTAssertEqual(.init(boardB.edit[1].date.timeIntervalSince1970), Int(archived[0].edit.last!.date.timeIntervalSince1970))
         XCTAssertEqual("total recall", archived[0].name)
         
-        if case let .rename(name) = archived[0].edit.last!.actions[1] {
+        if case let .rename(name) = archived[0].edit.last!.actions.first! {
             XCTAssertEqual("lorem ipsum", name)
         } else {
             XCTFail()

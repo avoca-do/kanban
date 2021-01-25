@@ -9,7 +9,7 @@ extension Board {
             Data()
                 .add(date.timestamp)
                 .add(UInt8(actions.count))
-                + actions.flatMap(\.data)
+                .add(actions.flatMap(\.data))
         }
         
         init(action: Action) {
@@ -18,7 +18,11 @@ extension Board {
         }
         
         init(data: inout Data) {
-            fatalError()
+            date = .init(timestamp: data.uInt32())
+            actions = (0 ..< .init(data.removeFirst()))
+                .map { _ in
+                    .init(data: &data)
+                }
         }
     }
 }

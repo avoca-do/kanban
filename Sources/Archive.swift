@@ -7,7 +7,7 @@ public struct Archive: Archivable {
     
     var id: String
     
-    var boards = [Board]() {
+    var boards: [Board] {
         didSet {
             Memory.shared.save.send(self)
         }
@@ -17,15 +17,22 @@ public struct Archive: Archivable {
         Data()
             .add(id)
             .add(UInt8(boards.count))
-            + boards.flatMap(\.data)
+            .add(boards.flatMap(\.data))
+            .compressed
     }
     
     init() {
         id = ""
+        boards = []
     }
     
     init(data: inout Data) {
-        id = ""
+        data.decompress()
+        id = data.string()
+        boards = (0 ..< .init(data.removeFirst()))
+            .map { _ in
+                .init(data: &data)
+            }
     }
     
     public subscript(_ index: Int) -> Board {

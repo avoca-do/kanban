@@ -11,12 +11,23 @@ extension Board.Edit {
         
         var data: Data {
             Data()
-                .add(value)
-                + content
+                .add(key.rawValue)
+                .add(content)
         }
         
         init(data: inout Data) {
-            fatalError()
+            switch Key(rawValue: data.removeFirst())! {
+            case .create:
+                self = .create
+            case .card:
+                self = .card
+            case .rename:
+                self = .rename(data.string())
+            case .move:
+                self = .move(.init(data: &data), .init(data: &data))
+            case .content:
+                self = .content(.init(data: &data), data.string())
+            }
         }
         
         private var content: Data {
@@ -37,14 +48,23 @@ extension Board.Edit {
             }
         }
         
-        private var value: UInt8 {
+        private var key: Key {
             switch self {
-            case .create: return 0
-            case .card: return 1
-            case .rename: return 2
-            case .move: return 3
-            case .content: return 4
+            case .create: return .create
+            case .card: return .card
+            case .rename: return .rename
+            case .move: return .move
+            case .content: return .content
             }
         }
     }
+}
+
+private enum Key: UInt8 {
+    case
+    create,
+    card,
+    rename,
+    move,
+    content
 }

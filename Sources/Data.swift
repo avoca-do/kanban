@@ -5,8 +5,8 @@ extension Data {
         try! (self as NSData).compressed(using: .lzfse) as Self
     }
     
-    var decompressed: Self {
-        try! (self as NSData).decompressed(using: .lzfse) as Self
+    mutating func decompress() {
+        self = try! (self as NSData).decompressed(using: .lzfse) as Self
     }
     
     mutating func string() -> String {
@@ -30,6 +30,14 @@ extension Data {
         }
         self = remove(4)
         return result
+    }
+    
+    func add(_ data: Self) -> Self {
+        self + data
+    }
+    
+    func add(_ collection: [Self.Element]) -> Self {
+        self + collection
     }
     
     func add(_ string: String) -> Self {

@@ -1,23 +1,30 @@
 import Foundation
 
 public struct Board: Hashable, Archivable {
-    public private(set) var name = ""
-    public private(set) var columns = [Column]()
+    public private(set) var name: String
+    public private(set) var columns: [Column]
     var edit: [Edit]
     
     var data: Data {
         Data()
             .add(name)
             .add(UInt16(edit.count))
-            + edit.flatMap(\.data)
+            .add(edit.flatMap(\.data))
     }
     
     init() {
+        name = ""
+        columns = []
         edit = [.init(action: .create)]
     }
     
     init(data: inout Data) {
-        fatalError()
+        name = data.string()
+        columns = []
+        edit = (0 ..< .init(data.uInt16()))
+            .map { _ in
+                .init(data: &data)
+            }
     }
     
     public mutating func card() {
