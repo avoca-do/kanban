@@ -7,6 +7,10 @@ public struct Board: Hashable, Archivable {
         columns.count
     }
     
+    public var date: Date {
+        edit.last!.date
+    }
+    
     var edit: [Edit]
     private var columns: [Column]
     
