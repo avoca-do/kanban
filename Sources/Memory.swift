@@ -92,7 +92,9 @@ public final class Memory {
     private func auth() {
         if record.value == nil {
             container.fetchUserRecordID { [weak self] user, _ in
-                self?.record.value = user
+                self?.record.value = user.map {
+                    .init(recordName: "archive_" + $0.recordName)
+                }
             }
         }
     }
