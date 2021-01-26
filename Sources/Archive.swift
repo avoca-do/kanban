@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Archive: Archivable {
+public struct Archive: Archivable, Hashable {
     public var count: Int {
         boards.count
     }
@@ -47,5 +47,14 @@ public struct Archive: Archivable {
     
     public mutating func add() {
         boards.append(.init())
+    }
+    
+    public func hash(into: inout Hasher) {
+        into.combine(date)
+        into.combine(boards)
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.date == rhs.date && lhs.boards == rhs.boards
     }
 }
