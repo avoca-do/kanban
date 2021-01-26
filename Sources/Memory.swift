@@ -79,7 +79,7 @@ public final class Memory {
     }
     
     public func refresh() {
-        remote.send(FileManager.archive)
+        local.send(FileManager.archive)
         guard network else {
             remote.send(nil)
             return
