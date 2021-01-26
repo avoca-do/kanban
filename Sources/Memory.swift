@@ -12,7 +12,7 @@ public final class Memory {
     private let remote = PassthroughSubject<Archive?, Never>()
     private let pull = PassthroughSubject<Void, Never>()
     private let push = PassthroughSubject<Void, Never>()
-    private let record = CurrentValueSubject<CKRecord.ID?, Never>(nil)
+    private let record = PassthroughSubject<CKRecord.ID?, Never>()
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "", qos: .utility)
     
@@ -23,7 +23,6 @@ public final class Memory {
     init() {
         save.debounce(for: .seconds(1), scheduler: queue).sink { [weak self] in
             FileManager.archive = $0
-            self?.auth()
             self?.push.send()
         }
         .store(in: &subs)
@@ -85,17 +84,11 @@ public final class Memory {
             remote.send(nil)
             return
         }
-        auth()
-        pull.send()
-    }
-    
-    private func auth() {
-        if record.value == nil {
-            container.fetchUserRecordID { [weak self] user, _ in
-                self?.record.value = user.map {
-                    .init(recordName: "archive_" + $0.recordName)
-                }
-            }
+        container.fetchUserRecordID { [weak self] user, _ in
+            self?.record.send(user.map {
+                .init(recordName: "archive_" + $0.recordName)
+            })
         }
+        pull.send()
     }
 }
