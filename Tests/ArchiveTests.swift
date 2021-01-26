@@ -21,7 +21,8 @@ final class ArchiveTests: XCTestCase {
             XCTAssertEqual(1, $0.count)
             XCTAssertGreaterThanOrEqual($0.date, date)
             expect.fulfill()
-        }.store(in: &subs)
+        }
+        .store(in: &subs)
         
         archive.add()
         XCTAssertEqual(1, archive.boards.count)
@@ -42,7 +43,8 @@ final class ArchiveTests: XCTestCase {
             XCTAssertEqual("Pink Floyd", $0.boards[0].name)
             XCTAssertGreaterThanOrEqual($0.date, date)
             expect.fulfill()
-        }.store(in: &subs)
+        }
+        .store(in: &subs)
         
         archive[0].rename("Pink Floyd")
         XCTAssertEqual("Pink Floyd", archive[0].name)
