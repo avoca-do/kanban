@@ -14,7 +14,10 @@ public final class Memory {
     private let record = CurrentValueSubject<CKRecord.ID?, Never>(nil)
     private let queue = DispatchQueue(label: "", qos: .utility)
     private let monitor = NWPathMonitor()
-    private let container = CKContainer(identifier: "iCloud.avoca.do")
+    
+    private var container: CKContainer {
+        .init(identifier: "iCloud.avoca.do")
+    }
     
     init() {
         save.debounce(for: .seconds(3), scheduler: queue).sink {

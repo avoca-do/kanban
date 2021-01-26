@@ -5,7 +5,6 @@ public struct Archive: Archivable {
         boards.count
     }
     
-    var id: String
     var date: Date
     
     var boards: [Board] {
@@ -17,7 +16,6 @@ public struct Archive: Archivable {
     
     var data: Data {
         Data()
-            .add(id)
             .add(date.timestamp)
             .add(UInt8(boards.count))
             .add(boards.flatMap(\.data))
@@ -25,14 +23,12 @@ public struct Archive: Archivable {
     }
     
     init() {
-        id = ""
         date = .init()
         boards = []
     }
     
     init(data: inout Data) {
         data.decompress()
-        id = data.string()
         date = .init(timestamp: data.uInt32())
         boards = (0 ..< .init(data.removeFirst()))
             .map { _ in

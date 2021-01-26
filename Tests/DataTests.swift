@@ -16,14 +16,13 @@ final class DataTests: XCTestCase {
         boardB.rename("total recall")
         
         var archive = Archive()
-        archive.id = "hello world"
         archive.boards = [boardB, boardA]
         archive.date = .init(timeIntervalSince1970: 150)
         
         let archived = archive.data.mutating {
             Archive(data: &$0)
         }
-        XCTAssertEqual("hello world", archived.id)
+        
         XCTAssertEqual(2, archived.boards.count)
         XCTAssertEqual(.init(timeIntervalSince1970: 150), archived.date)
         
