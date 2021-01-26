@@ -4,7 +4,7 @@ import XCTest
 final class MemoryTests: XCTestCase {
     override func setUp() {
         Memory.shared = .init()
-        Memory.shared.sub = nil
+        Memory.shared.subs = .init()
     }
     
     func testLoad() {

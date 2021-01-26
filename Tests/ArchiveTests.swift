@@ -10,7 +10,7 @@ final class ArchiveTests: XCTestCase {
         archive = .init()
         subs = .init()
         Memory.shared = .init()
-        Memory.shared.sub = nil
+        Memory.shared.subs = .init()
     }
     
     func testAdd() {

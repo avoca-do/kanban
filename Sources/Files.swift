@@ -1,12 +1,14 @@
 import Foundation
 
 extension FileManager {
-    static var archive: Data? {
+    static var archive: Archive? {
         get {
-            try? .init(contentsOf: _archive)
+            (try? Data(contentsOf: _archive))?.mutating {
+                .init(data: &$0)
+            }
         }
         set {
-            try? newValue!.write(to: _archive, options: .atomic)
+            try? newValue!.data.write(to: _archive, options: .atomic)
         }
     }
     

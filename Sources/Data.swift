@@ -5,6 +5,11 @@ extension Data {
         try! (self as NSData).compressed(using: .lzfse) as Self
     }
     
+    func mutating<M>(transform: (inout Self) -> M) -> M {
+        var mutating = self
+        return transform(&mutating)
+    }
+    
     mutating func decompress() {
         self = try! (self as NSData).decompressed(using: .lzfse) as Self
     }
