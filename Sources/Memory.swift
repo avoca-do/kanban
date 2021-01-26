@@ -30,7 +30,7 @@ public final class Memory {
         
         local.combineLatest(remote) {
             guard let local = $0 else { return $1 }
-            guard let remote = $1 else { return nil }
+            guard let remote = $1 else { return local }
             return local.date > remote.date ? local : remote
         }
         .map {
