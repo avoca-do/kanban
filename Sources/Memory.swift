@@ -32,11 +32,13 @@ public final class Memory {
             guard let remote = $1 else { return local }
             return local.date > remote.date ? local : remote
         }
-        .map {
-            $0 ?? .init()
+        .compactMap {
+            $0
         }
         .receive(on: DispatchQueue.main)
-        .sink(receiveValue: archive.send)
+        .sink { [weak self] in
+            self?.archive.send($0)
+        }
         .store(in: &subs)
         
         record.combineLatest(pull).sink { [weak self] id, _ in
