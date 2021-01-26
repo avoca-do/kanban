@@ -36,6 +36,7 @@ public final class Memory {
         .map {
             $0 ?? .init()
         }
+        .receive(on: DispatchQueue.main)
         .sink(receiveValue: archive.send)
         .store(in: &subs)
         
