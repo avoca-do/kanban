@@ -4,6 +4,7 @@ import XCTest
 final class DataTests: XCTestCase {
     override func setUp() {
         Memory.shared = .init()
+        Memory.shared.sub = nil
     }
     
     func testArchive() {
@@ -17,11 +18,13 @@ final class DataTests: XCTestCase {
         var archive = Archive()
         archive.id = "hello world"
         archive.boards = [boardB, boardA]
+        archive.date = .init(timeIntervalSince1970: 150)
         
         var data = archive.data
         let archived = Archive(data: &data)
         XCTAssertEqual("hello world", archived.id)
         XCTAssertEqual(2, archived.boards.count)
+        XCTAssertEqual(.init(timeIntervalSince1970: 150), archived.date)
         
         XCTAssertEqual(2, archived[0].edit.count)
         XCTAssertEqual(1, archived[0].edit.first!.actions.count)
