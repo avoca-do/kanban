@@ -22,7 +22,7 @@ public struct Archive: Archivable {
             .compressed
     }
     
-    init() {
+    public init() {
         date = .init()
         boards = []
     }
