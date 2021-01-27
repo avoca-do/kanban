@@ -44,7 +44,7 @@ public struct Archive: Archivable, Hashable {
     }
     
     public mutating func add() {
-        boards.append(.init())
+        boards.insert(.init(), at: 0)
     }
     
     public func hash(into: inout Hasher) {
