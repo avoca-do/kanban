@@ -17,14 +17,12 @@ final class DataTests: XCTestCase {
         
         var archive = Archive()
         archive.boards = [boardB, boardA]
-        archive.date = .init(timeIntervalSince1970: 150)
         
         let archived = archive.data.mutating {
             Archive(data: &$0)
         }
         
         XCTAssertEqual(2, archived.boards.count)
-        XCTAssertEqual(.init(timeIntervalSince1970: 150), archived.date)
         
         XCTAssertEqual(2, archived[0].edit.count)
         XCTAssertEqual(1, archived[0].edit.first!.actions.count)

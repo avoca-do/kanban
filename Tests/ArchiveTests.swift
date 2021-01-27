@@ -16,7 +16,6 @@ final class ArchiveTests: XCTestCase {
     func testAdd() {
         let expect = expectation(description: "")
         let date = Date()
-        archive.date = .distantPast
         Memory.shared.save.sink {
             XCTAssertEqual(1, $0.count)
             XCTAssertGreaterThanOrEqual($0.date, date)
@@ -36,12 +35,9 @@ final class ArchiveTests: XCTestCase {
     func testRename() {
         let expect = expectation(description: "")
         archive.add()
-        let date = Date()
-        archive.date = .distantPast
         
         Memory.shared.save.sink {
             XCTAssertEqual("Pink Floyd", $0.boards[0].name)
-            XCTAssertGreaterThanOrEqual($0.date, date)
             expect.fulfill()
         }
         .store(in: &subs)
@@ -49,7 +45,6 @@ final class ArchiveTests: XCTestCase {
         archive[0].rename("Pink Floyd")
         XCTAssertEqual("Pink Floyd", archive[0].name)
         XCTAssertEqual(1, archive[0].edit.count)
-        XCTAssertGreaterThanOrEqual(archive.date, date)
         if case let .rename(name) = archive[0].edit.first!.actions.last! {
             XCTAssertEqual("Pink Floyd", name)
         } else {
