@@ -70,11 +70,11 @@ public struct Board: Hashable, Archivable {
         switch action {
         case .create:
             perform(.column)
-            perform(.title(0, "Do"))
+            perform(.title(0, "DO"))
             perform(.column)
-            perform(.title(1, "Doing"))
+            perform(.title(1, "DOING"))
             perform(.column)
-            perform(.title(2, "Done"))
+            perform(.title(2, "DONE"))
         case .card:
             break
         case .column:
