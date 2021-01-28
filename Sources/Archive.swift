@@ -5,6 +5,10 @@ public struct Archive: Archivable, Hashable {
         boards.count
     }
     
+    public var isEmpty: Bool {
+        boards.isEmpty
+    }
+    
     var date: Date {
         boards.map(\.date).max() ?? .init()
     }
