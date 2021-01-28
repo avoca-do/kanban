@@ -7,6 +7,10 @@ public struct Board: Hashable, Archivable {
         columns.count
     }
     
+    public var isEmpty: Bool {
+        columns.isEmpty
+    }
+    
     public var date: Date {
         edit.last!.date
     }

@@ -8,6 +8,10 @@ public extension Board {
             cards.count
         }
         
+        public var isEmpty: Bool {
+            cards.isEmpty
+        }
+        
         private var cards: [String]
         
         init() {
