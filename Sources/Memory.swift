@@ -44,9 +44,7 @@ public final class Memory {
             operation.configuration.timeoutIntervalForResource = 20
             operation.fetchRecordsCompletionBlock = { [weak self] records, _ in
                 guard let value = records?.values.first else { return }
-                self?.remote.send((try! Data(contentsOf: (value["asset"] as! CKAsset).fileURL!)).mutating {
-                    .init(data: &$0)
-                })
+                self?.remote.send((try! Data(contentsOf: (value["asset"] as! CKAsset).fileURL!)).mutating(transform: Archive.init(data:)))
             }
             self?.container.publicCloudDatabase.add(operation)
         }

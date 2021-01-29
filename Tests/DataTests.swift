@@ -20,9 +20,7 @@ final class DataTests: XCTestCase {
         var archive = Archive()
         archive.boards = [boardB, boardA]
         
-        let archived = archive.data.mutating {
-            Archive(data: &$0)
-        }
+        let archived = archive.data.mutating(transform: Archive.init(data:))
         
         XCTAssertEqual(2, archived.boards.count)
         XCTAssertEqual(1, archived[0][0].count)
@@ -68,5 +66,10 @@ final class DataTests: XCTestCase {
         XCTAssertEqual("DO", archived[0][0].title)
         XCTAssertEqual("DOING", archived[0][1].title)
         XCTAssertEqual("DONE", archived[0][2].title)
+    }
+    
+    func testOrder() {
+        let edit = Board.Edit(action: .order(.init(column: 120, card: 19242), 4233))
+        XCTAssertEqual(edit, edit.data.mutating(transform: Board.Edit.init(data:)))
     }
 }

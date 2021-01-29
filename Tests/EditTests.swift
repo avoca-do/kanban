@@ -57,4 +57,12 @@ final class EditTests: XCTestCase {
         board.content(position: .init(column: 0, card: 1), text: "hello world")
         XCTAssertEqual("hello world", board[0][1])
     }
+    
+    func testOrder() {
+        board.card()
+        board.columns[0].cards[0] = "hello world"
+        board.card()
+        board.order(position: .init(column: 0, card: 1), index: 0)
+        XCTAssertEqual("hello world", board[0][0])
+    }
 }

@@ -60,6 +60,10 @@ public struct Board: Hashable, Archivable {
         add(.content(position, text))
     }
     
+    public mutating func order(position: Position, index: Int) {
+        add(.order(position, index))
+    }
+    
     private mutating func add(_ action: Action) {
         if let last = edit.last {
             if Calendar.current.dateComponents([.minute], from: last.date, to: .init()).minute! > 4 {
@@ -70,7 +74,6 @@ public struct Board: Hashable, Archivable {
         } else {
             edit.append(.init(action: action))
         }
-        
         perform(action)
     }
     
@@ -91,10 +94,10 @@ public struct Board: Hashable, Archivable {
             self.name = name
         case let .title(index, title):
             columns[index].title = title
-        case .move:
-            break
         case let .content(position, text):
             columns[position.column].cards[position.card] = text
+        case let .order(position, index):
+            columns[position.column].cards.insert(columns[position.column].cards[position.card], at: index)
         }
     }
     

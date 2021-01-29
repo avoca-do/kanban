@@ -9,9 +9,7 @@ extension FileManager {
     
     static var archive: Archive? {
         get {
-            (try? Data(contentsOf: url))?.mutating {
-                .init(data: &$0)
-            }
+            (try? Data(contentsOf: url))?.mutating(transform: Archive.init(data:))
         }
         set {
             try? newValue!.data.write(to: url, options: .atomic)

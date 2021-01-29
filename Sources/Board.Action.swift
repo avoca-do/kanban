@@ -8,8 +8,8 @@ extension Board {
         column,
         rename(String),
         title(Int, String),
-        move(Position, Position),
-        content(Position, String)
+        content(Position, String),
+        order(Position, Int)
         
         var data: Data {
             Data()
@@ -29,10 +29,10 @@ extension Board {
                 self = .rename(data.string())
             case .title:
                 self = .title(.init(data.removeFirst()), data.string())
-            case .move:
-                self = .move(.init(data: &data), .init(data: &data))
             case .content:
                 self = .content(.init(data: &data), data.string())
+            case .order:
+                self = .order(.init(data: &data), .init(data.uInt16()))
             }
         }
         
@@ -47,12 +47,12 @@ extension Board {
                 return Data()
                     .add(UInt8(index))
                     .add(title)
-            case let .move(from, to):
-                return from.data
-                    + to.data
             case let .content(position, content):
                 return position.data
                     .add(content)
+            case let .order(card, index):
+                return card.data
+                    .add(UInt16(index))
             }
         }
         
@@ -63,8 +63,8 @@ extension Board {
             case .column: return .column
             case .rename: return .rename
             case .title: return .title
-            case .move: return .move
             case .content: return .content
+            case .order: return .order
             }
         }
     }
@@ -77,6 +77,6 @@ private enum Key: UInt8 {
     column,
     rename,
     title,
-    move,
-    content
+    content,
+    order
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 extension Board {
-    struct Edit: Archivable {
+    struct Edit: Equatable, Archivable {
         var date: Date
         var actions: [Action]
         
@@ -23,6 +23,10 @@ extension Board {
                 .map { _ in
                     .init(data: &data)
                 }
+        }
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.date.timestamp == rhs.date.timestamp && lhs.actions == rhs.actions
         }
     }
 }
