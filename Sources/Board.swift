@@ -94,16 +94,16 @@ public struct Board: Hashable, Archivable {
         guard card.column != column else { return }
         add(.horizontal(card, column))
         
-        if card.order == 0 {
-            var card = card
-            edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
-                if case let .horizontal(previous, index) = $1, index == card.column {
-                    card = previous
-                } else {
-                    $0.append($1)
-                }
-            }.reversed() + [.horizontal(card, column)]
-        }
+        var card = card
+        edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
+            if case let .horizontal(previous, index) = $1, index == card.column {
+                card = previous
+            } else if case let .vertical(previous, index) = $1, previous.column == card.column, index == card.order {
+                card = previous
+            } else {
+                $0.append($1)
+            }
+        }.reversed() + [.horizontal(card, column)]
     }
     
     private mutating func add(_ action: Action) {
