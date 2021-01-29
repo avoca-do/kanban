@@ -15,7 +15,7 @@ final class DataTests: XCTestCase {
         boardB.rename("lorem ipsum")
         boardB.rename("total recall")
         boardB.card()
-        boardB.content(position: .init(column: 0, card: 0), text: "hello world")
+        boardB.content(card: .init(column: 0, order: 0), text: "hello world")
         
         var archive = Archive()
         archive.boards = [boardB, boardA]
@@ -49,9 +49,9 @@ final class DataTests: XCTestCase {
         
         XCTAssertEqual(.card, archived[0].edit.last!.actions[2])
         
-        if case let .content(position, text) = archived[0].edit.last!.actions[3] {
+        if case let .content(card, text) = archived[0].edit.last!.actions[3] {
             XCTAssertEqual("hello world", text)
-            XCTAssertEqual(.init(column: 0, card: 0), position)
+            XCTAssertEqual(.init(column: 0, order: 0), card)
         } else {
             XCTFail()
         }
@@ -68,8 +68,8 @@ final class DataTests: XCTestCase {
         XCTAssertEqual("DONE", archived[0][2].title)
     }
     
-    func testOrder() {
-        let edit = Board.Edit(action: .order(.init(column: 120, card: 19242), 4233))
+    func testVertical() {
+        let edit = Board.Edit(action: .vertical(.init(column: 120, order: 19242), 4233))
         XCTAssertEqual(edit, edit.data.mutating(transform: Board.Edit.init(data:)))
     }
 }

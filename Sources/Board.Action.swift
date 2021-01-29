@@ -8,8 +8,9 @@ extension Board {
         column,
         rename(String),
         title(Int, String),
-        content(Position, String),
-        order(Position, Int)
+        content(Card, String),
+        vertical(Card, Int),
+        horizontal(Card, Int)
         
         var data: Data {
             Data()
@@ -31,8 +32,10 @@ extension Board {
                 self = .title(.init(data.removeFirst()), data.string())
             case .content:
                 self = .content(.init(data: &data), data.string())
-            case .order:
-                self = .order(.init(data: &data), .init(data.uInt16()))
+            case .vertical:
+                self = .vertical(.init(data: &data), .init(data.uInt16()))
+            case .horizontal:
+                self = .horizontal(.init(data: &data), .init(data.removeFirst()))
             }
         }
         
@@ -43,16 +46,19 @@ extension Board {
             case let .rename(name):
                 return Data()
                     .add(name)
-            case let .title(index, title):
+            case let .title(column, title):
                 return Data()
-                    .add(UInt8(index))
+                    .add(UInt8(column))
                     .add(title)
-            case let .content(position, content):
-                return position.data
-                    .add(content)
-            case let .order(card, index):
+            case let .content(card, content):
                 return card.data
-                    .add(UInt16(index))
+                    .add(content)
+            case let .vertical(card, order):
+                return card.data
+                    .add(UInt16(order))
+            case let .horizontal(card, column):
+                return card.data
+                    .add(UInt8(column))
             }
         }
         
@@ -64,7 +70,8 @@ extension Board {
             case .rename: return .rename
             case .title: return .title
             case .content: return .content
-            case .order: return .order
+            case .vertical: return .vertical
+            case .horizontal: return .horizontal
             }
         }
     }
@@ -78,5 +85,6 @@ private enum Key: UInt8 {
     rename,
     title,
     content,
-    order
+    vertical,
+    horizontal
 }

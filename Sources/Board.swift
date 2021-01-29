@@ -56,12 +56,16 @@ public struct Board: Hashable, Archivable {
         add(.rename(name))
     }
     
-    public mutating func content(position: Position, text: String) {
-        add(.content(position, text))
+    public mutating func content(card: Card, text: String) {
+        add(.content(card, text))
     }
     
-    public mutating func order(position: Position, index: Int) {
-        add(.order(position, index))
+    public mutating func vertical(card: Card, order: Int) {
+        add(.vertical(card, order))
+    }
+    
+    public mutating func horizontal(card: Card, column: Int) {
+        add(.horizontal(card, column))
     }
     
     private mutating func add(_ action: Action) {
@@ -92,12 +96,14 @@ public struct Board: Hashable, Archivable {
             columns.append(.init())
         case let .rename(name):
             self.name = name
-        case let .title(index, title):
-            columns[index].title = title
-        case let .content(position, text):
-            columns[position.column].cards[position.card] = text
-        case let .order(position, index):
-            columns[position.column].cards.insert(columns[position.column].cards[position.card], at: index)
+        case let .title(column, title):
+            columns[column].title = title
+        case let .content(card, text):
+            columns[card.column].cards[card.order] = text
+        case let .vertical(card, order):
+            columns[card.column].cards.insert(columns[card.column].cards.remove(at: card.order), at: order)
+        case let .horizontal(card, column):
+            columns[column].cards.insert(columns[card.column].cards.remove(at: card.order), at: 0)
         }
     }
     

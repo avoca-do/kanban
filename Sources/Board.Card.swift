@@ -1,24 +1,24 @@
 import Foundation
 
 public extension Board {
-    struct Position: Equatable, Archivable {
+    struct Card: Equatable, Archivable {
         public let column: Int
-        public let card: Int
+        public let order: Int
         
         var data: Data {
             Data()
                 .add(UInt8(column))
-                .add(UInt16(card))
+                .add(UInt16(order))
         }
         
-        public init(column: Int, card: Int) {
+        public init(column: Int, order: Int) {
             self.column = column
-            self.card = card
+            self.order = order
         }
         
         init(data: inout Data) {
             column = .init(data.removeFirst())
-            card = .init(data.uInt16())
+            order = .init(data.uInt16())
         }
     }
 }

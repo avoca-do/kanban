@@ -54,15 +54,23 @@ final class EditTests: XCTestCase {
     func testContent() {
         board.card()
         board.card()
-        board.content(position: .init(column: 0, card: 1), text: "hello world")
+        board.content(card: .init(column: 0, order: 1), text: "hello world")
         XCTAssertEqual("hello world", board[0][1])
     }
     
-    func testOrder() {
+    func testVertical() {
         board.card()
         board.columns[0].cards[0] = "hello world"
         board.card()
-        board.order(position: .init(column: 0, card: 1), index: 0)
+        board.vertical(card: .init(column: 0, order: 1), order: 0)
         XCTAssertEqual("hello world", board[0][0])
+        XCTAssertEqual(2, board[0].count)
+    }
+    
+    func testHorizontal() {
+        board.card()
+        board.horizontal(card: .init(column: 0, order: 0), column: 1)
+        XCTAssertTrue(board[0].isEmpty)
+        XCTAssertEqual(1, board[1].count)
     }
 }
