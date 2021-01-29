@@ -13,36 +13,34 @@ final class ArchiveTests: XCTestCase {
         Memory.shared.subs = .init()
     }
     
-    func testAdd() {
+    func testSave() {
         let expect = expectation(description: "")
         let date = Date()
         Memory.shared.save.sink {
-            XCTAssertEqual(1, $0.count)
             XCTAssertGreaterThanOrEqual($0.date, date)
             expect.fulfill()
         }
         .store(in: &subs)
+        archive.boards = []
         
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testAdd() {
+        let date = Date()
         archive.add()
+        
         XCTAssertEqual(1, archive.boards.count)
         XCTAssertEqual(1, archive[0].edit.first!.actions.count)
         XCTAssertEqual(.create, archive[0].edit.first!.actions.first!)
         XCTAssertGreaterThanOrEqual(archive[0].edit.first!.date, date)
         XCTAssertGreaterThanOrEqual(archive.date, date)
-        waitForExpectations(timeout: 1)
     }
     
     func testRename() {
-        let expect = expectation(description: "")
         archive.add()
-        
-        Memory.shared.save.sink {
-            XCTAssertEqual("Pink Floyd", $0.boards[0].name)
-            expect.fulfill()
-        }
-        .store(in: &subs)
-        
         archive[0].rename("Pink Floyd")
+        
         XCTAssertEqual("Pink Floyd", archive[0].name)
         XCTAssertEqual(1, archive[0].edit.count)
         if case let .rename(name) = archive[0].edit.first!.actions.last! {
@@ -50,6 +48,5 @@ final class ArchiveTests: XCTestCase {
         } else {
             XCTFail()
         }
-        waitForExpectations(timeout: 1)
     }
 }

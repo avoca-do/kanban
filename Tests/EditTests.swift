@@ -10,9 +10,9 @@ final class EditTests: XCTestCase {
     
     func testCreate() {
         XCTAssertEqual(3, board.count)
-        XCTAssertEqual("Do", board[0].title)
-        XCTAssertEqual("Doing", board[1].title)
-        XCTAssertEqual("Done", board[2].title)
+        XCTAssertEqual("DO", board[0].title)
+        XCTAssertEqual("DOING", board[1].title)
+        XCTAssertEqual("DONE", board[2].title)
     }
     
     func testGroup() {
@@ -40,5 +40,15 @@ final class EditTests: XCTestCase {
         XCTAssertEqual(2, board.edit.count)
         XCTAssertLessThanOrEqual(board.edit.first!.date, date)
         XCTAssertGreaterThanOrEqual(board.edit.last!.date, date)
+    }
+    
+    func testCard() {
+        board.card()
+        XCTAssertEqual(1, board.edit.count)
+        XCTAssertEqual(1, board[0].count)
+        board.columns[0].cards[0] = "hello world"
+        board.card()
+        XCTAssertEqual(2, board[0].count)
+        XCTAssertEqual("hello world", board[0][1])
     }
 }

@@ -14,6 +14,7 @@ final class DataTests: XCTestCase {
         boardB.edit[0].date = .init(timeIntervalSince1970: 500)
         boardB.rename("lorem ipsum")
         boardB.rename("total recall")
+        boardB.card()
         
         var archive = Archive()
         archive.boards = [boardB, boardA]
@@ -23,26 +24,30 @@ final class DataTests: XCTestCase {
         }
         
         XCTAssertEqual(2, archived.boards.count)
+        XCTAssertEqual(1, archived[0][0].count)
+        XCTAssertTrue(archived[1][0].isEmpty)
         
         XCTAssertEqual(2, archived[0].edit.count)
         XCTAssertEqual(1, archived[0].edit.first!.actions.count)
         XCTAssertEqual(.create, archived[0].edit.first!.actions.first!)
-        XCTAssertEqual(2, archived[0].edit.last!.actions.count)
+        XCTAssertEqual(3, archived[0].edit.last!.actions.count)
         XCTAssertEqual(500, Int(archived[0].edit.first!.date.timeIntervalSince1970))
         XCTAssertEqual(.init(boardB.edit[1].date.timeIntervalSince1970), Int(archived[0].edit.last!.date.timeIntervalSince1970))
         XCTAssertEqual("total recall", archived[0].name)
         
-        if case let .rename(name) = archived[0].edit.last!.actions.first! {
+        if case let .rename(name) = archived[0].edit.last!.actions[0] {
             XCTAssertEqual("lorem ipsum", name)
         } else {
             XCTFail()
         }
         
-        if case let .rename(name) = archived[0].edit.last!.actions.last! {
+        if case let .rename(name) = archived[0].edit.last!.actions[1] {
             XCTAssertEqual("total recall", name)
         } else {
             XCTFail()
         }
+        
+        XCTAssertEqual(.card, archived[0].edit.last!.actions[2])
 
         XCTAssertEqual(1, archived[1].edit.count)
         XCTAssertEqual(1, archived[1].edit.first!.actions.count)
@@ -51,8 +56,8 @@ final class DataTests: XCTestCase {
         XCTAssertEqual(.init(boardA.edit[0].date.timeIntervalSince1970), Int(archived[1].edit.last!.date.timeIntervalSince1970))
         
         XCTAssertEqual(3, archived[0].count)
-        XCTAssertEqual("Do", archived[0][0].title)
-        XCTAssertEqual("Doing", archived[0][1].title)
-        XCTAssertEqual("Done", archived[0][2].title)
+        XCTAssertEqual("DO", archived[0][0].title)
+        XCTAssertEqual("DOING", archived[0][1].title)
+        XCTAssertEqual("DONE", archived[0][2].title)
     }
 }

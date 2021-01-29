@@ -12,7 +12,7 @@ public extension Board {
             cards.isEmpty
         }
         
-        private var cards: [String]
+        var cards: [String]
         
         init() {
             title = ""

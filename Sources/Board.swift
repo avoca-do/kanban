@@ -16,7 +16,7 @@ public struct Board: Hashable, Archivable {
     }
     
     var edit: [Edit]
-    private var columns: [Column]
+    var columns: [Column]
     
     var data: Data {
         Data()
@@ -80,7 +80,7 @@ public struct Board: Hashable, Archivable {
             perform(.column)
             perform(.title(2, "DONE"))
         case .card:
-            break
+            columns[0].cards.insert("", at: 0)
         case .column:
             columns.append(.init())
         case let .rename(name):
