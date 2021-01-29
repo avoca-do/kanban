@@ -1,16 +1,24 @@
 import Foundation
 
-extension Board.Edit {
+public extension Board {
     struct Position: Equatable, Archivable {
-        let column: Int
-        let index: Int
+        public let column: Int
+        public let card: Int
         
         var data: Data {
-            .init()
+            Data()
+                .add(UInt8(column))
+                .add(UInt16(card))
+        }
+        
+        public init(column: Int, card: Int) {
+            self.column = column
+            self.card = card
         }
         
         init(data: inout Data) {
-            fatalError()
+            column = .init(data.removeFirst())
+            card = .init(data.uInt16())
         }
     }
 }

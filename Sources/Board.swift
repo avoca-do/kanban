@@ -56,7 +56,11 @@ public struct Board: Hashable, Archivable {
         add(.rename(name))
     }
     
-    private mutating func add(_ action: Edit.Action) {
+    public mutating func content(position: Position, text: String) {
+        add(.content(position, text))
+    }
+    
+    private mutating func add(_ action: Action) {
         if let last = edit.last {
             if Calendar.current.dateComponents([.minute], from: last.date, to: .init()).minute! > 4 {
                 edit.append(.init(action: action))
@@ -70,7 +74,7 @@ public struct Board: Hashable, Archivable {
         perform(action)
     }
     
-    private mutating func perform(_ action: Edit.Action) {
+    private mutating func perform(_ action: Action) {
         switch action {
         case .create:
             perform(.column)
@@ -89,8 +93,8 @@ public struct Board: Hashable, Archivable {
             columns[index].title = title
         case .move:
             break
-        case .content:
-            break
+        case let .content(position, text):
+            columns[position.column].cards[position.card] = text
         }
     }
     

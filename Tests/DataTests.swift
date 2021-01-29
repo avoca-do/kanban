@@ -15,6 +15,7 @@ final class DataTests: XCTestCase {
         boardB.rename("lorem ipsum")
         boardB.rename("total recall")
         boardB.card()
+        boardB.content(position: .init(column: 0, card: 0), text: "hello world")
         
         var archive = Archive()
         archive.boards = [boardB, boardA]
@@ -26,11 +27,12 @@ final class DataTests: XCTestCase {
         XCTAssertEqual(2, archived.boards.count)
         XCTAssertEqual(1, archived[0][0].count)
         XCTAssertTrue(archived[1][0].isEmpty)
+        XCTAssertEqual("hello world", archived[0][0][0])
         
         XCTAssertEqual(2, archived[0].edit.count)
         XCTAssertEqual(1, archived[0].edit.first!.actions.count)
         XCTAssertEqual(.create, archived[0].edit.first!.actions.first!)
-        XCTAssertEqual(3, archived[0].edit.last!.actions.count)
+        XCTAssertEqual(4, archived[0].edit.last!.actions.count)
         XCTAssertEqual(500, Int(archived[0].edit.first!.date.timeIntervalSince1970))
         XCTAssertEqual(.init(boardB.edit[1].date.timeIntervalSince1970), Int(archived[0].edit.last!.date.timeIntervalSince1970))
         XCTAssertEqual("total recall", archived[0].name)
@@ -48,6 +50,13 @@ final class DataTests: XCTestCase {
         }
         
         XCTAssertEqual(.card, archived[0].edit.last!.actions[2])
+        
+        if case let .content(position, text) = archived[0].edit.last!.actions[3] {
+            XCTAssertEqual("hello world", text)
+            XCTAssertEqual(.init(column: 0, card: 0), position)
+        } else {
+            XCTFail()
+        }
 
         XCTAssertEqual(1, archived[1].edit.count)
         XCTAssertEqual(1, archived[1].edit.first!.actions.count)

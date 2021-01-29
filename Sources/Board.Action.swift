@@ -1,6 +1,6 @@
 import Foundation
 
-extension Board.Edit {
+extension Board {
     enum Action: Equatable, Archivable {
         case
         create,

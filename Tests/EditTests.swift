@@ -44,11 +44,17 @@ final class EditTests: XCTestCase {
     
     func testCard() {
         board.card()
-        XCTAssertEqual(1, board.edit.count)
         XCTAssertEqual(1, board[0].count)
         board.columns[0].cards[0] = "hello world"
         board.card()
         XCTAssertEqual(2, board[0].count)
+        XCTAssertEqual("hello world", board[0][1])
+    }
+    
+    func testContent() {
+        board.card()
+        board.card()
+        board.content(position: .init(column: 0, card: 1), text: "hello world")
         XCTAssertEqual("hello world", board[0][1])
     }
 }
