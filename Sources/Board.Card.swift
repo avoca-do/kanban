@@ -2,8 +2,8 @@ import Foundation
 
 public extension Board {
     struct Card: Equatable, Archivable {
-        public let column: Int
-        public let order: Int
+        public internal(set) var column: Int
+        public internal(set) var order: Int
         
         var data: Data {
             Data()

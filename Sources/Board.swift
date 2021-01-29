@@ -53,24 +53,62 @@ public struct Board: Hashable, Archivable {
     }
     
     public mutating func rename(_ name: String) {
+        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard
+            !name.isEmpty,
+            name != self.name
+        else { return }
         add(.rename(name))
     }
     
     public mutating func content(card: Card, text: String) {
+        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard
+            !text.isEmpty,
+            text != self[card.column][card.order]
+        else { return }
+        edit[edit.count - 1].actions.removeAll {
+            if case let .content(previous, _) = $0, previous == card {
+                return true
+            }
+            return false
+        }
         add(.content(card, text))
     }
     
     public mutating func vertical(card: Card, order: Int) {
+        guard card.order != order else { return }
         add(.vertical(card, order))
+        
+        var card = card
+        edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
+            if case let .vertical(previous, index) = $1, previous.column == card.column, index == card.order {
+                card.order = previous.order
+            } else {
+                $0.append($1)
+            }
+        }.reversed() + [.vertical(card, order)]
     }
     
     public mutating func horizontal(card: Card, column: Int) {
+        guard card.column != column else { return }
         add(.horizontal(card, column))
+        
+        if card.order == 0 {
+            var card = card
+            edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
+                if case let .horizontal(previous, index) = $1, index == card.column {
+                    card = previous
+                } else {
+                    $0.append($1)
+                }
+            }.reversed() + [.horizontal(card, column)]
+        }
     }
     
     private mutating func add(_ action: Action) {
         if let last = edit.last {
-            if Calendar.current.dateComponents([.minute], from: last.date, to: .init()).minute! > 4 {
+            if Calendar.current.dateComponents([.hour], from: last.date, to: .init()).hour! > 0 {
                 edit.append(.init(action: action))
             } else {
                 edit[edit.count - 1].actions.append(action)
