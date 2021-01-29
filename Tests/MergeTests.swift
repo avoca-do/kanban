@@ -21,6 +21,14 @@ final class MergeTests: XCTestCase {
         XCTAssertEqual(3, board.edit.first!.actions.count)
     }
     
+    func testContentHorizontal() {
+        board.card()
+        board.card()
+        board.content(card: .init(column: 0, order: 0), text: "a")
+        board.horizontal(card: .init(column: 0, order: 0), column: 1)
+        board.content(card: .init(column: 0, order: 0), text: "b")
+    }
+    
     func testVertical() {
         board.card()
         board.card()
@@ -68,5 +76,19 @@ final class MergeTests: XCTestCase {
         XCTAssertEqual(1, board[2].count)
         XCTAssertEqual(11, board.edit.first!.actions.count)
         print(board.edit.first!.actions)
+    }
+    
+    func testMixedHorizontal() {
+        board.card()
+        board.content(card: .init(column: 0, order: 0), text: "a")
+        board.horizontal(card: .init(column: 0, order: 0), column: 1)
+        board.card()
+        board.content(card: .init(column: 0, order: 0), text: "b")
+        board.edit[0].date = .init(timestamp: 0)
+        board.horizontal(card: .init(column: 0, order: 0), column: 1)
+        board.horizontal(card: .init(column: 1, order: 1), column: 2)
+        XCTAssertEqual(2, board.edit.last!.actions.count)
+        XCTAssertEqual("b", board[1][0])
+        XCTAssertEqual("a", board[2][0])
     }
 }
