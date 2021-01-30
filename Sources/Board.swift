@@ -12,35 +12,37 @@ public struct Board: Hashable, Archivable {
     }
     
     public var date: Date {
-        edit.last!.date
+        snaps.last!.date
     }
     
-    var edit: [Edit]
+    var snaps: [Snap]
     var columns: [Column]
     
     var data: Data {
         Data()
             .add(name)
-            .add(UInt16(edit.count))
-            .add(edit.flatMap(\.data))
+            .add(UInt16(snaps.count))
+            .add(snaps.flatMap(\.data))
     }
     
     init() {
         name = ""
         columns = []
-        edit = []
+        snaps = []
         add(.create)
     }
     
     init(data: inout Data) {
         name = data.string()
+        
+        
         columns = []
-        edit = (0 ..< .init(data.uInt16()))
+        snaps = (0 ..< .init(data.uInt16()))
             .map { _ in
                 .init(data: &data)
             }
         
-        edit.flatMap(\.actions).forEach {
+        snaps.flatMap(\.actions).forEach {
             perform($0)
         }
     }
@@ -99,10 +101,10 @@ public struct Board: Hashable, Archivable {
     }
     
     private mutating func add(_ action: Action) {
-        if edit.isEmpty || Calendar.current.dateComponents([.hour], from: edit.last!.date, to: .init()).hour! > 0 {
-            edit.append(.init(state: columns))
+        if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.date, to: .init()).hour! > 0 {
+            snaps.append(.init(state: columns))
         }
-        edit[edit.count - 1].add(action)
+        snaps[snaps.count - 1].add(action)
         perform(action)
     }
     

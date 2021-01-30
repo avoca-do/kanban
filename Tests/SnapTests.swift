@@ -20,34 +20,34 @@ final class EditTests: XCTestCase {
         board.card()
         board.card()
         board.card()
-        XCTAssertEqual(1, board.edit.count)
-        XCTAssertEqual(5, board.edit.first!.actions.count)
+        XCTAssertEqual(1, board.snaps.count)
+        XCTAssertEqual(5, board.snaps.first!.actions.count)
     }
     
     func testUpdateDateToLast() {
         let date = Date()
         var data = Data()
             .add(Date(timeIntervalSinceNow: -3599).timestamp)
-            .add(UInt8(board.edit[0].actions.count))
-            .add(board.edit[0].actions.flatMap(\.data))
-        board.edit[0] = .init(data: &data)
+            .add(UInt8(board.snaps[0].actions.count))
+            .add(board.snaps[0].actions.flatMap(\.data))
+        board.snaps[0] = .init(data: &data)
         board.card()
-        XCTAssertEqual(1, board.edit.count)
-        XCTAssertEqual(.card, board.edit.first!.actions.last)
-        XCTAssertGreaterThanOrEqual(board.edit.first!.date, date)
+        XCTAssertEqual(1, board.snaps.count)
+        XCTAssertEqual(.card, board.snaps.first!.actions.last)
+        XCTAssertGreaterThanOrEqual(board.snaps.first!.date, date)
     }
     
     func testGroupBy1Hour() {
         let date = Date()
         var data = Data()
             .add(Date(timeIntervalSinceNow: -3601).timestamp)
-            .add(UInt8(board.edit[0].actions.count))
-            .add(board.edit[0].actions.flatMap(\.data))
-        board.edit[0] = .init(data: &data)
+            .add(UInt8(board.snaps[0].actions.count))
+            .add(board.snaps[0].actions.flatMap(\.data))
+        board.snaps[0] = .init(data: &data)
         board.card()
-        XCTAssertEqual(2, board.edit.count)
-        XCTAssertLessThanOrEqual(board.edit.first!.date, date)
-        XCTAssertGreaterThanOrEqual(board.edit.last!.date, date)
+        XCTAssertEqual(2, board.snaps.count)
+        XCTAssertLessThanOrEqual(board.snaps.first!.date, date)
+        XCTAssertGreaterThanOrEqual(board.snaps.last!.date, date)
     }
     
     func testCard() {
@@ -64,7 +64,7 @@ final class EditTests: XCTestCase {
         board.card()
         board.content(card: .init(column: 0, order: 1), text: " hello world")
         XCTAssertEqual("hello world", board[0][1])
-        XCTAssertEqual(4, board.edit.last!.actions.count)
+        XCTAssertEqual(4, board.snaps.last!.actions.count)
     }
     
     func testContentEmpty() {
@@ -74,14 +74,14 @@ final class EditTests: XCTestCase {
         board.content(card: .init(column: 0, order: 0), text: " ")
         board.content(card: .init(column: 0, order: 0), text: "\t")
         board.content(card: .init(column: 0, order: 0), text: "\n \t\n")
-        XCTAssertEqual(2, board.edit.first!.actions.count)
+        XCTAssertEqual(2, board.snaps.first!.actions.count)
     }
     
     func testContentSame() {
         board.card()
         board.content(card: .init(column: 0, order: 0), text: " hello world")
         board.content(card: .init(column: 0, order: 0), text: "hello world ")
-        XCTAssertEqual(3, board.edit.first!.actions.count)
+        XCTAssertEqual(3, board.snaps.first!.actions.count)
     }
     
     func testVertical() {
@@ -97,7 +97,7 @@ final class EditTests: XCTestCase {
         board.card()
         board.card()
         board.vertical(card: .init(column: 0, order: 1), order: 1)
-        XCTAssertEqual(3, board.edit.first!.actions.count)
+        XCTAssertEqual(3, board.snaps.first!.actions.count)
     }
     
     func testHorizontal() {
@@ -110,6 +110,6 @@ final class EditTests: XCTestCase {
     func testHorizontalSameColumn() {
         board.card()
         board.horizontal(card: .init(column: 0, order: 0), column: 0)
-        XCTAssertEqual(2, board.edit.first!.actions.count)
+        XCTAssertEqual(2, board.snaps.first!.actions.count)
     }
 }

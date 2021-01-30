@@ -31,9 +31,9 @@ final class ArchiveTests: XCTestCase {
         archive.add()
         
         XCTAssertEqual(1, archive.boards.count)
-        XCTAssertEqual(1, archive[0].edit.first!.actions.count)
-        XCTAssertEqual(.create, archive[0].edit.first!.actions.first!)
-        XCTAssertGreaterThanOrEqual(archive[0].edit.first!.date, date)
+        XCTAssertEqual(1, archive[0].snaps.first!.actions.count)
+        XCTAssertEqual(.create, archive[0].snaps.first!.actions.first!)
+        XCTAssertGreaterThanOrEqual(archive[0].snaps.first!.date, date)
         XCTAssertGreaterThanOrEqual(archive.date, date)
     }
 }

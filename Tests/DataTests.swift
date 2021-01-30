@@ -11,16 +11,16 @@ final class DataTests: XCTestCase {
         var boardA = Board()
         var data = Data()
             .add(Date(timeIntervalSince1970: 300).timestamp)
-            .add(UInt8(boardA.edit[0].actions.count))
-            .add(boardA.edit[0].actions.flatMap(\.data))
-        boardA.edit[0] = .init(data: &data)
+            .add(UInt8(boardA.snaps[0].actions.count))
+            .add(boardA.snaps[0].actions.flatMap(\.data))
+        boardA.snaps[0] = .init(data: &data)
         
         var boardB = Board()
         data = Data()
             .add(Date(timeIntervalSince1970: 500).timestamp)
-            .add(UInt8(boardB.edit[0].actions.count))
-            .add(boardB.edit[0].actions.flatMap(\.data))
-        boardB.edit[0] = .init(data: &data)
+            .add(UInt8(boardB.snaps[0].actions.count))
+            .add(boardB.snaps[0].actions.flatMap(\.data))
+        boardB.snaps[0] = .init(data: &data)
         boardB.name = "total recall"
         boardB.card()
         boardB.content(card: .init(column: 0, order: 0), text: "hello world")
@@ -35,28 +35,28 @@ final class DataTests: XCTestCase {
         XCTAssertTrue(archived[1][0].isEmpty)
         XCTAssertEqual("hello world", archived[0][0][0])
         
-        XCTAssertEqual(2, archived[0].edit.count)
-        XCTAssertEqual(1, archived[0].edit.first!.actions.count)
-        XCTAssertEqual(.create, archived[0].edit.first!.actions.first!)
-        XCTAssertEqual(2, archived[0].edit.last!.actions.count)
-        XCTAssertEqual(500, Int(archived[0].edit.first!.date.timeIntervalSince1970))
-        XCTAssertEqual(.init(boardB.edit[1].date.timeIntervalSince1970), Int(archived[0].edit.last!.date.timeIntervalSince1970))
+        XCTAssertEqual(2, archived[0].snaps.count)
+        XCTAssertEqual(1, archived[0].snaps.first!.actions.count)
+        XCTAssertEqual(.create, archived[0].snaps.first!.actions.first!)
+        XCTAssertEqual(2, archived[0].snaps.last!.actions.count)
+        XCTAssertEqual(500, Int(archived[0].snaps.first!.date.timeIntervalSince1970))
+        XCTAssertEqual(.init(boardB.snaps[1].date.timeIntervalSince1970), Int(archived[0].snaps.last!.date.timeIntervalSince1970))
         XCTAssertEqual("total recall", archived[0].name)
         
-        XCTAssertEqual(.card, archived[0].edit.last!.actions.first)
+        XCTAssertEqual(.card, archived[0].snaps.last!.actions.first)
         
-        if case let .content(card, text) = archived[0].edit.last!.actions.last {
+        if case let .content(card, text) = archived[0].snaps.last!.actions.last {
             XCTAssertEqual("hello world", text)
             XCTAssertEqual(.init(column: 0, order: 0), card)
         } else {
             XCTFail()
         }
 
-        XCTAssertEqual(1, archived[1].edit.count)
-        XCTAssertEqual(1, archived[1].edit.first!.actions.count)
-        XCTAssertEqual(.create, archived[1].edit.first!.actions.first!)
-        XCTAssertEqual(300, Int(archived[1].edit.first!.date.timeIntervalSince1970))
-        XCTAssertEqual(.init(boardA.edit[0].date.timeIntervalSince1970), Int(archived[1].edit.last!.date.timeIntervalSince1970))
+        XCTAssertEqual(1, archived[1].snaps.count)
+        XCTAssertEqual(1, archived[1].snaps.first!.actions.count)
+        XCTAssertEqual(.create, archived[1].snaps.first!.actions.first!)
+        XCTAssertEqual(300, Int(archived[1].snaps.first!.date.timeIntervalSince1970))
+        XCTAssertEqual(.init(boardA.snaps[0].date.timeIntervalSince1970), Int(archived[1].snaps.last!.date.timeIntervalSince1970))
         
         XCTAssertEqual(3, archived[0].count)
         XCTAssertEqual("DO", archived[0][0].title)
@@ -65,8 +65,8 @@ final class DataTests: XCTestCase {
     }
     
     func testVertical() {
-        var edit = Board.Edit(state: [])
-        edit.add(.vertical(.init(column: 120, order: 19242), 4233))
-        XCTAssertEqual(edit, edit.data.mutating(transform: Board.Edit.init(data:)))
+        var snap = Board.Snap(state: [])
+        snap.add(.vertical(.init(column: 120, order: 19242), 4233))
+        XCTAssertEqual(snap, snap.data.mutating(transform: Board.Snap.init(data:)))
     }
 }

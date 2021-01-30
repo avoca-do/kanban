@@ -10,7 +10,7 @@ final class CompressTests: XCTestCase {
     
     override func tearDown() {
         XCTAssertEqual(board, board.data.mutating(transform: Board.init(data:)))
-        XCTAssertEqual(board.edit, board.data.mutating(transform: Board.init(data:)).edit)
+        XCTAssertEqual(board.snaps, board.data.mutating(transform: Board.init(data:)).snaps)
     }
     /*
     func testContent() {

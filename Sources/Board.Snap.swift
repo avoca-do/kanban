@@ -1,7 +1,7 @@
 import Foundation
 
 extension Board {
-    struct Edit: Equatable, Archivable {
+    struct Snap: Equatable, Archivable {
         let date: Date
         let actions: [Action]
         let state: [Column]
