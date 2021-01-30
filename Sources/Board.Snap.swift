@@ -44,6 +44,10 @@ extension Board {
             self = .init(date: .init(), actions: actions + [action], columns: columns.apply(action))
         }
         
+        mutating func compress(state: [Column]) {
+            
+        }
+        
         static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.date.timestamp == rhs.date.timestamp && lhs.actions == rhs.actions
         }

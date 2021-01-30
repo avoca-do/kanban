@@ -95,6 +95,7 @@ public struct Board: Hashable, Archivable {
             snaps.append(.init(state: snaps.last?.columns ?? []))
         }
         snaps[snaps.count - 1].add(action)
+        snaps[snaps.count - 1].compress(state: snaps.count > 1 ? snaps[snaps.count - 2].columns : [])
     }
     
     public func hash(into: inout Hasher) {
