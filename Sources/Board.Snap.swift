@@ -4,7 +4,7 @@ extension Board {
     struct Snap: Equatable, Archivable {
         let date: Date
         let actions: [Action]
-        let state: [Column]
+        let columns: [Column]
         
         var data: Data {
             Data()
@@ -16,7 +16,7 @@ extension Board {
         init(state: [Column]) {
             date = .init()
             actions = []
-            self.state = state
+            columns = state
         }
         
         init(data: inout Data) {
@@ -25,21 +25,23 @@ extension Board {
                 .map { _ in
                     .init(data: &data)
                 }
-            state = []
+            columns = []
         }
         
-        private init(date: Date, actions: [Action], state: [Column]) {
+        private init(date: Date, actions: [Action], columns: [Column]) {
             self.date = date
             self.actions = actions
-            self.state = state
+            self.columns = columns
         }
         
         func with(state: [Column]) -> Self {
-            .init(date: date, actions: actions, state: state)
+            .init(date: date, actions: actions, columns: actions.reduce(state) {
+                $0.apply($1)
+            })
         }
         
         mutating func add(_ action: Action) {
-            self = .init(date: .init(), actions: actions + [action], state: state)
+            self = .init(date: .init(), actions: actions + [action], columns: columns.apply(action))
         }
         
         static func == (lhs: Self, rhs: Self) -> Bool {

@@ -4,11 +4,11 @@ public struct Board: Hashable, Archivable {
     public var name: String
     
     public var count: Int {
-        columns.count
+        snaps.last!.columns.count
     }
     
     public var isEmpty: Bool {
-        columns.isEmpty
+        snaps.last!.columns.isEmpty
     }
     
     public var date: Date {
@@ -16,7 +16,6 @@ public struct Board: Hashable, Archivable {
     }
     
     var snaps: [Snap]
-    var columns: [Column]
     
     var data: Data {
         Data()
@@ -27,28 +26,19 @@ public struct Board: Hashable, Archivable {
     
     init() {
         name = ""
-        columns = []
         snaps = []
         add(.create)
     }
     
     init(data: inout Data) {
         name = data.string()
-        
-        
-        columns = []
-        snaps = (0 ..< .init(data.uInt16()))
-            .map { _ in
-                .init(data: &data)
-            }
-        
-        snaps.flatMap(\.actions).forEach {
-            perform($0)
+        snaps = (0 ..< .init(data.uInt16())).reduce(into: []) {
+            $0.append(Snap(data: &data).with(state: $1 == 0 ? [] : $0[$1 - 1].columns))
         }
     }
     
     public subscript(_ index: Int) -> Column {
-        columns[index]
+        snaps.last!.columns[index]
     }
     
     public mutating func card() {
@@ -102,40 +92,17 @@ public struct Board: Hashable, Archivable {
     
     private mutating func add(_ action: Action) {
         if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.date, to: .init()).hour! > 0 {
-            snaps.append(.init(state: columns))
+            snaps.append(.init(state: snaps.last?.columns ?? []))
         }
         snaps[snaps.count - 1].add(action)
-        perform(action)
-    }
-    
-    private mutating func perform(_ action: Action) {
-        switch action {
-        case .create:
-            perform(.column)
-            perform(.column)
-            perform(.column)
-            columns[0].title = "DO"
-            columns[1].title = "DOING"
-            columns[2].title = "DONE"
-        case .card:
-            columns[0].cards.insert(.init(), at: 0)
-        case .column:
-            columns.append(.init())
-        case let .content(card, text):
-            columns[card.column].cards[card.order].content = text
-        case let .vertical(card, order):
-            columns[card.column].cards.insert(columns[card.column].cards.remove(at: card.order), at: order)
-        case let .horizontal(card, column):
-            columns[column].cards.insert(columns[card.column].cards.remove(at: card.order), at: 0)
-        }
     }
     
     public func hash(into: inout Hasher) {
         into.combine(name)
-        into.combine(columns)
+        into.combine(snaps.last!.columns)
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.name == rhs.name && lhs.columns == rhs.columns
+        lhs.name == rhs.name && lhs.snaps.last!.columns == rhs.snaps.last!.columns
     }
 }

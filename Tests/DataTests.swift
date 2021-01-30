@@ -13,14 +13,14 @@ final class DataTests: XCTestCase {
             .add(Date(timeIntervalSince1970: 300).timestamp)
             .add(UInt8(boardA.snaps[0].actions.count))
             .add(boardA.snaps[0].actions.flatMap(\.data))
-        boardA.snaps[0] = .init(data: &data)
+        boardA.snaps[0] = Board.Snap(data: &data).with(state: [])
         
         var boardB = Board()
         data = Data()
             .add(Date(timeIntervalSince1970: 500).timestamp)
             .add(UInt8(boardB.snaps[0].actions.count))
             .add(boardB.snaps[0].actions.flatMap(\.data))
-        boardB.snaps[0] = .init(data: &data)
+        boardB.snaps[0] = Board.Snap(data: &data).with(state: [])
         boardB.name = "total recall"
         boardB.card()
         boardB.content(card: .init(column: 0, order: 0), text: "hello world")
@@ -65,8 +65,10 @@ final class DataTests: XCTestCase {
     }
     
     func testVertical() {
-        var snap = Board.Snap(state: [])
-        snap.add(.vertical(.init(column: 120, order: 19242), 4233))
+        var column = Board.Column()
+        column.cards = [.init(), .init()]
+        var snap = Board.Snap(state: [column])
+        snap.add(.vertical(.init(column: 0, order: 0), 1))
         XCTAssertEqual(snap, snap.data.mutating(transform: Board.Snap.init(data:)))
     }
 }

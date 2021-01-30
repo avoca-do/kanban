@@ -30,7 +30,7 @@ final class EditTests: XCTestCase {
             .add(Date(timeIntervalSinceNow: -3599).timestamp)
             .add(UInt8(board.snaps[0].actions.count))
             .add(board.snaps[0].actions.flatMap(\.data))
-        board.snaps[0] = .init(data: &data)
+        board.snaps[0] = Board.Snap(data: &data).with(state: [])
         board.card()
         XCTAssertEqual(1, board.snaps.count)
         XCTAssertEqual(.card, board.snaps.first!.actions.last)
@@ -43,7 +43,7 @@ final class EditTests: XCTestCase {
             .add(Date(timeIntervalSinceNow: -3601).timestamp)
             .add(UInt8(board.snaps[0].actions.count))
             .add(board.snaps[0].actions.flatMap(\.data))
-        board.snaps[0] = .init(data: &data)
+        board.snaps[0] = Board.Snap(data: &data).with(state: [])
         board.card()
         XCTAssertEqual(2, board.snaps.count)
         XCTAssertLessThanOrEqual(board.snaps.first!.date, date)
@@ -53,7 +53,7 @@ final class EditTests: XCTestCase {
     func testCard() {
         board.card()
         XCTAssertEqual(1, board[0].count)
-        board.columns[0].cards[0].content = "hello world"
+        board.content(card: .init(column: 0, order: 0), text: "hello world")
         board.card()
         XCTAssertEqual(2, board[0].count)
         XCTAssertEqual("hello world", board[0][1])
@@ -86,7 +86,7 @@ final class EditTests: XCTestCase {
     
     func testVertical() {
         board.card()
-        board.columns[0].cards[0].content = "hello world"
+        board.content(card: .init(column: 0, order: 0), text: "hello world")
         board.card()
         board.vertical(card: .init(column: 0, order: 1), order: 0)
         XCTAssertEqual("hello world", board[0][0])
