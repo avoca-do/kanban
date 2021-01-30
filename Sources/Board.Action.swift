@@ -8,9 +8,9 @@ extension Board {
         column,
         rename(String),
         title(Int, String),
-        content(Card, String),
-        vertical(Card, Int),
-        horizontal(Card, Int)
+        content(Index, String),
+        vertical(Index, Int),
+        horizontal(Index, Int)
         
         var data: Data {
             Data()

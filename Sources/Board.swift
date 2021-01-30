@@ -61,7 +61,7 @@ public struct Board: Hashable, Archivable {
         add(.rename(name))
     }
     
-    public mutating func content(card: Card, text: String) {
+    public mutating func content(card: Index, text: String) {
         let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard
             !text.isEmpty,
@@ -76,7 +76,7 @@ public struct Board: Hashable, Archivable {
         add(.content(card, text))
     }
     
-    public mutating func vertical(card: Card, order: Int) {
+    public mutating func vertical(card: Index, order: Int) {
         guard card.order != order else { return }
         add(.vertical(card, order))
         
@@ -90,7 +90,7 @@ public struct Board: Hashable, Archivable {
         }.reversed() + [.vertical(card, order)]
     }
     
-    public mutating func horizontal(card: Card, column: Int) {
+    public mutating func horizontal(card: Index, column: Int) {
         guard card.column != column else { return }
         add(.horizontal(card, column))
         
@@ -129,7 +129,7 @@ public struct Board: Hashable, Archivable {
             perform(.column)
             perform(.title(2, "DONE"))
         case .card:
-            columns[0].cards.insert("", at: 0)
+            columns[0].cards.insert(.init(), at: 0)
         case .column:
             columns.append(.init())
         case let .rename(name):
@@ -137,7 +137,7 @@ public struct Board: Hashable, Archivable {
         case let .title(column, title):
             columns[column].title = title
         case let .content(card, text):
-            columns[card.column].cards[card.order] = text
+            columns[card.column].cards[card.order].content = text
         case let .vertical(card, order):
             columns[card.column].cards.insert(columns[card.column].cards.remove(at: card.order), at: order)
         case let .horizontal(card, column):

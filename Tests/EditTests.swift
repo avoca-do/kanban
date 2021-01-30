@@ -62,7 +62,7 @@ final class EditTests: XCTestCase {
     func testCard() {
         board.card()
         XCTAssertEqual(1, board[0].count)
-        board.columns[0].cards[0] = "hello world"
+        board.columns[0].cards[0].content = "hello world"
         board.card()
         XCTAssertEqual(2, board[0].count)
         XCTAssertEqual("hello world", board[0][1])
@@ -95,7 +95,7 @@ final class EditTests: XCTestCase {
     
     func testVertical() {
         board.card()
-        board.columns[0].cards[0] = "hello world"
+        board.columns[0].cards[0].content = "hello world"
         board.card()
         board.vertical(card: .init(column: 0, order: 1), order: 0)
         XCTAssertEqual("hello world", board[0][0])

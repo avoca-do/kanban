@@ -12,7 +12,7 @@ public extension Board {
             cards.isEmpty
         }
         
-        var cards: [String]
+        var cards: [Card]
         
         init() {
             title = ""
@@ -20,7 +20,7 @@ public extension Board {
         }
         
         public subscript(_ index: Int) -> String {
-            cards[index]
+            cards[index].content
         }
     }
 }
