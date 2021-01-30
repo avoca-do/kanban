@@ -2,8 +2,9 @@ import Foundation
 
 extension Board {
     struct Edit: Equatable, Archivable {
-        var date: Date
-        var actions: [Action]
+        let date: Date
+        let actions: [Action]
+        let state: [Column]
         
         var data: Data {
             Data()
@@ -12,9 +13,10 @@ extension Board {
                 .add(actions.flatMap(\.data))
         }
         
-        init(action: Action) {
+        init(state: [Column]) {
             date = .init()
-            actions = [action]
+            actions = []
+            self.state = state
         }
         
         init(data: inout Data) {
@@ -23,6 +25,21 @@ extension Board {
                 .map { _ in
                     .init(data: &data)
                 }
+            state = []
+        }
+        
+        private init(date: Date, actions: [Action], state: [Column]) {
+            self.date = date
+            self.actions = actions
+            self.state = state
+        }
+        
+        func with(state: [Column]) -> Self {
+            .init(date: date, actions: actions, state: state)
+        }
+        
+        mutating func add(_ action: Action) {
+            self = .init(date: .init(), actions: actions + [action], state: state)
         }
         
         static func == (lhs: Self, rhs: Self) -> Bool {

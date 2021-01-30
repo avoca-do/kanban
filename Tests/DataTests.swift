@@ -9,9 +9,18 @@ final class DataTests: XCTestCase {
     
     func testArchive() {
         var boardA = Board()
-        boardA.edit[boardA.edit.count - 1].date = .init(timeIntervalSince1970: 300)
+        var data = Data()
+            .add(Date(timeIntervalSince1970: 300).timestamp)
+            .add(UInt8(boardA.edit[0].actions.count))
+            .add(boardA.edit[0].actions.flatMap(\.data))
+        boardA.edit[0] = .init(data: &data)
+        
         var boardB = Board()
-        boardB.edit[0].date = .init(timeIntervalSince1970: 500)
+        data = Data()
+            .add(Date(timeIntervalSince1970: 500).timestamp)
+            .add(UInt8(boardB.edit[0].actions.count))
+            .add(boardB.edit[0].actions.flatMap(\.data))
+        boardB.edit[0] = .init(data: &data)
         boardB.name = "total recall"
         boardB.card()
         boardB.content(card: .init(column: 0, order: 0), text: "hello world")
@@ -56,7 +65,8 @@ final class DataTests: XCTestCase {
     }
     
     func testVertical() {
-        let edit = Board.Edit(action: .vertical(.init(column: 120, order: 19242), 4233))
+        var edit = Board.Edit(state: [])
+        edit.add(.vertical(.init(column: 120, order: 19242), 4233))
         XCTAssertEqual(edit, edit.data.mutating(transform: Board.Edit.init(data:)))
     }
 }

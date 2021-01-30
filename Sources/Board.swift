@@ -39,6 +39,7 @@ public struct Board: Hashable, Archivable {
             .map { _ in
                 .init(data: &data)
             }
+        
         edit.flatMap(\.actions).forEach {
             perform($0)
         }
@@ -58,12 +59,12 @@ public struct Board: Hashable, Archivable {
             !text.isEmpty,
             text != self[card.column][card.order]
         else { return }
-        edit[edit.count - 1].actions.removeAll {
-            if case let .content(previous, _) = $0, previous == card {
-                return true
-            }
-            return false
-        }
+//        edit[edit.count - 1].actions.removeAll {
+//            if case let .content(previous, _) = $0, previous == card {
+//                return true
+//            }
+//            return false
+//        }
         add(.content(card, text))
     }
     
@@ -71,42 +72,37 @@ public struct Board: Hashable, Archivable {
         guard card.order != order else { return }
         add(.vertical(card, order))
         
-        var card = card
-        edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
-            if case let .vertical(previous, index) = $1, previous.column == card.column, index == card.order {
-                card.order = previous.order
-            } else {
-                $0.append($1)
-            }
-        }.reversed() + [.vertical(card, order)]
+//        var card = card
+//        edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
+//            if case let .vertical(previous, index) = $1, previous.column == card.column, index == card.order {
+//                card.order = previous.order
+//            } else {
+//                $0.append($1)
+//            }
+//        }.reversed() + [.vertical(card, order)]
     }
     
     public mutating func horizontal(card: Index, column: Int) {
         guard card.column != column else { return }
         add(.horizontal(card, column))
         
-        var card = card
-        edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
-            if case let .horizontal(previous, index) = $1, index == card.column {
-                card = previous
-            } else if case let .vertical(previous, index) = $1, previous.column == card.column, index == card.order {
-                card = previous
-            } else {
-                $0.append($1)
-            }
-        }.reversed() + [.horizontal(card, column)]
+//        var card = card
+//        edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
+//            if case let .horizontal(previous, index) = $1, index == card.column {
+//                card = previous
+//            } else if case let .vertical(previous, index) = $1, previous.column == card.column, index == card.order {
+//                card = previous
+//            } else {
+//                $0.append($1)
+//            }
+//        }.reversed() + [.horizontal(card, column)]
     }
     
     private mutating func add(_ action: Action) {
-        if let last = edit.last {
-            if Calendar.current.dateComponents([.hour], from: last.date, to: .init()).hour! > 0 {
-                edit.append(.init(action: action))
-            } else {
-                edit[edit.count - 1].actions.append(action)
-            }
-        } else {
-            edit.append(.init(action: action))
+        if edit.isEmpty || Calendar.current.dateComponents([.hour], from: edit.last!.date, to: .init()).hour! > 0 {
+            edit.append(.init(state: columns))
         }
+        edit[edit.count - 1].add(action)
         perform(action)
     }
     

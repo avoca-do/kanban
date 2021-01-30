@@ -26,16 +26,24 @@ final class EditTests: XCTestCase {
     
     func testUpdateDateToLast() {
         let date = Date()
-        board.edit[board.edit.count - 1].date = Date(timeIntervalSinceNow: -3599)
+        var data = Data()
+            .add(Date(timeIntervalSinceNow: -3599).timestamp)
+            .add(UInt8(board.edit[0].actions.count))
+            .add(board.edit[0].actions.flatMap(\.data))
+        board.edit[0] = .init(data: &data)
         board.card()
         XCTAssertEqual(1, board.edit.count)
         XCTAssertEqual(.card, board.edit.first!.actions.last)
-        XCTAssertLessThanOrEqual(board.edit.first!.date, date)
+        XCTAssertGreaterThanOrEqual(board.edit.first!.date, date)
     }
     
     func testGroupBy1Hour() {
         let date = Date()
-        board.edit[board.edit.count - 1].date = Date(timeIntervalSinceNow: -3601)
+        var data = Data()
+            .add(Date(timeIntervalSinceNow: -3601).timestamp)
+            .add(UInt8(board.edit[0].actions.count))
+            .add(board.edit[0].actions.flatMap(\.data))
+        board.edit[0] = .init(data: &data)
         board.card()
         XCTAssertEqual(2, board.edit.count)
         XCTAssertLessThanOrEqual(board.edit.first!.date, date)
