@@ -6,7 +6,6 @@ extension Board {
         create,
         card,
         column,
-        title(Int, String),
         content(Index, String),
         vertical(Index, Int),
         horizontal(Index, Int)
@@ -25,8 +24,6 @@ extension Board {
                 self = .card
             case .column:
                 self = .column
-            case .title:
-                self = .title(.init(data.removeFirst()), data.string())
             case .content:
                 self = .content(.init(data: &data), data.string())
             case .vertical:
@@ -40,10 +37,6 @@ extension Board {
             switch self {
             case .create, .card, .column:
                 return .init()
-            case let .title(column, title):
-                return Data()
-                    .add(UInt8(column))
-                    .add(title)
             case let .content(card, content):
                 return card.data
                     .add(content)
@@ -61,7 +54,6 @@ extension Board {
             case .create: return .create
             case .card: return .card
             case .column: return .column
-            case .title: return .title
             case .content: return .content
             case .vertical: return .vertical
             case .horizontal: return .horizontal
@@ -75,7 +67,6 @@ private enum Key: UInt8 {
     create,
     card,
     column,
-    title,
     content,
     vertical,
     horizontal

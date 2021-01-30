@@ -114,17 +114,15 @@ public struct Board: Hashable, Archivable {
         switch action {
         case .create:
             perform(.column)
-            perform(.title(0, "DO"))
             perform(.column)
-            perform(.title(1, "DOING"))
             perform(.column)
-            perform(.title(2, "DONE"))
+            columns[0].title = "DO"
+            columns[1].title = "DOING"
+            columns[2].title = "DONE"
         case .card:
             columns[0].cards.insert(.init(), at: 0)
         case .column:
             columns.append(.init())
-        case let .title(column, title):
-            columns[column].title = title
         case let .content(card, text):
             columns[card.column].cards[card.order].content = text
         case let .vertical(card, order):
