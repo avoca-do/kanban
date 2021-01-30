@@ -42,23 +42,6 @@ final class EditTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(board.edit.last!.date, date)
     }
     
-    func testRename() {
-        board.rename("hello ")
-        XCTAssertEqual("hello", board.name)
-    }
-    
-    func testRenameEmpty() {
-        board.rename(" hello")
-        board.rename("\n")
-        XCTAssertEqual("hello", board.name)
-    }
-    
-    func testRenameSame() {
-        board.rename(" hello")
-        board.rename("hello ")
-        XCTAssertEqual(2, board.edit.first!.actions.count)
-    }
-    
     func testCard() {
         board.card()
         XCTAssertEqual(1, board[0].count)

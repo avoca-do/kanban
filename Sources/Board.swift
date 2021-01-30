@@ -1,7 +1,7 @@
 import Foundation
 
 public struct Board: Hashable, Archivable {
-    public private(set) var name: String
+    public var name: String
     
     public var count: Int {
         columns.count
@@ -50,15 +50,6 @@ public struct Board: Hashable, Archivable {
     
     public mutating func card() {
         add(.card)
-    }
-    
-    public mutating func rename(_ name: String) {
-        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard
-            !name.isEmpty,
-            name != self.name
-        else { return }
-        add(.rename(name))
     }
     
     public mutating func content(card: Index, text: String) {
@@ -132,8 +123,6 @@ public struct Board: Hashable, Archivable {
             columns[0].cards.insert(.init(), at: 0)
         case .column:
             columns.append(.init())
-        case let .rename(name):
-            self.name = name
         case let .title(column, title):
             columns[column].title = title
         case let .content(card, text):

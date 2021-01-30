@@ -12,8 +12,7 @@ final class DataTests: XCTestCase {
         boardA.edit[boardA.edit.count - 1].date = .init(timeIntervalSince1970: 300)
         var boardB = Board()
         boardB.edit[0].date = .init(timeIntervalSince1970: 500)
-        boardB.rename("lorem ipsum")
-        boardB.rename("total recall")
+        boardB.name = "total recall"
         boardB.card()
         boardB.content(card: .init(column: 0, order: 0), text: "hello world")
         
@@ -30,26 +29,14 @@ final class DataTests: XCTestCase {
         XCTAssertEqual(2, archived[0].edit.count)
         XCTAssertEqual(1, archived[0].edit.first!.actions.count)
         XCTAssertEqual(.create, archived[0].edit.first!.actions.first!)
-        XCTAssertEqual(4, archived[0].edit.last!.actions.count)
+        XCTAssertEqual(2, archived[0].edit.last!.actions.count)
         XCTAssertEqual(500, Int(archived[0].edit.first!.date.timeIntervalSince1970))
         XCTAssertEqual(.init(boardB.edit[1].date.timeIntervalSince1970), Int(archived[0].edit.last!.date.timeIntervalSince1970))
         XCTAssertEqual("total recall", archived[0].name)
         
-        if case let .rename(name) = archived[0].edit.last!.actions[0] {
-            XCTAssertEqual("lorem ipsum", name)
-        } else {
-            XCTFail()
-        }
+        XCTAssertEqual(.card, archived[0].edit.last!.actions.first)
         
-        if case let .rename(name) = archived[0].edit.last!.actions[1] {
-            XCTAssertEqual("total recall", name)
-        } else {
-            XCTFail()
-        }
-        
-        XCTAssertEqual(.card, archived[0].edit.last!.actions[2])
-        
-        if case let .content(card, text) = archived[0].edit.last!.actions[3] {
+        if case let .content(card, text) = archived[0].edit.last!.actions.last {
             XCTAssertEqual("hello world", text)
             XCTAssertEqual(.init(column: 0, order: 0), card)
         } else {

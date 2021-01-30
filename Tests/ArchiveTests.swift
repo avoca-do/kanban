@@ -36,17 +36,4 @@ final class ArchiveTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(archive[0].edit.first!.date, date)
         XCTAssertGreaterThanOrEqual(archive.date, date)
     }
-    
-    func testRename() {
-        archive.add()
-        archive[0].rename("Pink Floyd")
-        
-        XCTAssertEqual("Pink Floyd", archive[0].name)
-        XCTAssertEqual(1, archive[0].edit.count)
-        if case let .rename(name) = archive[0].edit.first!.actions.last! {
-            XCTAssertEqual("Pink Floyd", name)
-        } else {
-            XCTFail()
-        }
-    }
 }

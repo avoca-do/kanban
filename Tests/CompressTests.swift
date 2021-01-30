@@ -1,7 +1,7 @@
 import XCTest
 @testable import Kanban
 
-final class MergeTests: XCTestCase {
+final class CompressTests: XCTestCase {
     private var board: Board!
     
     override func setUp() {
@@ -12,7 +12,7 @@ final class MergeTests: XCTestCase {
         XCTAssertEqual(board, board.data.mutating(transform: Board.init(data:)))
         XCTAssertEqual(board.edit, board.data.mutating(transform: Board.init(data:)).edit)
     }
-    
+    /*
     func testContent() {
         board.card()
         board.content(card: .init(column: 0, order: 0), text: "hello world")
@@ -91,4 +91,5 @@ final class MergeTests: XCTestCase {
         XCTAssertEqual("b", board[1][0])
         XCTAssertEqual("a", board[2][0])
     }
+ */
 }

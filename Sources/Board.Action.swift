@@ -6,7 +6,6 @@ extension Board {
         create,
         card,
         column,
-        rename(String),
         title(Int, String),
         content(Index, String),
         vertical(Index, Int),
@@ -26,8 +25,6 @@ extension Board {
                 self = .card
             case .column:
                 self = .column
-            case .rename:
-                self = .rename(data.string())
             case .title:
                 self = .title(.init(data.removeFirst()), data.string())
             case .content:
@@ -43,9 +40,6 @@ extension Board {
             switch self {
             case .create, .card, .column:
                 return .init()
-            case let .rename(name):
-                return Data()
-                    .add(name)
             case let .title(column, title):
                 return Data()
                     .add(UInt8(column))
@@ -67,7 +61,6 @@ extension Board {
             case .create: return .create
             case .card: return .card
             case .column: return .column
-            case .rename: return .rename
             case .title: return .title
             case .content: return .content
             case .vertical: return .vertical
@@ -82,7 +75,6 @@ private enum Key: UInt8 {
     create,
     card,
     column,
-    rename,
     title,
     content,
     vertical,
