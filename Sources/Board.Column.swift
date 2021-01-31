@@ -2,7 +2,7 @@ import Foundation
 
 public extension Board {
     struct Column: Hashable {
-        public var title: String
+        public internal(set) var title: String
         
         public var count: Int {
             cards.count

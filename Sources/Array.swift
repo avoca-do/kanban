@@ -6,15 +6,17 @@ extension Array where Element == Board.Column {
         switch action {
         case .create:
             columns = columns.apply(.column)
+            columns = columns.apply(.title(0, "DO"))
             columns = columns.apply(.column)
+            columns = columns.apply(.title(1, "DOING"))
             columns = columns.apply(.column)
-            columns[0].title = "DO"
-            columns[1].title = "DOING"
-            columns[2].title = "DONE"
+            columns = columns.apply(.title(2, "DONE"))
         case .card:
             columns[0].cards.insert(.init(), at: 0)
         case .column:
             columns.append(.init())
+        case let .title(column, title):
+            columns[column].title = title
         case let .content(card, text):
             columns[card.column].cards[card.order].content = text
         case let .vertical(card, order):
