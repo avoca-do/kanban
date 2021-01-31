@@ -12,15 +12,16 @@ final class CompressTests: XCTestCase {
         XCTAssertEqual(board, board.data.mutating(transform: Board.init(data:)))
         XCTAssertEqual(board.snaps, board.data.mutating(transform: Board.init(data:)).snaps)
     }
-    /*
+    
     func testContent() {
         board.card()
         board.content(card: .init(column: 0, order: 0), text: "hello world")
         board.content(card: .init(column: 0, order: 0), text: "lorem ipsum")
         XCTAssertEqual("lorem ipsum", board[0][0])
-        XCTAssertEqual(3, board.edit.first!.actions.count)
+        XCTAssertEqual(3, board.snaps.first!.actions.count)
     }
     
+    /*
     func testContentHorizontal() {
         board.card()
         board.card()

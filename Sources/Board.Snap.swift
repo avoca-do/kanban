@@ -45,7 +45,7 @@ extension Board {
         }
         
         mutating func compress(state: [Column]) {
-            
+            self = .init(date: .init(), actions: actions.compress(from: state, to: columns), columns: columns)
         }
         
         static func == (lhs: Self, rhs: Self) -> Bool {
