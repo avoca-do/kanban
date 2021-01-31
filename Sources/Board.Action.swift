@@ -56,7 +56,7 @@ extension Board {
             }
         }
         
-        private var key: Key {
+        var key: Key {
             switch self {
             case .create: return .create
             case .card: return .card
@@ -68,15 +68,4 @@ extension Board {
             }
         }
     }
-}
-
-private enum Key: UInt8 {
-    case
-    create,
-    card,
-    column,
-    title,
-    content,
-    vertical,
-    horizontal
 }

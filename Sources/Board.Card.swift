@@ -9,5 +9,13 @@ extension Board {
             content = ""
             id = .init()
         }
+        
+        public func hash(into: inout Hasher) {
+            into.combine(content)
+        }
+        
+        public static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.content == rhs.content
+        }
     }
 }
