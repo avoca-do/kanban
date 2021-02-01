@@ -48,10 +48,10 @@ extension Board {
                 return Data()
                         .add(UInt16(id))
                         .add(content)
-            case let .vertical(id, order):
+            case let .vertical(id, index):
                 return Data()
                         .add(UInt16(id))
-                        .add(UInt16(order))
+                        .add(UInt16(index))
             case let .horizontal(id, column):
                 return Data()
                         .add(UInt16(id))

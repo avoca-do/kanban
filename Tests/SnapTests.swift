@@ -62,7 +62,7 @@ final class EditTests: XCTestCase {
     func testContent() {
         board.card()
         board.card()
-        board[0, 0] = " hello world"
+        board[0, 1] = " hello world"
         XCTAssertEqual("hello world", board[0][1])
         XCTAssertEqual(4, board.snaps.last!.state.actions.count)
     }
@@ -93,7 +93,7 @@ final class EditTests: XCTestCase {
         XCTAssertEqual(2, board[0].count)
     }
     
-    func testVerticalSameOrder() {
+    func testVerticalSameIndex() {
         board.card()
         board.card()
         board[vertical: 0, 1] = 1

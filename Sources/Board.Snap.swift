@@ -58,12 +58,10 @@ extension Board {
                 return .init(state: state, columns: columns.mutating(id: id) {
                     $0.with(content: content)
                 }, counter: counter)
-            case let .vertical(card, order):
-    //            columns[card.column].cards.insert(columns[card.column].cards.remove(at: card.order), at: order)
-                return self
-            case let .horizontal(card, column):
-    //            columns[column].cards.insert(columns[card.column].cards.remove(at: card.order), at: 0)
-                return self
+            case let .vertical(id, index):
+                return .init(state: state, columns: columns.vertical(id: id, to: index), counter: counter)
+            case let .horizontal(id, column):
+                return .init(state: state, columns: columns.horizontal(id: id, to: column), counter: counter)
             }
         }
         
