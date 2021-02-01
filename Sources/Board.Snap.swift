@@ -59,9 +59,9 @@ extension Board {
                     $0.with(content: content)
                 }, counter: counter)
             case let .vertical(id, index):
-                return .init(state: state, columns: columns.vertical(id: id, to: index), counter: counter)
+                return .init(state: state, columns: columns.moving(id: id, vertical: index), counter: counter)
             case let .horizontal(id, column):
-                return .init(state: state, columns: columns.horizontal(id: id, to: column), counter: counter)
+                return .init(state: state, columns: columns.moving(id: id, horizontal: column), counter: counter)
             }
         }
         

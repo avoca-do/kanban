@@ -7,13 +7,13 @@ extension Array {
         return array
     }
     
-    func move(from: Int, to: Int) -> Self {
+    func moving(from: Int, to: Int) -> Self {
         var array = self
         array.insert(array.remove(at: from), at: to)
         return array
     }
     
-    func remove(index: Int) -> Self {
+    func removing(index: Int) -> Self {
         var array = self
         array.remove(at: index)
         return array
@@ -41,20 +41,20 @@ extension Array where Element == Board.Column {
         } (self[id])
     }
     
-    func vertical(id: Int, to: Int) -> Self {
+    func moving(id: Int, vertical: Int) -> Self {
         { index in
             mutating(index: index.0) {
-                $0.with(cards: $0.cards.move(from: index.1, to: to))
+                $0.with(cards: $0.cards.moving(from: index.1, to: vertical))
             }
         } (self[id])
     }
     
-    func horizontal(id: Int, to: Int) -> Self {
+    func moving(id: Int, horizontal: Int) -> Self {
         { index in
             mutating(index: index.0) {
-                $0.with(cards: $0.cards.remove(index: index.1))
+                $0.with(cards: $0.cards.removing(index: index.1))
             }
-            .mutating(index: to) {
+            .mutating(index: horizontal) {
                 $0.with(cards: self[index.0].cards[index.1] + $0.cards)
             }
         } (self[id])
