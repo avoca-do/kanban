@@ -19,9 +19,9 @@ public struct Board: Equatable, Archivable {
     
     var data: Data {
         Data()
-            .add(name)
-            .add(UInt16(snaps.count))
-            .add(snaps.map(\.state).flatMap(\.data))
+            .adding(name)
+            .adding(UInt16(snaps.count))
+            .adding(snaps.map(\.state).flatMap(\.data))
     }
     
     init() {

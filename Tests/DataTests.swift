@@ -10,16 +10,16 @@ final class DataTests: XCTestCase {
     func testArchive() {
         var boardA = Board()
         var data = Data()
-            .add(Date(timeIntervalSince1970: 300).timestamp)
-            .add(UInt8(boardA.snaps[0].state.actions.count))
-            .add(boardA.snaps[0].state.actions.flatMap(\.data))
+            .adding(Date(timeIntervalSince1970: 300).timestamp)
+            .adding(UInt8(boardA.snaps[0].state.actions.count))
+            .adding(boardA.snaps[0].state.actions.flatMap(\.data))
         boardA.snaps[0] = Board.Snap(data: &data, after: nil)
         
         var boardB = Board()
         data = Data()
-            .add(Date(timeIntervalSince1970: 500).timestamp)
-            .add(UInt8(boardB.snaps[0].state.actions.count))
-            .add(boardB.snaps[0].state.actions.flatMap(\.data))
+            .adding(Date(timeIntervalSince1970: 500).timestamp)
+            .adding(UInt8(boardB.snaps[0].state.actions.count))
+            .adding(boardB.snaps[0].state.actions.flatMap(\.data))
         boardB.snaps[0] = Board.Snap(data: &data, after: nil)
         boardB.name = "total recall"
         boardB.card()

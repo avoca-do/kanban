@@ -7,9 +7,9 @@ extension Board {
         
         var data: Data {
             Data()
-                .add(date.timestamp)
-                .add(UInt8(actions.count))
-                .add(actions.flatMap(\.data))
+                .adding(date.timestamp)
+                .adding(UInt8(actions.count))
+                .adding(actions.flatMap(\.data))
         }
         
         init() {

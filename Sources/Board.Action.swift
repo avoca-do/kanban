@@ -13,8 +13,8 @@ extension Board {
         
         var data: Data {
             Data()
-                .add(key.rawValue)
-                .add(value)
+                .adding(key.rawValue)
+                .adding(value)
         }
         
         init(data: inout Data) {
@@ -42,20 +42,20 @@ extension Board {
                 return .init()
             case let .title(column, title):
                 return Data()
-                    .add(UInt8(column))
-                    .add(title)
+                    .adding(UInt8(column))
+                    .adding(title)
             case let .content(id, content):
                 return Data()
-                        .add(UInt16(id))
-                        .add(content)
+                        .adding(UInt16(id))
+                        .adding(content)
             case let .vertical(id, index):
                 return Data()
-                        .add(UInt16(id))
-                        .add(UInt16(index))
+                        .adding(UInt16(id))
+                        .adding(UInt16(index))
             case let .horizontal(id, column):
                 return Data()
-                        .add(UInt16(id))
-                        .add(UInt8(column))
+                        .adding(UInt16(id))
+                        .adding(UInt8(column))
             }
         }
         

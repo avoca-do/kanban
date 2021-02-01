@@ -21,8 +21,8 @@ public struct Archive: Equatable, Archivable {
     
     var data: Data {
         Data()
-            .add(UInt8(boards.count))
-            .add(boards.flatMap(\.data))
+            .adding(UInt8(boards.count))
+            .adding(boards.flatMap(\.data))
             .compressed
     }
     
