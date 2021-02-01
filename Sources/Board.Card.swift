@@ -9,5 +9,14 @@ extension Board {
             self.id = id
             content = ""
         }
+        
+        private init(id: Int, content: String) {
+            self.id = id
+            self.content = content
+        }
+        
+        func with(content: String) -> Self {
+            .init(id: id, content: content)
+        }
     }
 }

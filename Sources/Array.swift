@@ -19,3 +19,23 @@ extension Array {
         return array
     }
 }
+
+extension Array where Element == Board.Column {
+    func mutating(id: Int, transform: (Board.Card) -> Board.Card) -> Self {
+        { index in
+            mutating(index: index.0) {
+                $0.with(cards: $0.cards.mutating(index: index.1, transform: transform))
+            }
+        } (map[id]!)
+    }
+    
+    private var map: [Int : (Int, Int)] {
+        enumerated().map {
+            ($0.0, $0.1.cards.enumerated())
+        } .reduce(into: [:]) { map, column in
+            column.1.forEach {
+                map[$0.1.id] = (column.0, $0.0)
+            }
+        }
+    }
+}

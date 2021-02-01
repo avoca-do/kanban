@@ -51,12 +51,13 @@ extension Board {
             case .column:
                 return .init(state: state, columns: columns + Column(), counter: counter)
             case let .title(column, title):
-    //            columns[column].title = title
-                return self
+                return .init(state: state, columns: columns.mutating(index: column) {
+                    $0.with(title: title)
+                }, counter: counter)
             case let .content(id, content):
-                return .init(state: state, columns: columns.replacing(<#T##index: Int##Int#>, <#T##value: Board.Column##Board.Column#>), counter: counter)
-    //            columns[card.column].cards[card.order].content = text
-                return self
+                return .init(state: state, columns: columns.mutating(id: id) {
+                    $0.with(content: content)
+                }, counter: counter)
             case let .vertical(card, order):
     //            columns[card.column].cards.insert(columns[card.column].cards.remove(at: card.order), at: order)
                 return self

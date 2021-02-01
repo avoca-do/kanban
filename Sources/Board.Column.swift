@@ -25,7 +25,15 @@ public extension Board {
         }
         
         func adding(id: Int) -> Self {
-            .init(title: title, cards: .init(id: id) + cards)
+            with(cards: .init(id: id) + cards)
+        }
+        
+        func with(cards: [Card]) -> Self {
+            .init(title: title, cards: cards)
+        }
+        
+        func with(title: String) -> Self {
+            .init(title: title, cards: cards)
         }
         
         subscript(_ index: Int) -> Int {
