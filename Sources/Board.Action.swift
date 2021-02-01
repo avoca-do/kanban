@@ -7,9 +7,9 @@ extension Board {
         card,
         column,
         title(Int, String),
-        content(Index, String),
-        vertical(Index, Int),
-        horizontal(Index, Int)
+        content(Int, String),
+        vertical(Int, Int),
+        horizontal(Int, Int)
         
         var data: Data {
             Data()
@@ -28,11 +28,11 @@ extension Board {
             case .title:
                 self = .title(.init(data.removeFirst()), data.string())
             case .content:
-                self = .content(.init(data: &data), data.string())
+                self = .content(.init(data.uInt16()), data.string())
             case .vertical:
-                self = .vertical(.init(data: &data), .init(data.uInt16()))
+                self = .vertical(.init(data.uInt16()), .init(data.uInt16()))
             case .horizontal:
-                self = .horizontal(.init(data: &data), .init(data.removeFirst()))
+                self = .horizontal(.init(data.uInt16()), .init(data.removeFirst()))
             }
         }
         
@@ -44,15 +44,18 @@ extension Board {
                 return Data()
                     .add(UInt8(column))
                     .add(title)
-            case let .content(card, content):
-                return card.data
-                    .add(content)
-            case let .vertical(card, order):
-                return card.data
-                    .add(UInt16(order))
-            case let .horizontal(card, column):
-                return card.data
-                    .add(UInt8(column))
+            case let .content(id, content):
+                return Data()
+                        .add(UInt16(id))
+                        .add(content)
+            case let .vertical(id, order):
+                return Data()
+                        .add(UInt16(id))
+                        .add(UInt16(order))
+            case let .horizontal(id, column):
+                return Data()
+                        .add(UInt16(id))
+                        .add(UInt8(column))
             }
         }
         

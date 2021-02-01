@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Board: Hashable, Archivable {
+public struct Board: Equatable, Archivable {
     public var name: String
     
     public var count: Int {
@@ -12,7 +12,7 @@ public struct Board: Hashable, Archivable {
     }
     
     public var date: Date {
-        snaps.last!.date
+        snaps.last!.state.date
     }
     
     var snaps: [Snap]
@@ -21,7 +21,7 @@ public struct Board: Hashable, Archivable {
         Data()
             .add(name)
             .add(UInt16(snaps.count))
-            .add(snaps.flatMap(\.data))
+            .add(snaps.map(\.state).flatMap(\.data))
     }
     
     init() {
@@ -32,8 +32,8 @@ public struct Board: Hashable, Archivable {
     
     init(data: inout Data) {
         name = data.string()
-        snaps = (0 ..< .init(data.uInt16())).reduce(into: []) {
-            $0.append(Snap(data: &data).with(state: $1 == 0 ? [] : $0[$1 - 1].columns))
+        snaps = (0 ..< .init(data.uInt16())).reduce(into: []) { list, _ in
+            list.append(Snap(data: &data, after: list.last))
         }
     }
     
@@ -45,62 +45,45 @@ public struct Board: Hashable, Archivable {
         add(.card)
     }
     
-    public mutating func content(card: Index, text: String) {
-        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard
-            !text.isEmpty,
-            text != self[card.column][card.order]
-        else { return }
-//        edit[edit.count - 1].actions.removeAll {
-//            if case let .content(previous, _) = $0, previous == card {
-//                return true
-//            }
-//            return false
-//        }
-        add(.content(card, text))
+    public subscript(_ column: Int, _ index: Int) -> String {
+        get {
+            snaps.last!.columns[column][index]
+        }
+        set {
+            let content = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard
+                !content.isEmpty,
+                content != snaps.last!.columns[column][index]
+            else { return }
+            add(.content(snaps.last!.columns[column][index], content))
+        }
     }
     
-    public mutating func vertical(card: Index, order: Int) {
-        guard card.order != order else { return }
-        add(.vertical(card, order))
-        
-//        var card = card
-//        edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
-//            if case let .vertical(previous, index) = $1, previous.column == card.column, index == card.order {
-//                card.order = previous.order
-//            } else {
-//                $0.append($1)
-//            }
-//        }.reversed() + [.vertical(card, order)]
+    public subscript(vertical column: Int, _ index: Int) -> Int {
+        get {
+            index
+        }
+        set {
+            guard index != newValue else { return }
+            add(.vertical(snaps.last!.columns[column][index], newValue))
+        }
     }
     
-    public mutating func horizontal(card: Index, column: Int) {
-        guard card.column != column else { return }
-        add(.horizontal(card, column))
-        
-//        var card = card
-//        edit[edit.count - 1].actions = edit[edit.count - 1].actions.dropLast().reversed().reduce(into: []) {
-//            if case let .horizontal(previous, index) = $1, index == card.column {
-//                card = previous
-//            } else if case let .vertical(previous, index) = $1, previous.column == card.column, index == card.order {
-//                card = previous
-//            } else {
-//                $0.append($1)
-//            }
-//        }.reversed() + [.horizontal(card, column)]
+    public subscript(horizontal column: Int, _ index: Int) -> Int {
+        get {
+            column
+        }
+        set {
+            guard column != newValue else { return }
+            add(.horizontal(snaps.last!.columns[column][index], newValue))
+        }
     }
     
     private mutating func add(_ action: Action) {
-        if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.date, to: .init()).hour! > 0 {
-            snaps.append(.init(state: snaps.last?.columns ?? []))
+        if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.state.date, to: .init()).hour! > 0 {
+            snaps.append(.init(after: snaps.last))
         }
         snaps[snaps.count - 1].add(action)
-        snaps[snaps.count - 1].compress(state: snaps.count > 1 ? snaps[snaps.count - 2].columns : [])
-    }
-    
-    public func hash(into: inout Hasher) {
-        into.combine(name)
-        into.combine(snaps.last!.columns)
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {

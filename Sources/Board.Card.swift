@@ -1,21 +1,13 @@
 import Foundation
 
 extension Board {
-    struct Card: Hashable {
-        var content: String
-        let id: UUID
+    struct Card: Equatable {
+        let id: Int
+        let content: String
         
-        init() {
+        init(id: Int) {
+            self.id = id
             content = ""
-            id = .init()
-        }
-        
-        public func hash(into: inout Hasher) {
-            into.combine(content)
-        }
-        
-        public static func == (lhs: Self, rhs: Self) -> Bool {
-            lhs.content == rhs.content
         }
     }
 }
