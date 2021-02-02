@@ -68,4 +68,9 @@ final class DataTests: XCTestCase {
         let action = Board.Action.vertical(19242, 29242)
         XCTAssertEqual(action, action.data.mutating(transform: Board.Action.init(data:)))
     }
+    
+    func testHorizontal() {
+        let action = Board.Action.horizontal(19242, 244)
+        XCTAssertEqual(action, action.data.mutating(transform: Board.Action.init(data:)))
+    }
 }

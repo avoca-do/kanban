@@ -145,4 +145,24 @@ final class FilterTests: XCTestCase {
         XCTAssertEqual(0, board[0][0])
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
+    
+    func testTitle() {
+        board.title(column: 0, "hello world")
+        board.title(column: 0, "lorem ipsum")
+        XCTAssertEqual("lorem ipsum", board[0].title)
+        XCTAssertEqual(2, board.snaps.first!.state.actions.count)
+    }
+    
+    func testTitleRedundant() {
+        var data = Data()
+            .adding(Date(timeIntervalSince1970: 300).timestamp)
+            .adding(UInt8(board.snaps[0].state.actions.count))
+            .adding(board.snaps[0].state.actions.flatMap(\.data))
+        board.snaps[0] = Board.Snap(data: &data, after: nil)
+        
+        board.title(column: 0, "hello world")
+        board.title(column: 0, "DO")
+        XCTAssertEqual("DO", board[0].title)
+        XCTAssertTrue(board.snaps.last!.state.actions.isEmpty)
+    }
 }

@@ -79,6 +79,15 @@ public struct Board: Equatable, Archivable {
         }
     }
     
+    public mutating func title(column: Int, _ title: String) {
+        let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard
+            !title.isEmpty,
+            title != self[column].title
+        else { return }
+        add(.title(column, title))
+    }
+    
     private mutating func add(_ action: Action) {
         if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.state.date, to: .init()).hour! > 0 {
             snaps.append(.init(after: snaps.last))

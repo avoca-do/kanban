@@ -52,6 +52,10 @@ extension Board {
                 if case let .vertical(other, _) = action, id == other {
                     return false
                 }
+            case let .title(column, _):
+                if case let .title(other, _) = action, column == other {
+                    return false
+                }
             default: break
             }
             return true
@@ -80,6 +84,10 @@ extension Board {
                     if to[id]!.column == 0, index == 0 && to.counter == id + 1 {
                         return true
                     }
+                }
+            case let .title(column, title):
+                if let from = from, from.columns.count > column, from.columns[column].title == title {
+                    return true
                 }
             default: break
             }

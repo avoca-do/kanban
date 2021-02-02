@@ -112,4 +112,21 @@ final class EditTests: XCTestCase {
         board[horizontal: 0, 0] = 0
         XCTAssertEqual(2, board.snaps.first!.state.actions.count)
     }
+    
+    func testTitle() {
+        board.title(column: 0, " Lorem Ipsum\n")
+        XCTAssertEqual("Lorem Ipsum", board[0].title)
+    }
+    
+    func testEmpty() {
+        board.title(column: 0, " ")
+        XCTAssertEqual("DO", board[0].title)
+        XCTAssertEqual(1, board.snaps.first!.state.actions.count)
+    }
+    
+    func testSame() {
+        board.title(column: 0, "DO")
+        XCTAssertEqual("DO", board[0].title)
+        XCTAssertEqual(1, board.snaps.first!.state.actions.count)
+    }
 }
