@@ -16,7 +16,7 @@ extension Board {
             self = {
                 $0.actions.reduce(after ?? .init(state: .init(), columns: [], counter: 0)) {
                     $0.applying($1)
-                }.with($0)
+                }.with(state: $0)
             } (State(data: &data))
         }
         
@@ -26,12 +26,26 @@ extension Board {
             self.counter = counter
         }
         
-        mutating func add(_ action: Action) {
-            self = applying(action)
-                .with(state.adding(action))
+        subscript(_ id: Int) -> Position? {
+            columns[id]
         }
         
-        private func with(_ state: State) -> Self {
+        subscript(_ position: Position) -> Int {
+            columns[position.column][position.index]
+        }
+        
+        subscript(_ position: Position) -> String {
+            columns[position.column][position.index]
+        }
+        
+        mutating func add(_ action: Action, _ previous: Snap?) {
+            self = applying(action)
+                .with(state: state
+                        .filtering(action: action)
+                        .validating(action: action, from: previous, to: self))
+        }
+        
+        private func with(state: State) -> Self {
             .init(state: state, columns: columns, counter: counter)
         }
         

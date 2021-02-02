@@ -36,19 +36,50 @@ extension Board {
             }
         }
         
-        func overrides(_ action: Self) -> Bool {
+        func allows(_ action: Self) -> Bool {
             switch self {
             case let .content(id, _):
                 if case let .content(other, _) = action, id == other {
-                    return true
+                    return false
                 }
             case let .horizontal(id, _):
                 if case let .horizontal(other, _) = action, id == other {
-                    return true
+                    return false
+                } else if case let .vertical(other, _) = action, id == other {
+                    return false
                 }
             case let .vertical(id, _):
                 if case let .vertical(other, _) = action, id == other {
-                    return true
+                    return false
+                }
+            default: break
+            }
+            return true
+        }
+        
+        func redundant(_ from: Snap?, _ to: Snap) -> Bool {
+            switch self {
+            case let .content(id, content):
+                return from.flatMap { snap in
+                    snap[id].map {
+                        snap[$0] == content
+                    }
+                } ?? false
+            case let .horizontal(id, index):
+                if let previous = from?[id] {
+                    return previous.column == index
+                } else {
+                    if index == 0 {
+                        return true
+                    }
+                }
+            case let .vertical(id, index):
+                if let previous = from?[id] {
+                    return previous.column == to[id]!.column && previous.index == index
+                } else {
+                    if to[id]!.column == 0, index == 0 {
+                        return true
+                    }
                 }
             default: break
             }

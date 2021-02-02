@@ -30,12 +30,12 @@ extension Board {
             self.actions = actions
         }
         
-        func adding(_ action: Action) -> Self {
-            .init(date: .init(), actions: actions.reduce(into: []) {
-                if !action.overrides($1) {
-                    $0.append($1)
-                }
-            } + action)
+        func filtering(action: Action) -> Self {
+            .init(date: date, actions: actions.filter(action.allows))
+        }
+        
+        func validating(action: Action, from: Snap?, to: Snap) -> Self {
+            action.redundant(from, to) ? self : .init(date: .init(), actions: actions + action)
         }
     }
 }

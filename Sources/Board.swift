@@ -83,7 +83,7 @@ public struct Board: Equatable, Archivable {
         if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.state.date, to: .init()).hour! > 0 {
             snaps.append(.init(after: snaps.last))
         }
-        snaps[snaps.count - 1].add(action)
+        snaps[snaps.count - 1].add(action, snaps.count > 1 ? snaps[snaps.count - 2] : nil)
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {

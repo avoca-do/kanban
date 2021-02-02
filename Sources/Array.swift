@@ -34,39 +34,39 @@ extension Array {
 
 extension Array where Element == Board.Column {
     func mutating(id: Int, transform: (Board.Card) -> Board.Card) -> Self {
-        { index in
-            mutating(index: index.0) {
-                $0.with(cards: $0.cards.mutating(index: index.1, transform: transform))
+        { position in
+            mutating(index: position.column) {
+                $0.with(cards: $0.cards.mutating(index: position.index, transform: transform))
             }
-        } (self[id])
+        } (self[id]!)
     }
     
     func moving(id: Int, vertical: Int) -> Self {
-        { index in
-            mutating(index: index.0) {
-                $0.with(cards: $0.cards.moving(from: index.1, to: vertical))
+        { position in
+            mutating(index: position.column) {
+                $0.with(cards: $0.cards.moving(from: position.index, to: vertical))
             }
-        } (self[id])
+        } (self[id]!)
     }
     
     func moving(id: Int, horizontal: Int) -> Self {
-        { index in
-            mutating(index: index.0) {
-                $0.with(cards: $0.cards.removing(index: index.1))
+        { position in
+            mutating(index: position.column) {
+                $0.with(cards: $0.cards.removing(index: position.index))
             }
             .mutating(index: horizontal) {
-                $0.with(cards: self[index.0].cards[index.1] + $0.cards)
+                $0.with(cards: self[position.column].cards[position.index] + $0.cards)
             }
-        } (self[id])
+        } (self[id]!)
     }
     
-    subscript(_ id: Int) -> (Int, Int) {
+    subscript(_ id: Int) -> Board.Position? {
         enumerated().map {
             ($0.0, $0.1.cards.enumerated())
         } .reduce(into: [:]) { map, column in
             column.1.forEach {
-                map[$0.1.id] = (column.0, $0.0)
+                map[$0.1.id] = .init(column: column.0, index: $0.0)
             }
-        }[id]!
+        }[id]
     }
 }
