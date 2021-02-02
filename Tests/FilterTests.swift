@@ -116,6 +116,17 @@ final class FilterTests: XCTestCase {
     }
     
     func testMixingIndexes() {
-        
+        board.card()
+        board.card()
+        board[vertical: 0, 0] = 1 // id 1
+        board[horizontal: 0, 1] = 1 // id 1
+        board[horizontal: 0, 0] = 1 // id 0
+        board[vertical: 1, 0] = 1 // id 0
+        board[vertical: 1, 0] = 1 // id 1
+        board[horizontal: 1, 1] = 2 // id 1
+        XCTAssertEqual(1, board[2][0])
+        XCTAssertEqual(0, board[1][0])
+        XCTAssertEqual(6, board.snaps.first!.state.actions.count)
+        print(board.snaps.first!.state.actions)
     }
 }

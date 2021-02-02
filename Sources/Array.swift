@@ -9,7 +9,7 @@ extension Array {
     
     func moving(from: Int, to: Int) -> Self {
         var array = self
-        array.insert(array.remove(at: from), at: to)
+        array.insert(array.remove(at: from), at: Swift.min(to, array.count))
         return array
     }
     
