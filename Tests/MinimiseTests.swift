@@ -1,7 +1,7 @@
 import XCTest
 @testable import Kanban
 
-final class CompressTests: XCTestCase {
+final class MinimiseTests: XCTestCase {
     private var board: Board!
     
     override func setUp() {
@@ -10,16 +10,20 @@ final class CompressTests: XCTestCase {
     
     override func tearDown() {
         XCTAssertEqual(board, board.data.mutating(transform: Board.init(data:)))
-        XCTAssertEqual(board.snaps, board.data.mutating(transform: Board.init(data:)).snaps)
+        XCTAssertEqual(board.snaps.count, board.data.mutating(transform: Board.init(data:)).snaps.count)
+        (0 ..< board.snaps.count).forEach {
+            XCTAssertEqual(board.snaps[$0].columns, board.data.mutating(transform: Board.init(data:)).snaps[$0].columns)
+        }
     }
     
-//    func testContent() {
-//        board.card()
-//        board.content(card: .init(column: 0, order: 0), text: "hello world")
-//        board.content(card: .init(column: 0, order: 0), text: "lorem ipsum")
-//        XCTAssertEqual("lorem ipsum", board[0][0])
-//        XCTAssertEqual(3, board.snaps.first!.actions.count)
-//    }
+    func testContent() {
+        board.card()
+        board[0, 0] = "hello world"
+        board[0, 0] = "total recall"
+        board[0, 0] = "lorem ipsum"
+        XCTAssertEqual("lorem ipsum", board[0][0])
+        XCTAssertEqual(3, board.snaps.first!.state.actions.count)
+    }
     
     /*
     func testContentHorizontal() {

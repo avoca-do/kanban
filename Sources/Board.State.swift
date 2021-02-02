@@ -1,7 +1,7 @@
 import Foundation
 
 extension Board {
-    struct State: Equatable, Archivable {
+    struct State: Archivable {
         let date: Date
         let actions: [Action]
         
@@ -31,7 +31,11 @@ extension Board {
         }
         
         func adding(_ action: Action) -> Self {
-            .init(date: .init(), actions: actions + action)
+            .init(date: .init(), actions: actions.reduce(into: []) {
+                if !action.overrides($1) {
+                    $0.append($1)
+                }
+            } + action)
         }
     }
 }

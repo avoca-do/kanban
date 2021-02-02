@@ -1,7 +1,7 @@
 import Foundation
 
 extension Board {
-    struct Snap: Equatable {
+    struct Snap {
         let state: State
         let columns: [Column]
         private let counter: Int
@@ -63,10 +63,6 @@ extension Board {
             case let .horizontal(id, column):
                 return .init(state: state, columns: columns.moving(id: id, horizontal: column), counter: counter)
             }
-        }
-        
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            lhs.state == rhs.state
         }
     }
 }

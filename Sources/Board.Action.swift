@@ -36,6 +36,17 @@ extension Board {
             }
         }
         
+        func overrides(_ action: Self) -> Bool {
+            switch self {
+            case let .content(id, _):
+                if case let .content(other, _) = action, id == other {
+                    return true
+                }
+            default: break
+            }
+            return false
+        }
+        
         private var value: Data {
             switch self {
             case .create, .card, .column:
