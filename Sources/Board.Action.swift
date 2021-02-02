@@ -42,6 +42,14 @@ extension Board {
                 if case let .content(other, _) = action, id == other {
                     return true
                 }
+            case let .horizontal(id, _):
+                if case let .horizontal(other, _) = action, id == other {
+                    return true
+                }
+            case let .vertical(id, _):
+                if case let .vertical(other, _) = action, id == other {
+                    return true
+                }
             default: break
             }
             return false

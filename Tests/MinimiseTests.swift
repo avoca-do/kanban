@@ -25,15 +25,34 @@ final class MinimiseTests: XCTestCase {
         XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
     
-    /*
-    func testContentHorizontal() {
+    
+    func testHorizontal() {
         board.card()
-        board.card()
-        board.content(card: .init(column: 0, order: 0), text: "a")
-        board.horizontal(card: .init(column: 0, order: 0), column: 1)
-        board.content(card: .init(column: 0, order: 0), text: "b")
+        board[horizontal: 0, 0] = 1
+        board[horizontal: 1, 0] = 2
+        XCTAssertEqual(1, board[2].count)
+        XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
     
+    func testVertical() {
+        board.card()
+        board.card()
+        board.card()
+        board[vertical: 0, 0] = 1
+        board[vertical: 0, 1] = 2
+        XCTAssertEqual(2, board[0][2])
+        XCTAssertEqual(5, board.snaps.first!.state.actions.count)
+    }
+    
+    func testVerticalReturns() {
+        board.card()
+        board.card()
+        board[vertical: 0, 0] = 1
+        board[vertical: 0, 1] = 0
+        XCTAssertEqual(1, board[0][0])
+        XCTAssertEqual(3, board.snaps.first!.state.actions.count)
+    }
+    /*
     func testVertical() {
         board.card()
         board.card()
