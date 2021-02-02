@@ -4,7 +4,7 @@ extension Board {
     struct Snap {
         let state: State
         let columns: [Column]
-        private let counter: Int
+        let counter: Int
 
         init(after: Snap?) {
             state = .init()

@@ -127,6 +127,22 @@ final class FilterTests: XCTestCase {
         XCTAssertEqual(1, board[2][0])
         XCTAssertEqual(0, board[1][0])
         XCTAssertEqual(6, board.snaps.first!.state.actions.count)
-        print(board.snaps.first!.state.actions)
+    }
+    
+    func test_goingBackToFirst_butNotLastId_vertical() {
+        board.card()
+        board.card()
+        board[vertical: 0, 1] = 0
+        XCTAssertEqual(0, board[0][0])
+        XCTAssertEqual(4, board.snaps.first!.state.actions.count)
+    }
+    
+    func test_goingBackToFirst_butNotLastId_horizontal() {
+        board.card()
+        board.card()
+        board[horizontal: 0, 1] = 1
+        board[horizontal: 1, 0] = 0
+        XCTAssertEqual(0, board[0][0])
+        XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
 }

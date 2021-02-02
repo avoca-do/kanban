@@ -47,15 +47,15 @@ public struct Board: Equatable, Archivable {
     
     public subscript(_ column: Int, _ index: Int) -> String {
         get {
-            snaps.last!.columns[column][index]
+            snaps.last![.init(column: column, index: index)]
         }
         set {
             let content = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
             guard
                 !content.isEmpty,
-                content != snaps.last!.columns[column][index]
+                content != snaps.last![.init(column: column, index: index)]
             else { return }
-            add(.content(snaps.last!.columns[column][index], content))
+            add(.content(snaps.last![.init(column: column, index: index)], content))
         }
     }
     
@@ -65,7 +65,7 @@ public struct Board: Equatable, Archivable {
         }
         set {
             guard index != newValue else { return }
-            add(.vertical(snaps.last!.columns[column][index], newValue))
+            add(.vertical(snaps.last![.init(column: column, index: index)], newValue))
         }
     }
     
@@ -75,7 +75,7 @@ public struct Board: Equatable, Archivable {
         }
         set {
             guard column != newValue else { return }
-            add(.horizontal(snaps.last!.columns[column][index], newValue))
+            add(.horizontal(snaps.last![.init(column: column, index: index)], newValue))
         }
     }
     

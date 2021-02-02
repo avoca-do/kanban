@@ -69,7 +69,7 @@ extension Board {
                 if let previous = from?[id] {
                     return previous.column == index
                 } else {
-                    if index == 0 {
+                    if index == 0 && to.counter == id + 1 {
                         return true
                     }
                 }
@@ -77,7 +77,7 @@ extension Board {
                 if let previous = from?[id] {
                     return previous.column == to[id]!.column && previous.index == index
                 } else {
-                    if to[id]!.column == 0, index == 0 {
+                    if to[id]!.column == 0, index == 0 && to.counter == id + 1 {
                         return true
                     }
                 }
