@@ -9,7 +9,7 @@ public struct Archive: Archivable {
         boards.isEmpty
     }
     
-    var date: Date {
+    public var date: Date {
         boards.map(\.date).max() ?? .init()
     }
     
