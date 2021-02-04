@@ -7,7 +7,7 @@ public final class Memory {
     public let archive = PassthroughSubject<Archive, Never>()
     var subs = Set<AnyCancellable>()
     let save = PassthroughSubject<Archive, Never>()
-    private let local = PassthroughSubject<Archive, Never>()
+    let local = PassthroughSubject<Archive, Never>()
     private let remote = PassthroughSubject<Archive, Never>()
     private let pull = PassthroughSubject<Void, Never>()
     private let push = PassthroughSubject<Void, Never>()
@@ -25,18 +25,18 @@ public final class Memory {
         }
         .store(in: &subs)
         
-        local.merge(with: remote).scan(nil) {
-            guard let previous = $0 else { return $1 }
-            return $1.date > previous.date ? $1 : nil
-        }
-        .compactMap {
-            $0
-        }
-        .receive(on: DispatchQueue.main)
-        .sink { [weak self] in
-            self?.archive.send($0)
-        }
-        .store(in: &subs)
+        local
+            .merge(with: remote)
+            .scan(nil, scan)
+            .scan(nil, scan)
+            .compactMap {
+                $0
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.archive.send($0)
+            }
+            .store(in: &subs)
         
         record.combineLatest(pull).sink { [weak self] id, _ in
             let operation = CKFetchRecordsOperation(recordIDs: [id])
@@ -70,5 +70,11 @@ public final class Memory {
             }
         }
         pull.send()
+    }
+    
+    private func scan(_ previous: Archive?, _ next: Archive?) -> Archive? {
+        guard let next = next else { return nil }
+        guard let previous = previous else { return next }
+        return next.date > previous.date ? next : nil
     }
 }
