@@ -7,7 +7,7 @@ public final class Memory {
     public let archive = PassthroughSubject<Archive, Never>()
     var subs = Set<AnyCancellable>()
     let save = PassthroughSubject<Archive, Never>()
-    let local = PassthroughSubject<Archive, Never>()
+    private let local = PassthroughSubject<Archive, Never>()
     private let remote = PassthroughSubject<Archive, Never>()
     private let pull = PassthroughSubject<Void, Never>()
     private let push = PassthroughSubject<Void, Never>()
@@ -30,10 +30,12 @@ public final class Memory {
             .scan(nil, scan)
             .scan(nil, scan)
             .compactMap {
-                $0
+                print("compact \($0?.date)")
+                return $0
             }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
+                print("sink \($0.date)")
                 self?.archive.send($0)
             }
             .store(in: &subs)
@@ -73,6 +75,7 @@ public final class Memory {
     }
     
     private func scan(_ previous: Archive?, _ next: Archive?) -> Archive? {
+        print("pre: \(previous?.date) , next: \(next?.date)")
         guard let next = next else { return nil }
         guard let previous = previous else { return next }
         return next.date > previous.date ? next : nil
