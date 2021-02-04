@@ -26,9 +26,13 @@ public final class Memory {
         .store(in: &subs)
         
         local
-            .merge(with: remote)
-            .scan(nil, scan)
-            .scan(nil, scan)
+            .removeDuplicates()
+            .merge(with: remote.removeDuplicates())
+            .scan(nil) { (previous: Archive?, next: Archive) in
+                print("pre: \(previous?.date) , next: \(next.date)")
+                guard let previous = previous else { return next }
+                return next.date > previous.date ? next : nil
+            }
             .compactMap {
                 print("compact \($0?.date)")
                 return $0

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Archive: Archivable {
+public struct Archive: Archivable, Comparable {
     public var count: Int {
         boards.count
     }
@@ -49,5 +49,9 @@ public struct Archive: Archivable {
     
     public mutating func add() {
         boards.insert(.init(), at: 0)
+    }
+    
+    public static func < (lhs: Archive, rhs: Archive) -> Bool {
+        lhs.date < rhs.date
     }
 }
