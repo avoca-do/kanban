@@ -60,7 +60,7 @@ extension Array where Element == Board.Column {
         } (self[id]!)
     }
     
-    subscript(_ id: Int) -> Board.Position? {
+    subscript(_ id: Int) -> Position? {
         enumerated().map {
             ($0.0, $0.1.cards.enumerated())
         } .reduce(into: [:]) { map, column in
