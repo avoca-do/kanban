@@ -34,9 +34,9 @@ public final class Memory {
                 return $0
             }
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                print("sink \($0.date)")
-                self?.archive.send($0)
+            .sink { [weak self] (archive: Archive) in
+                print("sink \(archive.date)")
+                self?.archive.send(archive)
             }
             .store(in: &subs)
         
