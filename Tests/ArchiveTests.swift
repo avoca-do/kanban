@@ -21,7 +21,7 @@ final class ArchiveTests: XCTestCase {
             expect.fulfill()
         }
         .store(in: &subs)
-        archive.boards = []
+        archive.boards = [.init()]
         
         waitForExpectations(timeout: 1)
     }

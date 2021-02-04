@@ -10,7 +10,7 @@ public struct Archive: Archivable {
     }
     
     public var date: Date {
-        boards.map(\.date).max() ?? .init()
+        boards.map(\.date).max() ?? .distantPast
     }
     
     var boards: [Board] {
