@@ -46,10 +46,10 @@ extension Board {
                     return false
                 }
             case let .horizontal(id, _):
-                if case let .horizontal(other, _) = action, id == other {
-                    return false
-                } else if case let .vertical(other, _) = action, id == other {
-                    return false
+                switch action {
+                case let .horizontal(other, _), let .vertical(other, _):
+                    return id != other
+                default: break
                 }
             case let .vertical(id, _):
                 if case let .vertical(other, _) = action, id == other {
@@ -58,6 +58,12 @@ extension Board {
             case let .title(column, _):
                 if case let .title(other, _) = action, column == other {
                     return false
+                }
+            case let .remove(id):
+                switch action {
+                case let .content(other, _), let .horizontal(other, _), let .vertical(other, _):
+                    return id != other
+                default: break
                 }
             default: break
             }

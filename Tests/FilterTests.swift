@@ -165,4 +165,17 @@ final class FilterTests: XCTestCase {
         XCTAssertEqual("DO", board[0].title)
         XCTAssertTrue(board.snaps.last!.state.actions.isEmpty)
     }
+    
+    func testRemove() {
+        board.card()
+        board[horizontal: 0, 0] = 1
+        board.card()
+        board[0, 0] = "hello world"
+        board[0, 0] = "total recall"
+        board[0, 0] = "lorem ipsum"
+        board[horizontal: 0, 0] = 1
+        board[vertical: 1, 0] = 1
+        board.remove(column: 1, index: 1)
+        XCTAssertEqual(5, board.snaps.first!.state.actions.count)
+    }
 }
