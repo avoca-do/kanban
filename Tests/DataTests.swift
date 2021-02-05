@@ -73,4 +73,14 @@ final class DataTests: XCTestCase {
         let action = Board.Action.horizontal(19242, 244)
         XCTAssertEqual(action, action.data.mutating(transform: Board.Action.init(data:)))
     }
+    
+    func testRemove() {
+        let action = Board.Action.remove(19242)
+        XCTAssertEqual(action, action.data.mutating(transform: Board.Action.init(data:)))
+    }
+    
+    func testDrop() {
+        let action = Board.Action.drop(254)
+        XCTAssertEqual(action, action.data.mutating(transform: Board.Action.init(data:)))
+    }
 }

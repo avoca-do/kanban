@@ -171,11 +171,28 @@ final class FilterTests: XCTestCase {
         board[horizontal: 0, 0] = 1
         board.card()
         board[0, 0] = "hello world"
-        board[0, 0] = "total recall"
-        board[0, 0] = "lorem ipsum"
         board[horizontal: 0, 0] = 1
         board[vertical: 1, 0] = 1
         board.remove(column: 1, index: 1)
         XCTAssertEqual(5, board.snaps.first!.state.actions.count)
+    }
+    
+    func testDrop() {
+        board.title(column: 0, "Total recall")
+        board.card()
+        board.card()
+        board[0, 0] = "hello world"
+        board[0, 1] = "lorem ipsum"
+        board[vertical: 0, 0] = 1
+        board[horizontal: 0, 0] = 1
+        board.drop(column: 0)
+        XCTAssertEqual(6, board.snaps.first!.state.actions.count)
+    }
+    
+    func testDropHorizontal() {
+        board.card()
+        board[horizontal: 0, 0] = 1
+        board.drop(column: 1)
+        XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
 }

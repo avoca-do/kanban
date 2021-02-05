@@ -65,6 +65,11 @@ final class EditTests: XCTestCase {
         XCTAssertTrue(board[0].isEmpty)
     }
     
+    func testDrop() {
+        board.drop(column: 1)
+        XCTAssertEqual(2, board.count)
+    }
+    
     func testContent() {
         board.card()
         board.card()

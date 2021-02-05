@@ -10,6 +10,7 @@ extension Board {
         content,
         vertical,
         horizontal,
-        remove
+        remove,
+        drop
     }
 }

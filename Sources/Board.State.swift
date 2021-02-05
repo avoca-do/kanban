@@ -30,8 +30,10 @@ extension Board {
             self.actions = actions
         }
         
-        func filtering(action: Action) -> Self {
-            .init(date: date, actions: actions.filter(action.allows))
+        func filtering(action: Action, on: Snap) -> Self {
+            .init(date: date, actions: actions.filter {
+                action.allows($0, on: on)
+            })
         }
         
         func validating(action: Action, from: Snap?, to: Snap) -> Self {

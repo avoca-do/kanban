@@ -10,7 +10,8 @@ extension Board {
         content(Int, String),
         vertical(Int, Int),
         horizontal(Int, Int),
-        remove(Int)
+        remove(Int),
+        drop(Int)
         
         var data: Data {
             Data()
@@ -36,10 +37,12 @@ extension Board {
                 self = .horizontal(.init(data.uInt16()), .init(data.removeFirst()))
             case .remove:
                 self = .remove(.init(data.uInt16()))
+            case .drop:
+                self = .drop(.init(data.removeFirst()))
             }
         }
         
-        func allows(_ action: Self) -> Bool {
+        func allows(_ action: Self, on: Snap) -> Bool {
             switch self {
             case let .content(id, _):
                 if case let .content(other, _) = action, id == other {
@@ -63,6 +66,14 @@ extension Board {
                 switch action {
                 case let .content(other, _), let .horizontal(other, _), let .vertical(other, _):
                     return id != other
+                default: break
+                }
+            case let .drop(column):
+                switch action {
+                case let .title(other, _):
+                    return column != other
+                case let .content(id, _), let .vertical(id, _):
+                    return column != on[id]!.column
                 default: break
                 }
             default: break
@@ -126,6 +137,9 @@ extension Board {
             case let .remove(id):
                 return Data()
                     .adding(UInt16(id))
+            case let .drop(column):
+                return Data()
+                    .adding(UInt8(column))
             }
         }
         
@@ -139,6 +153,7 @@ extension Board {
             case .vertical: return .vertical
             case .horizontal: return .horizontal
             case .remove: return .remove
+            case .drop: return .drop
             }
         }
     }

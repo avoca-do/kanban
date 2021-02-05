@@ -41,7 +41,7 @@ extension Board {
         mutating func add(_ action: Action, _ previous: Snap?) {
             self = applying(action)
                 .with(state: state
-                        .filtering(action: action)
+                        .filtering(action: action, on: self)
                         .validating(action: action, from: previous, to: self))
         }
         
@@ -78,6 +78,8 @@ extension Board {
                 return .init(state: state, columns: columns.moving(id: id, horizontal: column), counter: counter)
             case let .remove(id):
                 return .init(state: state, columns: columns.removing(id: id), counter: counter)
+            case let .drop(column):
+                return .init(state: state, columns: columns.removing(index: column), counter: counter)
             }
         }
     }

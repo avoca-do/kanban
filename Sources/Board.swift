@@ -92,6 +92,10 @@ public struct Board: Equatable, Archivable {
         add(.title(column, title))
     }
     
+    public mutating func drop(column: Int) {
+        add(.drop(column))
+    }
+    
     private mutating func add(_ action: Action) {
         if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.state.date, to: .init()).hour! > 0 {
             snaps.append(.init(after: snaps.last))
