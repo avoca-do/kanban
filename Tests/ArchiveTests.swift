@@ -36,4 +36,11 @@ final class ArchiveTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(archive[0].snaps.first!.state.date, date)
         XCTAssertGreaterThanOrEqual(archive.date, date)
     }
+    
+    func testDelete() {
+        archive.add()
+        archive.delete(board: 0)
+        
+        XCTAssertTrue(archive.boards.isEmpty)
+    }
 }

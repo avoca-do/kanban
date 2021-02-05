@@ -51,6 +51,10 @@ public struct Archive: Archivable, Comparable {
         boards.insert(.init(), at: 0)
     }
     
+    public mutating func delete(board: Int) {
+        boards.remove(at: board)
+    }
+    
     public static func < (lhs: Archive, rhs: Archive) -> Bool {
         lhs.date < rhs.date
     }
