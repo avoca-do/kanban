@@ -76,6 +76,8 @@ extension Board {
                 return .init(state: state, columns: columns.moving(id: id, vertical: index), counter: counter)
             case let .horizontal(id, column):
                 return .init(state: state, columns: columns.moving(id: id, horizontal: column), counter: counter)
+            case let .remove(id):
+                return .init(state: state, columns: columns.removing(id: id), counter: counter)
             }
         }
     }

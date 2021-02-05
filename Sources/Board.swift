@@ -41,10 +41,6 @@ public struct Board: Equatable, Archivable {
         snaps.last!.columns[index]
     }
     
-    public mutating func card() {
-        add(.card)
-    }
-    
     public subscript(_ column: Int, _ index: Int) -> String {
         get {
             snaps.last![.init(column: column, index: index)]
@@ -77,6 +73,14 @@ public struct Board: Equatable, Archivable {
             guard column != newValue else { return }
             add(.horizontal(snaps.last![.init(column: column, index: index)], newValue))
         }
+    }
+    
+    public mutating func card() {
+        add(.card)
+    }
+    
+    public mutating func remove(column: Int, index: Int) {
+        add(.remove(snaps.last![.init(column: column, index: index)]))
     }
     
     public mutating func title(column: Int, _ title: String) {

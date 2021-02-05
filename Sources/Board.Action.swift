@@ -9,7 +9,8 @@ extension Board {
         title(Int, String),
         content(Int, String),
         vertical(Int, Int),
-        horizontal(Int, Int)
+        horizontal(Int, Int),
+        remove(Int)
         
         var data: Data {
             Data()
@@ -33,6 +34,8 @@ extension Board {
                 self = .vertical(.init(data.uInt16()), .init(data.uInt16()))
             case .horizontal:
                 self = .horizontal(.init(data.uInt16()), .init(data.removeFirst()))
+            case .remove:
+                self = .remove(.init(data.uInt16()))
             }
         }
         
@@ -114,6 +117,9 @@ extension Board {
                 return Data()
                         .adding(UInt16(id))
                         .adding(UInt8(column))
+            case let .remove(id):
+                return Data()
+                    .adding(UInt16(id))
             }
         }
         
@@ -126,6 +132,7 @@ extension Board {
             case .content: return .content
             case .vertical: return .vertical
             case .horizontal: return .horizontal
+            case .remove: return .remove
             }
         }
     }

@@ -9,6 +9,7 @@ extension Board {
         title,
         content,
         vertical,
-        horizontal
+        horizontal,
+        remove
     }
 }

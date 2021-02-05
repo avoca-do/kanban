@@ -60,6 +60,14 @@ extension Array where Element == Board.Column {
         } (self[id]!)
     }
     
+    func removing(id: Int) -> Self {
+        { position in
+            mutating(index: position.column) {
+                $0.with(cards: $0.cards.removing(index: position.index))
+            }
+        } (self[id]!)
+    }
+    
     subscript(_ id: Int) -> Position? {
         enumerated().map {
             ($0.0, $0.1.cards.enumerated())
