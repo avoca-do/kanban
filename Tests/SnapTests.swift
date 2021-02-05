@@ -50,6 +50,12 @@ final class EditTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(board.snaps.last!.state.date, date)
     }
     
+    func testColumn() {
+        board.column()
+        XCTAssertEqual(4, board.count)
+        XCTAssertEqual("", board[3].title)
+    }
+    
     func testCard() {
         board.card()
         XCTAssertEqual(1, board[0].count)

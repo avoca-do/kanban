@@ -75,6 +75,10 @@ public struct Board: Equatable, Archivable {
         }
     }
     
+    public mutating func column() {
+        add(.column)
+    }
+    
     public mutating func card() {
         add(.card)
     }
