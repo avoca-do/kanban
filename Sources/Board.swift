@@ -17,7 +17,7 @@ public struct Board: Equatable, Archivable {
     
     public var progress: Progress {
         {
-            .init(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
+            Progress(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
         } (snaps.last!.columns.map(\.count).reduce(0, +), snaps.last!.columns.last!.count)
     }
     
