@@ -1,6 +1,11 @@
 import Foundation
 
 public final class Defaults: UserDefaults {
+    public class var capacity: Int {
+        get { self[.capacity] as? Int ?? 1 }
+        set { self[.capacity] = newValue }
+    }
+    
     public class var rated: Bool {
         get { self[.rated] as? Bool ?? false }
         set { self[.rated] = newValue }
@@ -17,7 +22,7 @@ public final class Defaults: UserDefaults {
     }
     
     public class var correction: Bool {
-        get { self[.correction] as? Bool ?? true }
+        get { self[.correction] as? Bool ?? false }
         set { self[.correction] = newValue }
     }
     
