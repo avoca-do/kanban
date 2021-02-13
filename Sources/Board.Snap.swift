@@ -26,7 +26,7 @@ extension Board {
             self.counter = counter
         }
         
-        subscript(_ id: Int) -> Path? {
+        func path(_ id: Int) -> Path? {
             columns[id]
         }
         

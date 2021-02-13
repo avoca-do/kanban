@@ -24,6 +24,10 @@ extension Board {
             self.cards = cards
         }
         
+        subscript(_ path: Path) -> Card {
+            path.card < count ? cards[path.card] : .init(id: 0)
+        }
+        
         func adding(id: Int) -> Self {
             with(cards: .init(id: id) + cards)
         }
@@ -34,10 +38,6 @@ extension Board {
         
         func with(title: String) -> Self {
             .init(title: title, cards: cards)
-        }
-        
-        subscript(_ path: Path) -> Card {
-            path.card < count ? cards[path.card] : .init(id: 0)
         }
     }
 }

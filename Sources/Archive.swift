@@ -1,14 +1,14 @@
 import Foundation
 
 public struct Archive: Archivable, Comparable {
+    public var date: Date {
+        boards.map(\.date).max() ?? .distantPast
+    }
+    
     var boards: [Board] {
         didSet {
             Memory.shared.save.send(self)
         }
-    }
-    
-    var date: Date {
-        boards.map(\.date).max() ?? .distantPast
     }
     
     var data: Data {
@@ -30,28 +30,33 @@ public struct Archive: Archivable, Comparable {
             }
     }
     
-    public subscript(_ path: Path) -> Bool {
-        boards.isEmpty
+    public func isEmpty(_ path: Path) -> Bool {
+        switch path {
+        case .empty: return boards.isEmpty
+        case .board: return self[path].isEmpty
+        case .column: return self[path][path].isEmpty
+        default: return true
+        }
     }
     
-    public subscript(_ path: Path) -> Int {
-        boards.count
+    public func count(_ path: Path) -> Int {
+        switch path {
+        case .empty: return boards.count
+        case .board: return self[path].count
+        case .column: return self[path][path].count
+        default: return 0
+        }
     }
     
-    public subscript(_ path: Path) -> Date {
-        date
+    public func date(_ path: Path) -> Date {
+        switch path {
+        case .board: return self[path].date
+        default: return .distantPast
+        }
     }
     
-    public subscript(_ path: Path) -> Progress {
+    public func progress(_ path: Path) -> Progress {
         self[path].progress
-    }
-    
-    public subscript(title path: Path) -> String {
-        self[path][path].title
-    }
-    
-    public subscript(_ path: Path) -> String {
-        self[path][path][path].content
     }
     
     public subscript(name path: Path) -> String {
@@ -63,22 +68,30 @@ public struct Archive: Archivable, Comparable {
         }
     }
     
-    public subscript(vertical path: Path) -> Int {
+    public subscript(title path: Path) -> String {
         get {
-            path.card
+            self[path][title: path]
         }
         set {
-            self[path][vertical: path] = newValue
+            self[path][title: path] = newValue
         }
     }
     
-    public subscript(horizontal path: Path) -> Int {
+    public subscript(content path: Path) -> String {
         get {
-            path.column
+            self[path][content: path]
         }
         set {
-            self[path][horizontal: path] = newValue
+            self[path][content: path] = newValue
         }
+    }
+    
+    public mutating func move(_ path: Path, vertical: Int) {
+        self[path].move(path, vertical: vertical)
+    }
+    
+    public mutating func move(_ path: Path, horizontal: Int) {
+        self[path].move(path, horizontal: horizontal)
     }
     
     public mutating func add() {
@@ -100,11 +113,7 @@ public struct Archive: Archivable, Comparable {
     public mutating func remove(_ path: Path) {
         self[path].remove(path)
     }
-    
-    public mutating func change(_ path: Path, title: String) {
-        self[path].change(path, title: title)
-    }
-    
+
     public mutating func drop(_ path: Path) {
         self[path].drop(path)
     }

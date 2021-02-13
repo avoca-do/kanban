@@ -52,18 +52,10 @@ struct Board: Archivable, Equatable {
     }
     
     subscript(_ path: Path) -> Column {
-        columns[path.column]
+        path.column < count ? columns[path.column] : .init()
     }
     
-    subscript(_ path: Path) -> Bool {
-        isEmpty
-    }
-    
-    subscript(_ path: Path) -> Int {
-        count
-    }
-    
-    subscript(_ path: Path) -> String {
+    subscript(content path: Path) -> String {
         get {
             self[path][path].content
         }
@@ -77,24 +69,28 @@ struct Board: Archivable, Equatable {
         }
     }
     
-    subscript(vertical path: Path) -> Int {
+    subscript(title path: Path) -> String {
         get {
-            path.card
+            self[path].title
         }
         set {
-            guard path.card != newValue else { return }
-            add(.vertical(self[path][path].id, newValue))
+            let title = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard
+                !title.isEmpty,
+                title != self[path].title
+            else { return }
+            add(.title(path.column, title))
         }
     }
     
-    subscript(horizontal path: Path) -> Int {
-        get {
-            path.column
-        }
-        set {
-            guard path.column != newValue else { return }
-            add(.horizontal(self[path][path].id, newValue))
-        }
+    mutating func move(_ path: Path, vertical: Int) {
+        guard path.card != vertical else { return }
+        add(.vertical(self[path][path].id, vertical))
+    }
+    
+    mutating func move(_ path: Path, horizontal: Int) {
+        guard path.column != horizontal else { return }
+        add(.horizontal(self[path][path].id, horizontal))
     }
     
     mutating func column() {
@@ -106,17 +102,8 @@ struct Board: Archivable, Equatable {
     }
     
     mutating func remove(_ path: Path) {
-        guard snap[self[path][path].id] != nil else { return }
+        guard snap.path(self[path][path].id) != nil else { return }
         add(.remove(self[path][path].id))
-    }
-    
-    mutating func change(_ path: Path, title: String) {
-        let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard
-            !title.isEmpty,
-            title != self[path].title
-        else { return }
-        add(.title(path.column, title))
     }
     
     mutating func drop(_ path: Path) {
@@ -124,7 +111,7 @@ struct Board: Archivable, Equatable {
     }
     
     mutating func add(_ action: Action) {
-        if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snap.state.date, to: .init()).hour! > 0 {
+        if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: date, to: .init()).hour! > 0 {
             snaps.append(.init(after: snaps.last))
         }
         snaps[snaps.count - 1].add(action, snaps.count > 1 ? snaps[snaps.count - 2] : nil)

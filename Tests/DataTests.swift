@@ -31,8 +31,8 @@ final class DataTests: XCTestCase {
         let archived = archive.data.mutating(transform: Archive.init(data:))
         
         XCTAssertEqual(2, archived.boards.count)
-        XCTAssertEqual(1, archived[.column(.board(0), 0)].count)
-        XCTAssertTrue(archived[.column(.board(0), 0)].isEmpty)
+        XCTAssertEqual(1, archived[.column(.board(0), 0)][.column(.board(0), 0)].count)
+        XCTAssertTrue(archived[.column(.board(0), 0)][.column(.board(0), 0)].isEmpty)
         XCTAssertEqual("hello world", archived[.card(.column(.board(0), 0), 0)])
         
         XCTAssertEqual(2, archived.boards.first!.snaps.count)
@@ -58,7 +58,7 @@ final class DataTests: XCTestCase {
         XCTAssertEqual(300, Int(archived.boards[1].snaps.first!.state.date.timeIntervalSince1970))
         XCTAssertEqual(.init(boardA.snaps[0].state.date.timeIntervalSince1970), Int(archived.boards[1].snaps.last!.state.date.timeIntervalSince1970))
         
-        XCTAssertEqual(3, archived[.board(0)].count)
+        XCTAssertEqual(3, archived.boards[0].count)
         XCTAssertEqual("DO", archived[title: .column(.board(0), 0)])
         XCTAssertEqual("DOING", archived[title: .column(.board(0), 1)])
         XCTAssertEqual("DONE", archived[title: .column(.board(0), 2)])
