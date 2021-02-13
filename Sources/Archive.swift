@@ -43,15 +43,23 @@ public struct Archive: Archivable, Comparable {
     }
     
     public subscript(_ path: Path) -> Progress {
-        path.board < boards.count ? boards[path.board].progress : .init(cards: 0, done: 0, percentage: 0)
+        self[path].progress
+    }
+    
+    public subscript(title path: Path) -> String {
+        self[path][path].title
     }
     
     public subscript(_ path: Path) -> String {
+        self[path][path][path].content
+    }
+    
+    public subscript(name path: Path) -> String {
         get {
-            path.board < boards.count ? boards[path.board][path] : ""
+            self[path].name
         }
         set {
-            boards[path.board][path] = newValue
+            self[path].name = newValue
         }
     }
     
@@ -60,7 +68,7 @@ public struct Archive: Archivable, Comparable {
             path.card
         }
         set {
-            boards[path.board][vertical: path] = newValue
+            self[path][vertical: path] = newValue
         }
     }
     
@@ -69,7 +77,7 @@ public struct Archive: Archivable, Comparable {
             path.column
         }
         set {
-            boards[path.board][horizontal: path] = newValue
+            self[path][horizontal: path] = newValue
         }
     }
     
@@ -82,26 +90,35 @@ public struct Archive: Archivable, Comparable {
     }
     
     public mutating func column(_ path: Path) {
-        boards[path.board].column()
+        self[path].column()
     }
     
     public mutating func card(_ path: Path) {
-        boards[path.board].card()
+        self[path].card()
     }
     
     public mutating func remove(_ path: Path) {
-        boards[path.board].remove(path)
+        self[path].remove(path)
     }
     
     public mutating func change(_ path: Path, title: String) {
-        boards[path.board].change(path, title: title)
+        self[path].change(path, title: title)
     }
     
     public mutating func drop(_ path: Path) {
-        boards[path.board].drop(path)
+        self[path].drop(path)
     }
     
     public static func < (lhs: Archive, rhs: Archive) -> Bool {
         lhs.date < rhs.date
+    }
+    
+    subscript(_ path: Path) -> Board {
+        get {
+            path.board < boards.count ? boards[path.board] : .init()
+        }
+        set {
+            boards[path.board] = newValue
+        }
     }
 }

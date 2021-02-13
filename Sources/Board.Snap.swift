@@ -30,12 +30,8 @@ extension Board {
             columns[id]
         }
         
-        subscript(_ path: Path) -> Int {
-            columns[path.column][path.card]
-        }
-        
-        subscript(_ path: Path) -> String {
-            path.column < columns.count ? columns[path.column][path.card] : ""
+        subscript(_ path: Path) -> Column {
+            path.column < columns.count ? columns[path.column] : .init()
         }
         
         mutating func add(_ action: Action, _ previous: Snap?) {

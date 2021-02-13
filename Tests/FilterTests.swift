@@ -18,56 +18,56 @@ final class FilterTests: XCTestCase {
     
     func testContent() {
         board.card()
-        board[0, 0] = "hello world"
-        board[0, 0] = "total recall"
-        board[0, 0] = "lorem ipsum"
-        XCTAssertEqual("lorem ipsum", board[0][0])
+        board[.card(.column(.empty, 0), 0)] = "hello world"
+        board[.card(.column(.empty, 0), 0)] = "total recall"
+        board[.card(.column(.empty, 0), 0)] = "lorem ipsum"
+        XCTAssertEqual("lorem ipsum", board[.card(.column(.empty, 0), 0)])
         XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
     
     func testContentRedundant() {
         board.card()
-        board[0, 0] = "hello world"
+        board[.card(.column(.empty, 0), 0)] = "hello world"
         var data = Data()
             .adding(Date(timeIntervalSince1970: 300).timestamp)
             .adding(UInt8(board.snaps[0].state.actions.count))
             .adding(board.snaps[0].state.actions.flatMap(\.data))
         board.snaps[0] = Board.Snap(data: &data, after: nil)
-        board[0, 0] = "total recall"
-        board[0, 0] = "lorem ipsum"
-        board[0, 0] = "hello world"
-        XCTAssertEqual("hello world", board[0][0])
+        board[.card(.column(.empty, 0), 0)] = "total recall"
+        board[.card(.column(.empty, 0), 0)] = "lorem ipsum"
+        board[.card(.column(.empty, 0), 0)] = "hello world"
+        XCTAssertEqual("hello world", board[.card(.column(.empty, 0), 0)])
         XCTAssertTrue(board.snaps.last!.state.actions.isEmpty)
     }
     
     func testHorizontal() {
         board.card()
-        board[horizontal: 0, 0] = 1
-        board[horizontal: 1, 0] = 2
-        XCTAssertEqual(1, board[2].count)
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1
+        board[horizontal: .card(.column(.empty, 1), 0)] = 2
+        XCTAssertEqual(1, board[.column(.empty, 2)].count)
         XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
     
     func testHorizontalRedundant() {
         board.card()
-        board[horizontal: 0, 0] = 1
-        board[horizontal: 1, 0] = 0
-        XCTAssertEqual(0, board[0][0])
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1
+        board[horizontal: .card(.column(.empty, 1), 0)] = 0
+        XCTAssertEqual(0, board[.card(.column(.empty, 0), 0)])
         XCTAssertEqual(2, board.snaps.first!.state.actions.count)
     }
     
     func testHorizontalRedundantUpdate() {
         board.card()
-        board[horizontal: 0, 0] = 1
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1
         var data = Data()
             .adding(Date(timeIntervalSince1970: 300).timestamp)
             .adding(UInt8(board.snaps[0].state.actions.count))
             .adding(board.snaps[0].state.actions.flatMap(\.data))
         board.snaps[0] = Board.Snap(data: &data, after: nil)
         
-        board[horizontal: 1, 0] = 0
-        board[horizontal: 0, 0] = 1
-        XCTAssertEqual(0, board[1][0])
+        board[horizontal: .card(.column(.empty, 1), 0)] = 0
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1
+        XCTAssertEqual(0, board.snaps.last!.columns[1][0])
         XCTAssertTrue(board.snaps.last!.state.actions.isEmpty)
     }
     
@@ -75,8 +75,8 @@ final class FilterTests: XCTestCase {
         board.card()
         board.card()
         board.card()
-        board[vertical: 0, 0] = 1
-        board[vertical: 0, 1] = 2
+        board[vertical: .card(.column(.empty, 0), 0)] = 1
+        board[vertical: .card(.column(.empty, 0), 1)] = 2
         XCTAssertEqual(2, board[0][2])
         XCTAssertEqual(5, board.snaps.first!.state.actions.count)
     }
@@ -84,24 +84,24 @@ final class FilterTests: XCTestCase {
     func testVerticalRedundant() {
         board.card()
         board.card()
-        board[vertical: 0, 0] = 1
-        board[vertical: 0, 1] = 0
-        XCTAssertEqual(1, board[0][0])
+        board[vertical: .card(.column(.empty, 0), 0)] = 1
+        board[vertical: .card(.column(.empty, 0), 1)] = 0
+        XCTAssertEqual(1, board[.card(.column(.empty, 0), 0)])
         XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
     
     func testVerticalRedundantUpdate() {
         board.card()
         board.card()
-        board[vertical: 0, 0] = 1
+        board[vertical: .card(.column(.empty, 0), 0)] = 1
         var data = Data()
             .adding(Date(timeIntervalSince1970: 300).timestamp)
             .adding(UInt8(board.snaps[0].state.actions.count))
             .adding(board.snaps[0].state.actions.flatMap(\.data))
         board.snaps[0] = Board.Snap(data: &data, after: nil)
         
-        board[vertical: 0, 1] = 0
-        board[vertical: 0, 0] = 1
+        board[vertical: .card(.column(.empty, 0), 1)] = 0
+        board[vertical: .card(.column(.empty, 0), 0)] = 1
         XCTAssertEqual(1, board[0][1])
         XCTAssertTrue(board.snaps.last!.state.actions.isEmpty)
     }
@@ -109,8 +109,8 @@ final class FilterTests: XCTestCase {
     func testVerticalThenHorizontal() {
         board.card()
         board.card()
-        board[vertical: 0, 0] = 1
-        board[horizontal: 0, 1] = 1
+        board[vertical: .card(.column(.empty, 0), 0)] = 1
+        board[horizontal: .card(.column(.empty, 0), 1)] = 1
         XCTAssertEqual(1, board[1][0])
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
@@ -118,12 +118,12 @@ final class FilterTests: XCTestCase {
     func testMixingIndexes() {
         board.card()
         board.card()
-        board[vertical: 0, 0] = 1 // id 1
-        board[horizontal: 0, 1] = 1 // id 1
-        board[horizontal: 0, 0] = 1 // id 0
-        board[vertical: 1, 0] = 1 // id 0
-        board[vertical: 1, 0] = 1 // id 1
-        board[horizontal: 1, 1] = 2 // id 1
+        board[vertical: .card(.column(.empty, 0), 0)] = 1 // id 1
+        board[horizontal: .card(.column(.empty, 0), 1)] = 1 // id 1
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1 // id 0
+        board[vertical: .card(.column(.empty, 1), 0)] = 1 // id 0
+        board[vertical: .card(.column(.empty, 1), 0)] = 1 // id 1
+        board[horizontal: .card(.column(.empty, 1), 1)] = 2 // id 1
         XCTAssertEqual(1, board[2][0])
         XCTAssertEqual(0, board[1][0])
         XCTAssertEqual(6, board.snaps.first!.state.actions.count)
@@ -132,17 +132,17 @@ final class FilterTests: XCTestCase {
     func test_goingBackToFirst_butNotLastId_vertical() {
         board.card()
         board.card()
-        board[vertical: 0, 1] = 0
-        XCTAssertEqual(0, board[0][0])
+        board[vertical: .card(.column(.empty, 0), 1)] = 0
+        XCTAssertEqual(0, board[.card(.column(.empty, 0), 0)])
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
     
     func test_goingBackToFirst_butNotLastId_horizontal() {
         board.card()
         board.card()
-        board[horizontal: 0, 1] = 1
-        board[horizontal: 1, 0] = 0
-        XCTAssertEqual(0, board[0][0])
+        board[horizontal: .card(.column(.empty, 0), 1)] = 1
+        board[horizontal: .card(.column(.empty, 1), 0)] = 0
+        XCTAssertEqual(0, board[.card(.column(.empty, 0), 0)])
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
     
@@ -168,11 +168,11 @@ final class FilterTests: XCTestCase {
     
     func testRemove() {
         board.card()
-        board[horizontal: 0, 0] = 1
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1
         board.card()
-        board[0, 0] = "hello world"
-        board[horizontal: 0, 0] = 1
-        board[vertical: 1, 0] = 1
+        board[.card(.column(.empty, 0), 0)] = "hello world"
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1
+        board[vertical: .card(.column(.empty, 1), 0)] = 1
         board.remove(column: 1, index: 1)
         XCTAssertEqual(5, board.snaps.first!.state.actions.count)
     }
@@ -181,17 +181,17 @@ final class FilterTests: XCTestCase {
         board.title(column: 0, "Total recall")
         board.card()
         board.card()
-        board[0, 0] = "hello world"
-        board[0, 1] = "lorem ipsum"
-        board[vertical: 0, 0] = 1
-        board[horizontal: 0, 0] = 1
+        board[.card(.column(.empty, 0), 0)] = "hello world"
+        board[.card(.column(.empty, 0), 1)] = "lorem ipsum"
+        board[vertical: .card(.column(.empty, 0), 0)] = 1
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1
         board.drop(column: 0)
         XCTAssertEqual(6, board.snaps.first!.state.actions.count)
     }
     
     func testDropHorizontal() {
         board.card()
-        board[horizontal: 0, 0] = 1
+        board[horizontal: .card(.column(.empty, 0), 0)] = 1
         board.drop(column: 1)
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }

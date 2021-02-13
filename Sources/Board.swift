@@ -4,21 +4,21 @@ struct Board: Archivable, Equatable {
     var name: String
     
     var count: Int {
-        snaps.last!.columns.count
+        columns.count
     }
     
     var isEmpty: Bool {
-        snaps.last!.columns.isEmpty
+        columns.isEmpty
     }
     
     var date: Date {
-        snaps.last!.state.date
+        snap.state.date
     }
     
     var progress: Progress {
         {
-            Progress(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
-        } (snaps.last!.columns.map(\.count).reduce(0, +), snaps.last!.columns.last!.count)
+            .init(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
+        } (columns.map(\.count).reduce(0, +), columns.last!.count)
     }
     
     var snaps: [Snap]
@@ -28,6 +28,14 @@ struct Board: Archivable, Equatable {
             .adding(name)
             .adding(UInt16(snaps.count))
             .adding(snaps.map(\.state).flatMap(\.data))
+    }
+    
+    private var columns: [Column] {
+        snap.columns
+    }
+    
+    private var snap: Snap {
+        snaps.last!
     }
     
     init() {
@@ -41,6 +49,14 @@ struct Board: Archivable, Equatable {
         snaps = (0 ..< .init(data.uInt16())).reduce(into: []) { list, _ in
             list.append(Snap(data: &data, after: list.last))
         }
+    }
+    
+    subscript(_ path: Path) -> Bool {
+        isEmpty
+    }
+    
+    subscript(_ path: Path) -> Int {
+        count
     }
     
     subscript(_ path: Path) -> String {
@@ -93,7 +109,7 @@ struct Board: Archivable, Equatable {
         let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard
             !title.isEmpty,
-            title != snaps.last!.columns[path.column].title
+            title != self[path].title
         else { return }
         add(.title(path.column, title))
     }
@@ -110,6 +126,6 @@ struct Board: Archivable, Equatable {
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.name == rhs.name && lhs.snaps.last!.columns == rhs.snaps.last!.columns
+        lhs.name == rhs.name && lhs.columns == rhs.columns
     }
 }

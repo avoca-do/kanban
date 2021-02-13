@@ -65,11 +65,20 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(archive.boards.first!.date, archive[.column(.board(0), 0)])
     }
     
+    func testName() {
+        archive.add()
+        archive.boards[0].name = "hello world"
+        XCTAssertEqual("hello world", archive[name: .board(0)])
+        XCTAssertEqual("DO", archive[title: .column(.board(0), 0)])
+    }
+    
     func testIndexOutOfBounds() {
         XCTAssertEqual(true, archive[.board(0)])
         XCTAssertEqual(0, archive[.board(0)])
         XCTAssertEqual(.distantPast, archive[.board(0)])
         XCTAssertEqual(.init(cards: 0, done: 0, percentage: 0), archive[.board(0)])
         XCTAssertEqual("", archive[.board(0)])
+        XCTAssertEqual("", archive[name: .board(0)])
+        XCTAssertEqual("", archive[title: .column(.board(0), 0)])
     }
 }

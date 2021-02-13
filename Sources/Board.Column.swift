@@ -36,12 +36,8 @@ extension Board {
             .init(title: title, cards: cards)
         }
         
-        subscript(_ card: Int) -> Int {
-            cards[card].id
-        }
-        
-        subscript(_ card: Int) -> String {
-            card < count ? cards[card].content : ""
+        subscript(_ path: Path) -> Card {
+            path.card < count ? cards[path.card] : .init(id: 0)
         }
     }
 }

@@ -8,8 +8,16 @@ final class BoardTests: XCTestCase {
         board = .init()
     }
     
+    func testCount() {
+        XCTAssertEqual(0, board[.column(.empty, 0)])
+    }
+    
+    func testEmpty() {
+        XCTAssertEqual(true, board[.column(.empty, 0)])
+    }
+    
     func testIndexOutOfBounds() {
-        XCTAssertNotNil(board[3])
-        XCTAssertNotNil(board[5, 5])
+        XCTAssertEqual(true, board[.column(.empty, 3)])
+        XCTAssertEqual(0, board[.column(.empty, 3)])
     }
 }
