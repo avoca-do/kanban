@@ -51,6 +51,10 @@ struct Board: Archivable, Equatable {
         }
     }
     
+    subscript(_ path: Path) -> Column {
+        columns[path.column]
+    }
+    
     subscript(_ path: Path) -> Bool {
         isEmpty
     }
@@ -61,15 +65,15 @@ struct Board: Archivable, Equatable {
     
     subscript(_ path: Path) -> String {
         get {
-            snaps.last![path]
+            self[path][path].content
         }
         set {
             let content = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
             guard
                 !content.isEmpty,
-                content != snaps.last![path]
+                content != self[path][path].content
             else { return }
-            add(.content(snaps.last![path], content))
+            add(.content(self[path][path].id, content))
         }
     }
     
@@ -79,7 +83,7 @@ struct Board: Archivable, Equatable {
         }
         set {
             guard path.card != newValue else { return }
-            add(.vertical(snaps.last![path], newValue))
+            add(.vertical(self[path][path].id, newValue))
         }
     }
     
@@ -89,7 +93,7 @@ struct Board: Archivable, Equatable {
         }
         set {
             guard path.column != newValue else { return }
-            add(.horizontal(snaps.last![path], newValue))
+            add(.horizontal(self[path][path].id, newValue))
         }
     }
     
@@ -102,7 +106,8 @@ struct Board: Archivable, Equatable {
     }
     
     mutating func remove(_ path: Path) {
-        add(.remove(snaps.last![path]))
+        guard snap[self[path][path].id] != nil else { return }
+        add(.remove(self[path][path].id))
     }
     
     mutating func change(_ path: Path, title: String) {
@@ -119,7 +124,7 @@ struct Board: Archivable, Equatable {
     }
     
     mutating func add(_ action: Action) {
-        if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.state.date, to: .init()).hour! > 0 {
+        if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snap.state.date, to: .init()).hour! > 0 {
             snaps.append(.init(after: snaps.last))
         }
         snaps[snaps.count - 1].add(action, snaps.count > 1 ? snaps[snaps.count - 2] : nil)

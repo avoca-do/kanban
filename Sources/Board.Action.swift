@@ -86,7 +86,7 @@ extension Board {
             case let .content(id, content):
                 return from.flatMap { snap in
                     snap[id].map {
-                        snap[$0] == content
+                        snap[$0][$0].content == content
                     }
                 } ?? false
             case let .horizontal(id, column):
