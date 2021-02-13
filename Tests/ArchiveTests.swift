@@ -31,9 +31,9 @@ final class ArchiveTests: XCTestCase {
         archive.add()
         
         XCTAssertEqual(1, archive.boards.count)
-        XCTAssertEqual(1, archive[0].snaps.first!.state.actions.count)
-        XCTAssertEqual(.create, archive[0].snaps.first!.state.actions.first!)
-        XCTAssertGreaterThanOrEqual(archive[0].snaps.first!.state.date, date)
+        XCTAssertEqual(1, archive.boards.first!.snaps.first!.state.actions.count)
+        XCTAssertEqual(.create, archive.boards.first!.snaps.first!.state.actions.first!)
+        XCTAssertGreaterThanOrEqual(archive.boards.first!.snaps.first!.state.date, date)
         XCTAssertGreaterThanOrEqual(archive.date, date)
     }
     
@@ -44,7 +44,32 @@ final class ArchiveTests: XCTestCase {
         XCTAssertTrue(archive.boards.isEmpty)
     }
     
+    func testEmpty() {
+        XCTAssertEqual(true, archive[.empty])
+        archive.add()
+        XCTAssertEqual(false, archive[.board(0)])
+        XCTAssertEqual(true, archive[.column(.board(0), 0)])
+    }
+    
+    func testCount() {
+        XCTAssertEqual(0, archive[.empty])
+        archive.add()
+        XCTAssertEqual(3, archive[.board(0)])
+        XCTAssertEqual(0, archive[.column(.board(0), 0)])
+    }
+    
+    func testDate() {
+        XCTAssertEqual(.distantPast, archive[.empty])
+        archive.add()
+        XCTAssertEqual(archive.boards.first!.date, archive[.board(0)])
+        XCTAssertEqual(archive.boards.first!.date, archive[.column(.board(0), 0)])
+    }
+    
     func testIndexOutOfBounds() {
-        XCTAssertNotNil(archive[0])
+        XCTAssertEqual(true, archive[.board(0)])
+        XCTAssertEqual(0, archive[.board(0)])
+        XCTAssertEqual(.distantPast, archive[.board(0)])
+        XCTAssertEqual(.init(cards: 0, done: 0, percentage: 0), archive[.board(0)])
+        XCTAssertEqual("", archive[.board(0)])
     }
 }

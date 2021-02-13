@@ -26,16 +26,16 @@ extension Board {
             self.counter = counter
         }
         
-        subscript(_ id: Int) -> Position? {
+        subscript(_ id: Int) -> Path? {
             columns[id]
         }
         
-        subscript(_ position: Position) -> Int {
-            columns[position.column][position.index]
+        subscript(_ path: Path) -> Int {
+            columns[path.column][path.card]
         }
         
-        subscript(_ position: Position) -> String {
-            position.column < columns.count ? columns[position.column][position.index] : Column.placeholder[position.index]
+        subscript(_ path: Path) -> String {
+            path.column < columns.count ? columns[path.column][path.card] : ""
         }
         
         mutating func add(_ action: Action, _ previous: Snap?) {
@@ -72,8 +72,8 @@ extension Board {
                 return .init(state: state, columns: columns.mutating(id: id) {
                     $0.with(content: content)
                 }, counter: counter)
-            case let .vertical(id, index):
-                return .init(state: state, columns: columns.moving(id: id, vertical: index), counter: counter)
+            case let .vertical(id, card):
+                return .init(state: state, columns: columns.moving(id: id, vertical: card), counter: counter)
             case let .horizontal(id, column):
                 return .init(state: state, columns: columns.moving(id: id, horizontal: column), counter: counter)
             case let .remove(id):

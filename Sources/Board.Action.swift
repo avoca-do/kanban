@@ -1,7 +1,7 @@
 import Foundation
 
 extension Board {
-    enum Action: Equatable, Archivable {
+    enum Action: Archivable, Equatable {
         case
         create,
         card,
@@ -89,19 +89,19 @@ extension Board {
                         snap[$0] == content
                     }
                 } ?? false
-            case let .horizontal(id, index):
+            case let .horizontal(id, column):
                 if let previous = from?[id] {
-                    return previous.column == index
+                    return previous.column == column
                 } else {
-                    if index == 0 && to.counter == id + 1 {
+                    if column == 0 && to.counter == id + 1 {
                         return true
                     }
                 }
-            case let .vertical(id, index):
+            case let .vertical(id, card):
                 if let previous = from?[id] {
-                    return previous.column == to[id]!.column && previous.index == index
+                    return previous.column == to[id]!.column && previous.card == card
                 } else {
-                    if to[id]!.column == 0, index == 0 && to.counter == id + 1 {
+                    if to[id]!.column == 0, card == 0 && to.counter == id + 1 {
                         return true
                     }
                 }
@@ -126,10 +126,10 @@ extension Board {
                 return Data()
                         .adding(UInt16(id))
                         .adding(content)
-            case let .vertical(id, index):
+            case let .vertical(id, card):
                 return Data()
                         .adding(UInt16(id))
-                        .adding(UInt16(index))
+                        .adding(UInt16(card))
             case let .horizontal(id, column):
                 return Data()
                         .adding(UInt16(id))

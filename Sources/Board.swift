@@ -1,23 +1,21 @@
 import Foundation
 
-public struct Board: Archivable, Placeholderable, Equatable {
-    public static let placeholder = Self(name: "", snaps: [])
+struct Board: Archivable, Equatable {
+    var name: String
     
-    public var name: String
-    
-    public var count: Int {
+    var count: Int {
         snaps.last!.columns.count
     }
     
-    public var isEmpty: Bool {
+    var isEmpty: Bool {
         snaps.last!.columns.isEmpty
     }
     
-    public var date: Date {
+    var date: Date {
         snaps.last!.state.date
     }
     
-    public var progress: Progress {
+    var progress: Progress {
         {
             Progress(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
         } (snaps.last!.columns.map(\.count).reduce(0, +), snaps.last!.columns.last!.count)
@@ -33,7 +31,8 @@ public struct Board: Archivable, Placeholderable, Equatable {
     }
     
     init() {
-        self.init(name: "", snaps: [])
+        name = ""
+        snaps = []
         add(.create)
     }
     
@@ -44,82 +43,73 @@ public struct Board: Archivable, Placeholderable, Equatable {
         }
     }
     
-    private init(name: String, snaps: [Snap]) {
-        self.name = name
-        self.snaps = snaps
-    }
-    
-    public subscript(_ index: Int) -> Column {
-        index < count ? snaps.last!.columns[index] : .placeholder
-    }
-    
-    public subscript(_ column: Int, _ index: Int) -> String {
+    subscript(_ path: Path) -> String {
         get {
-            snaps.last![.init(column: column, index: index)]
+            snaps.last![path]
         }
         set {
             let content = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
             guard
                 !content.isEmpty,
-                content != snaps.last![.init(column: column, index: index)]
+                content != snaps.last![path]
             else { return }
-            add(.content(snaps.last![.init(column: column, index: index)], content))
+            add(.content(snaps.last![path], content))
         }
     }
     
-    public subscript(vertical column: Int, _ index: Int) -> Int {
+    subscript(vertical path: Path) -> Int {
         get {
-            index
+            path.card
         }
         set {
-            guard index != newValue else { return }
-            add(.vertical(snaps.last![.init(column: column, index: index)], newValue))
+            guard path.card != newValue else { return }
+            add(.vertical(snaps.last![path], newValue))
         }
     }
     
-    public subscript(horizontal column: Int, _ index: Int) -> Int {
+    subscript(horizontal path: Path) -> Int {
         get {
-            column
+            path.column
         }
         set {
-            guard column != newValue else { return }
-            add(.horizontal(snaps.last![.init(column: column, index: index)], newValue))
+            guard path.column != newValue else { return }
+            add(.horizontal(snaps.last![path], newValue))
         }
     }
     
-    public mutating func column() {
+    mutating func column() {
         add(.column)
     }
     
-    public mutating func card() {
+    mutating func card() {
         add(.card)
     }
     
-    public mutating func remove(column: Int, index: Int) {
-        add(.remove(snaps.last![.init(column: column, index: index)]))
+    mutating func remove(_ path: Path) {
+        add(.remove(snaps.last![path]))
     }
     
-    public mutating func title(column: Int, _ title: String) {
+    mutating func change(_ path: Path, title: String) {
         let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard
             !title.isEmpty,
-            title != self[column].title
+            title != snaps.last!.columns[path.column].title
         else { return }
-        add(.title(column, title))
+        add(.title(path.column, title))
     }
     
-    public mutating func drop(column: Int) {
-        add(.drop(column))
+    mutating func drop(_ path: Path) {
+        add(.drop(path.column))
     }
     
-    private mutating func add(_ action: Action) {
+    mutating func add(_ action: Action) {
         if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: snaps.last!.state.date, to: .init()).hour! > 0 {
             snaps.append(.init(after: snaps.last))
         }
         snaps[snaps.count - 1].add(action, snaps.count > 1 ? snaps[snaps.count - 2] : nil)
     }
     
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.name == rhs.name && lhs.snaps.last!.columns == rhs.snaps.last!.columns
     }
 }

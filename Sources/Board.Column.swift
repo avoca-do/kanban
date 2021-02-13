@@ -1,16 +1,14 @@
 import Foundation
 
-public extension Board {
-    struct Column: Placeholderable, Equatable {
-        static let placeholder = Self()
+extension Board {
+    struct Column: Equatable {
+        let title: String
         
-        public let title: String
-        
-        public var count: Int {
+        var count: Int {
             cards.count
         }
         
-        public var isEmpty: Bool {
+        var isEmpty: Bool {
             cards.isEmpty
         }
         
@@ -38,12 +36,12 @@ public extension Board {
             .init(title: title, cards: cards)
         }
         
-        subscript(_ index: Int) -> Int {
-            cards[index].id
+        subscript(_ card: Int) -> Int {
+            cards[card].id
         }
         
-        subscript(_ index: Int) -> String {
-            index < count ? cards[index].content : ""
+        subscript(_ card: Int) -> String {
+            card < count ? cards[card].content : ""
         }
     }
 }
