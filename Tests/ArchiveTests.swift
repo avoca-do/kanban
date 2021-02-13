@@ -43,4 +43,8 @@ final class ArchiveTests: XCTestCase {
         
         XCTAssertTrue(archive.boards.isEmpty)
     }
+    
+    func testIndexOutOfBounds() {
+        XCTAssertNotNil(archive[0])
+    }
 }

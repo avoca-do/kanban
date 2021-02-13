@@ -35,7 +35,7 @@ extension Board {
         }
         
         subscript(_ position: Position) -> String {
-            columns[position.column][position.index]
+            position.column < columns.count ? columns[position.column][position.index] : Column.placeholder[position.index]
         }
         
         mutating func add(_ action: Action, _ previous: Snap?) {

@@ -40,7 +40,7 @@ public struct Archive: Archivable, Comparable {
     
     public subscript(_ index: Int) -> Board {
         get {
-            boards[index]
+            index < count ? boards[index] : .placeholder
         }
         set {
             boards[index] = newValue

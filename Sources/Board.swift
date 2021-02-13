@@ -1,6 +1,8 @@
 import Foundation
 
-public struct Board: Equatable, Archivable {
+public struct Board: Archivable, Placeholderable, Equatable {
+    public static let placeholder = Self(name: "", snaps: [])
+    
     public var name: String
     
     public var count: Int {
@@ -31,8 +33,7 @@ public struct Board: Equatable, Archivable {
     }
     
     init() {
-        name = ""
-        snaps = []
+        self.init(name: "", snaps: [])
         add(.create)
     }
     
@@ -43,8 +44,13 @@ public struct Board: Equatable, Archivable {
         }
     }
     
+    private init(name: String, snaps: [Snap]) {
+        self.name = name
+        self.snaps = snaps
+    }
+    
     public subscript(_ index: Int) -> Column {
-        snaps.last!.columns[index]
+        index < count ? snaps.last!.columns[index] : .placeholder
     }
     
     public subscript(_ column: Int, _ index: Int) -> String {

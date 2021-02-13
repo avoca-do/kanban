@@ -1,7 +1,9 @@
 import Foundation
 
 public extension Board {
-    struct Column: Equatable {
+    struct Column: Placeholderable, Equatable {
+        static let placeholder = Self()
+        
         public let title: String
         
         public var count: Int {
@@ -41,7 +43,7 @@ public extension Board {
         }
         
         subscript(_ index: Int) -> String {
-            cards[index].content
+            index < count ? cards[index].content : ""
         }
     }
 }
