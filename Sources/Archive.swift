@@ -1,6 +1,10 @@
 import Foundation
 
 public struct Archive: Archivable, Comparable {
+    public var available: Bool {
+        Defaults.capacity > boards.count
+    }
+    
     public var date: Date {
         boards.map(\.date).max() ?? .distantPast
     }
