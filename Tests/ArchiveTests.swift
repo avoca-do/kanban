@@ -39,7 +39,7 @@ final class ArchiveTests: XCTestCase {
     
     func testDelete() {
         archive.add()
-        archive.delete(board: 0)
+        archive.delete(.board(0))
         
         XCTAssertTrue(archive.isEmpty(.archive))
     }

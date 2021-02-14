@@ -30,7 +30,7 @@ public indirect enum Path: Equatable {
         }
     }
     
-    var _board: Int {
+    public var _board: Int {
         switch self {
         case let .board(board): return board
         case let .column(parent, _), let .card(parent, _): return parent._board
@@ -38,7 +38,7 @@ public indirect enum Path: Equatable {
         }
     }
     
-    var _column: Int {
+    public var _column: Int {
         switch self {
         case let .column(_, column): return column
         case let .card(parent, _): return parent._column
@@ -46,7 +46,7 @@ public indirect enum Path: Equatable {
         }
     }
     
-    var _card: Int {
+    public var _card: Int {
         switch self {
         case let .card(_, card): return card
         default: return 0
