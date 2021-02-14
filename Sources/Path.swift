@@ -1,6 +1,10 @@
 import Foundation
 
-public indirect enum Path: Equatable {
+public indirect enum Path: Equatable, Identifiable {
+    public var id: String {
+        "\(self)"
+    }
+    
     case
     archive,
     board(Int),
