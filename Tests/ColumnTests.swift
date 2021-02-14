@@ -1,7 +1,7 @@
 import XCTest
 @testable import Kanban
 
-final class BoardTests: XCTestCase {
+final class ColumnTests: XCTestCase {
     private var board: Board!
     
     override func setUp() {
@@ -9,6 +9,6 @@ final class BoardTests: XCTestCase {
     }
     
     func testIndexOutOfBounds() {
-        XCTAssertNotNil(board[.column(.empty, 3)])
+        XCTAssertNotNil(board[.column(.empty, 0)][.card(.column(.empty, 3), 0)])
     }
 }

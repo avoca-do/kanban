@@ -30,10 +30,10 @@ final class ArchiveTests: XCTestCase {
         let date = Date()
         archive.add()
         
-        XCTAssertEqual(1, archive.boards.count)
-        XCTAssertEqual(1, archive.boards.first!.snaps.first!.state.actions.count)
-        XCTAssertEqual(.create, archive.boards.first!.snaps.first!.state.actions.first!)
-        XCTAssertGreaterThanOrEqual(archive.boards.first!.snaps.first!.state.date, date)
+        XCTAssertEqual(1, archive.count(.empty))
+        XCTAssertEqual(1, archive[.board(0)].snaps.first!.state.actions.count)
+        XCTAssertEqual(.create, archive[.board(0)].snaps.first!.state.actions.first!)
+        XCTAssertGreaterThanOrEqual(archive[.board(0)].snaps.first!.state.date, date)
         XCTAssertGreaterThanOrEqual(archive.date, date)
     }
     
@@ -41,28 +41,21 @@ final class ArchiveTests: XCTestCase {
         archive.add()
         archive.delete(board: 0)
         
-        XCTAssertTrue(archive.boards.isEmpty)
+        XCTAssertTrue(archive.isEmpty(.empty))
     }
     
     func testEmpty() {
-        XCTAssertEqual(true, archive[.empty])
+        XCTAssertEqual(true, archive.isEmpty(.empty))
         archive.add()
-        XCTAssertEqual(false, archive[.board(0)])
-        XCTAssertEqual(true, archive[.column(.board(0), 0)])
+        XCTAssertEqual(false, archive.isEmpty(.board(0)))
+        XCTAssertEqual(true, archive.isEmpty(.column(.board(0), 0)))
     }
     
     func testCount() {
-        XCTAssertEqual(0, archive[.empty])
+        XCTAssertEqual(0, archive.count(.empty))
         archive.add()
-        XCTAssertEqual(3, archive[.board(0)])
-        XCTAssertEqual(0, archive[.column(.board(0), 0)])
-    }
-    
-    func testDate() {
-        XCTAssertEqual(.distantPast, archive[.empty])
-        archive.add()
-        XCTAssertEqual(archive.boards.first!.date, archive[.board(0)])
-        XCTAssertEqual(archive.boards.first!.date, archive[.column(.board(0), 0)])
+        XCTAssertEqual(3, archive.count(.board(0)))
+        XCTAssertEqual(0, archive.count(.column(.board(0), 0)))
     }
     
     func testName() {
@@ -73,12 +66,6 @@ final class ArchiveTests: XCTestCase {
     }
     
     func testIndexOutOfBounds() {
-        XCTAssertEqual(true, archive[.board(0)])
-        XCTAssertEqual(0, archive[.board(0)])
-        XCTAssertEqual(.distantPast, archive[.board(0)])
-        XCTAssertEqual(.init(cards: 0, done: 0, percentage: 0), archive[.board(0)])
-        XCTAssertEqual("", archive[.board(0)])
-        XCTAssertEqual("", archive[name: .board(0)])
-        XCTAssertEqual("", archive[title: .column(.board(0), 0)])
+        XCTAssertNotNil(archive[.board(0)])
     }
 }

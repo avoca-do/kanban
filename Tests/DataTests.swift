@@ -23,7 +23,7 @@ final class DataTests: XCTestCase {
         boardB.snaps[0] = Board.Snap(data: &data, after: nil)
         boardB.name = "total recall"
         boardB.card()
-        boardB[.card(.column(.empty, 0), 0)] = "hello world"
+        boardB[content: .card(.column(.empty, 0), 0)] = "hello world"
         
         var archive = Archive()
         archive.boards = [boardB, boardA]
@@ -31,9 +31,9 @@ final class DataTests: XCTestCase {
         let archived = archive.data.mutating(transform: Archive.init(data:))
         
         XCTAssertEqual(2, archived.boards.count)
-        XCTAssertEqual(1, archived[.column(.board(0), 0)][.column(.board(0), 0)].count)
-        XCTAssertTrue(archived[.column(.board(0), 0)][.column(.board(0), 0)].isEmpty)
-        XCTAssertEqual("hello world", archived[.card(.column(.board(0), 0), 0)])
+        XCTAssertEqual(1, archived.count(.column(.board(0), 0)))
+        XCTAssertTrue(archived.isEmpty(.column(.board(1), 0)))
+        XCTAssertEqual("hello world", archived[content: .card(.column(.board(0), 0), 0)])
         
         XCTAssertEqual(2, archived.boards.first!.snaps.count)
         XCTAssertEqual(1, archived.boards.first!.snaps.first!.state.actions.count)
