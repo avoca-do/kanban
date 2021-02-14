@@ -2,20 +2,6 @@ import XCTest
 @testable import Kanban
 
 final class PathTests: XCTestCase {
-    func testUp() {
-        XCTAssertEqual(.archive, Path.archive.up)
-        XCTAssertEqual(.archive, Path.board(1).up)
-        XCTAssertEqual(.board(1), Path.column(.board(1), 2).up)
-        XCTAssertEqual(.column(.board(1), 2), Path.card(.column(.board(1), 2), 3).up)
-    }
-    
-    func testDown() {
-        XCTAssertEqual(.board(1), Path.archive.down(1))
-        XCTAssertEqual(.column(.board(1), 2), Path.board(1).down(2))
-        XCTAssertEqual(.card(.column(.board(1), 2), 3), Path.column(.board(1), 2).down(3))
-        XCTAssertEqual(.card(.column(.board(1), 2), 3), Path.card(.column(.board(1), 2), 3))
-    }
-    
     func testBoard() {
         XCTAssertEqual(0, Path.archive.board)
         XCTAssertEqual(1, Path.board(1).board)
