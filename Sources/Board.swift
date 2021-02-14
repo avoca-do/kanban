@@ -52,7 +52,7 @@ struct Board: Archivable, Equatable {
     }
     
     subscript(_ path: Path) -> Column {
-        path._column < count ? columns[path._column] : .init()
+        path._column >= 0 && path._column < count ? columns[path._column] : .init()
     }
     
     subscript(content path: Path) -> String {

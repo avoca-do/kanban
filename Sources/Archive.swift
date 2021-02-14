@@ -128,7 +128,7 @@ public struct Archive: Archivable, Comparable {
     
     subscript(_ path: Path) -> Board {
         get {
-            path._board < boards.count ? boards[path._board] : .init()
+            path._board >= 0 && path._board < boards.count ? boards[path._board] : .init()
         }
         set {
             boards[path._board] = newValue

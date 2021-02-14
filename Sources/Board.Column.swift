@@ -25,7 +25,7 @@ extension Board {
         }
         
         subscript(_ path: Path) -> Card {
-            path._card < count ? cards[path._card] : .init(id: 0)
+            path._card >= 0 && path._card < count ? cards[path._card] : .init(id: 0)
         }
         
         func adding(id: Int) -> Self {
