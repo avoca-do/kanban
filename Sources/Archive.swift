@@ -128,10 +128,10 @@ public struct Archive: Archivable, Comparable {
     
     subscript(_ path: Path) -> Board {
         get {
-            path.board < boards.count ? boards[path.board] : .init()
+            path._board < boards.count ? boards[path._board] : .init()
         }
         set {
-            boards[path.board] = newValue
+            boards[path._board] = newValue
         }
     }
 }

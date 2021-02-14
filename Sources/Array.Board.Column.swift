@@ -13,35 +13,35 @@ extension Array where Element == Board.Column {
     
     func mutating(id: Int, transform: (Board.Card) -> Board.Card) -> Self {
         mutating(id) { path in
-            mutating(index: path.column) {
-                $0.with(cards: $0.cards.mutating(index: path.card, transform: transform))
+            mutating(index: path._column) {
+                $0.with(cards: $0.cards.mutating(index: path._card, transform: transform))
             }
         }
     }
     
     func moving(id: Int, vertical: Int) -> Self {
         mutating(id) { path in
-            mutating(index: path.column) {
-                $0.with(cards: $0.cards.moving(from: path.card, to: vertical))
+            mutating(index: path._column) {
+                $0.with(cards: $0.cards.moving(from: path._card, to: vertical))
             }
         }
     }
     
     func moving(id: Int, horizontal: Int) -> Self {
         mutating(id) { path in
-            mutating(index: path.column) {
-                $0.with(cards: $0.cards.removing(index: path.card))
+            mutating(index: path._column) {
+                $0.with(cards: $0.cards.removing(index: path._card))
             }
             .mutating(index: horizontal) {
-                $0.with(cards: self[path.column].cards[path.card] + $0.cards)
+                $0.with(cards: self[path._column].cards[path._card] + $0.cards)
             }
         }
     }
     
     func removing(id: Int) -> Self {
         mutating(id) { path in
-            mutating(index: path.column) {
-                $0.with(cards: $0.cards.removing(index: path.card))
+            mutating(index: path._column) {
+                $0.with(cards: $0.cards.removing(index: path._card))
             }
         }
     }

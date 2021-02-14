@@ -31,7 +31,7 @@ extension Board {
         }
         
         subscript(_ path: Path) -> Column {
-            path.column < columns.count ? columns[path.column] : .init()
+            path._column < columns.count ? columns[path._column] : .init()
         }
         
         mutating func add(_ action: Action, _ previous: Snap?) {

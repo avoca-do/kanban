@@ -52,7 +52,7 @@ struct Board: Archivable, Equatable {
     }
     
     subscript(_ path: Path) -> Column {
-        path.column < count ? columns[path.column] : .init()
+        path._column < count ? columns[path._column] : .init()
     }
     
     subscript(content path: Path) -> String {
@@ -79,17 +79,17 @@ struct Board: Archivable, Equatable {
                 !title.isEmpty,
                 title != self[path].title
             else { return }
-            add(.title(path.column, title))
+            add(.title(path._column, title))
         }
     }
     
     mutating func move(_ path: Path, vertical: Int) {
-        guard path.card != vertical else { return }
+        guard path._card != vertical else { return }
         add(.vertical(self[path][path].id, vertical))
     }
     
     mutating func move(_ path: Path, horizontal: Int) {
-        guard path.column != horizontal else { return }
+        guard path._column != horizontal else { return }
         add(.horizontal(self[path][path].id, horizontal))
     }
     
@@ -107,7 +107,7 @@ struct Board: Archivable, Equatable {
     }
     
     mutating func drop(_ path: Path) {
-        add(.drop(path.column))
+        add(.drop(path._column))
     }
     
     mutating func add(_ action: Action) {

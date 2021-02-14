@@ -73,7 +73,7 @@ extension Board {
                 case let .title(other, _):
                     return column != other
                 case let .content(id, _), let .vertical(id, _):
-                    return column != on.path(id)!.column
+                    return column != on.path(id)!._column
                 default: break
                 }
             default: break
@@ -91,7 +91,7 @@ extension Board {
                 } ?? false
             case let .horizontal(id, column):
                 if let previous = from?.path(id) {
-                    return previous.column == column
+                    return previous._column == column
                 } else {
                     if column == 0 && to.counter == id + 1 {
                         return true
@@ -99,9 +99,9 @@ extension Board {
                 }
             case let .vertical(id, card):
                 if let previous = from?.path(id) {
-                    return previous.column == to.path(id)!.column && previous.card == card
+                    return previous._column == to.path(id)!._column && previous._card == card
                 } else {
-                    if to.path(id)!.column == 0, card == 0 && to.counter == id + 1 {
+                    if to.path(id)!._column == 0, card == 0 && to.counter == id + 1 {
                         return true
                     }
                 }
