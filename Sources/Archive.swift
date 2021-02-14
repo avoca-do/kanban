@@ -32,7 +32,7 @@ public struct Archive: Archivable, Comparable {
     
     public func isEmpty(_ path: Path) -> Bool {
         switch path {
-        case .empty: return boards.isEmpty
+        case .archive: return boards.isEmpty
         case .board: return self[path].isEmpty
         case .column: return self[path][path].isEmpty
         default: return true
@@ -41,7 +41,7 @@ public struct Archive: Archivable, Comparable {
     
     public func count(_ path: Path) -> Int {
         switch path {
-        case .empty: return boards.count
+        case .archive: return boards.count
         case .board: return self[path].count
         case .column: return self[path][path].count
         default: return 0

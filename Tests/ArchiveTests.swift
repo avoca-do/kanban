@@ -30,7 +30,7 @@ final class ArchiveTests: XCTestCase {
         let date = Date()
         archive.add()
         
-        XCTAssertEqual(1, archive.count(.empty))
+        XCTAssertEqual(1, archive.count(.archive))
         XCTAssertEqual(1, archive[.board(0)].snaps.first!.state.actions.count)
         XCTAssertEqual(.create, archive[.board(0)].snaps.first!.state.actions.first!)
         XCTAssertGreaterThanOrEqual(archive[.board(0)].snaps.first!.state.date, date)
@@ -41,18 +41,18 @@ final class ArchiveTests: XCTestCase {
         archive.add()
         archive.delete(board: 0)
         
-        XCTAssertTrue(archive.isEmpty(.empty))
+        XCTAssertTrue(archive.isEmpty(.archive))
     }
     
     func testEmpty() {
-        XCTAssertEqual(true, archive.isEmpty(.empty))
+        XCTAssertEqual(true, archive.isEmpty(.archive))
         archive.add()
         XCTAssertEqual(false, archive.isEmpty(.board(0)))
         XCTAssertEqual(true, archive.isEmpty(.column(.board(0), 0)))
     }
     
     func testCount() {
-        XCTAssertEqual(0, archive.count(.empty))
+        XCTAssertEqual(0, archive.count(.archive))
         archive.add()
         XCTAssertEqual(3, archive.count(.board(0)))
         XCTAssertEqual(0, archive.count(.column(.board(0), 0)))

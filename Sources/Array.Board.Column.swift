@@ -6,7 +6,7 @@ extension Array where Element == Board.Column {
             ($0.0, $0.1.cards.enumerated())
         } .reduce(into: [:]) { map, column in
             column.1.forEach {
-                map[$0.1.id] = .card(.column(.empty, column.0), $0.0)
+                map[$0.1.id] = .card(.column(.archive, column.0), $0.0)
             }
         }[id]
     }

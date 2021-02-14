@@ -23,7 +23,7 @@ final class DataTests: XCTestCase {
         boardB.snaps[0] = Board.Snap(data: &data, after: nil)
         boardB.name = "total recall"
         boardB.card()
-        boardB[content: .card(.column(.empty, 0), 0)] = "hello world"
+        boardB[content: .card(.column(.archive, 0), 0)] = "hello world"
         
         var archive = Archive()
         archive.boards = [boardB, boardA]
