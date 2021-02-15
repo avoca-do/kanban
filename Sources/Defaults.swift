@@ -11,6 +11,7 @@ public final class Defaults: UserDefaults {
         }
         set {
             NSUbiquitousKeyValueStore.default.set(Int64(newValue), forKey: Key.capacity.rawValue)
+            NSUbiquitousKeyValueStore.default.synchronize()
         }
     }
     
