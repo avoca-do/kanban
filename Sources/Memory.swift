@@ -58,7 +58,7 @@ public final class Memory {
         record
             .compactMap { $0 }
             .combineLatest(push)
-            .debounce(for: .seconds(3), scheduler: queue)
+            .debounce(for: .seconds(2), scheduler: queue)
             .sink { [weak self] id, _ in
                 let record = CKRecord(recordType: "Archive", recordID: id)
                 record["asset"] = CKAsset(fileURL: FileManager.url)
