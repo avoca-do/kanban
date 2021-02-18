@@ -1,6 +1,6 @@
 import Foundation
 
-public indirect enum Path: Equatable, Identifiable {
+public indirect enum Path: Identifiable, Hashable {
     public var id: String {
         "\(self)"
     }
