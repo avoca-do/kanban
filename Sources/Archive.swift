@@ -5,10 +5,6 @@ public struct Archive: Archivable, Comparable {
         Defaults.capacity > boards.count
     }
     
-    public var date: Date {
-        boards.map(\.date).max() ?? .distantPast
-    }
-    
     var boards: [Board] {
         didSet {
             Memory.shared.save.send(self)
@@ -55,7 +51,7 @@ public struct Archive: Archivable, Comparable {
     public func date(_ path: Path) -> Date {
         switch path {
         case .board: return self[path].date
-        default: return .distantPast
+        default: return boards.map(\.date).max() ?? .distantPast
         }
     }
     
@@ -123,7 +119,7 @@ public struct Archive: Archivable, Comparable {
     }
     
     public static func < (lhs: Archive, rhs: Archive) -> Bool {
-        lhs.date < rhs.date
+        lhs.date(.archive) < rhs.date(.archive)
     }
     
     subscript(_ path: Path) -> Board {

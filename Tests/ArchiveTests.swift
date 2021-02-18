@@ -17,7 +17,7 @@ final class ArchiveTests: XCTestCase {
         let expect = expectation(description: "")
         let date = Date()
         Memory.shared.save.sink {
-            XCTAssertGreaterThanOrEqual($0.date, date)
+            XCTAssertGreaterThanOrEqual($0.date(.archive), date)
             expect.fulfill()
         }
         .store(in: &subs)
@@ -34,7 +34,7 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(1, archive[.board(0)].snaps.first!.state.actions.count)
         XCTAssertEqual(.create, archive[.board(0)].snaps.first!.state.actions.first!)
         XCTAssertGreaterThanOrEqual(archive[.board(0)].snaps.first!.state.date, date)
-        XCTAssertGreaterThanOrEqual(archive.date, date)
+        XCTAssertGreaterThanOrEqual(archive.date(.archive), date)
     }
     
     func testDelete() {

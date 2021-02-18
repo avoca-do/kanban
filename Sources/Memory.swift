@@ -31,7 +31,7 @@ public final class Memory {
             .merge(with: remote.removeDuplicates())
             .scan(nil) {
                 guard let previous = $0 else { return $1 }
-                return $1.date > previous.date ? $1 : nil
+                return $1.date(.archive) > previous.date(.archive) ? $1 : nil
             }
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
