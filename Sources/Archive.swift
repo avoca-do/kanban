@@ -2,7 +2,7 @@ import Foundation
 
 public struct Archive: Archivable, Equatable {
     public var available: Bool {
-        Defaults.capacity > boards.count
+        capacity > boards.count
     }
     
     public var capacity = 1 {
