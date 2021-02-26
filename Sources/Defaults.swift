@@ -2,17 +2,7 @@ import Foundation
 
 public final class Defaults: UserDefaults {
     public class var capacity: Int {
-        get {
-            if let capacity = self[.capacity] as? Int {
-                NSUbiquitousKeyValueStore.default.set(Int64(capacity), forKey: Key.capacity.rawValue)
-                standard.removeObject(forKey: Key.capacity.rawValue)
-            }
-            return max(.init(NSUbiquitousKeyValueStore.default.longLong(forKey: Key.capacity.rawValue)), 1)
-        }
-        set {
-            NSUbiquitousKeyValueStore.default.set(Int64(newValue), forKey: Key.capacity.rawValue)
-            NSUbiquitousKeyValueStore.default.synchronize()
-        }
+        max(.init(NSUbiquitousKeyValueStore.default.longLong(forKey: Key.capacity.rawValue)), self[.capacity] as? Int ?? 1)
     }
     
     public class var rated: Bool {
