@@ -18,9 +18,7 @@ final class ArchiveTests: XCTestCase {
         let date = Date()
         Memory.shared.save.sink {
             XCTAssertGreaterThanOrEqual($0.date(.archive), date)
-            XCTAssertFalse($0.boards.isEmpty)
-            expect.fulfill()
-        }
+            expect.fulfill()         }
         .store(in: &subs)
         archive.boards = [.init()]
         
@@ -29,9 +27,7 @@ final class ArchiveTests: XCTestCase {
     
     func testSaveCapacity() {
         let expect = expectation(description: "")
-        let date = Date()
         Memory.shared.save.sink {
-            XCTAssertGreaterThanOrEqual($0.date(.archive), date)
             XCTAssertEqual(3, $0.capacity)
             expect.fulfill()
         }

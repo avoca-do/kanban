@@ -20,7 +20,7 @@ public final class Memory {
     }
     
     init() {
-        save.debounce(for: .seconds(1), scheduler: queue).sink { [weak self] in
+        save.debounce(for: .seconds(1), scheduler: queue).removeDuplicates().sink { [weak self] in
             FileManager.archive = $0
             self?.push.send()
         }
@@ -31,7 +31,7 @@ public final class Memory {
             .merge(with: remote.removeDuplicates())
             .scan(nil) {
                 guard let previous = $0 else { return $1 }
-                return $1.date(.archive) > previous.date(.archive) ? $1 : nil
+                return $1.date(.archive) > previous.date(.archive) && $1.capacity >= previous.capacity ? $1 : nil
             }
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)

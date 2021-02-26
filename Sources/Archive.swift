@@ -1,10 +1,14 @@
 import Foundation
 
-public struct Archive: Archivable, Comparable {
-    public var capacity = 1
-    
+public struct Archive: Archivable, Equatable {
     public var available: Bool {
         Defaults.capacity > boards.count
+    }
+    
+    public var capacity = 1 {
+        didSet {
+            Memory.shared.save.send(self)
+        }
     }
     
     var boards: [Board] {
@@ -17,6 +21,7 @@ public struct Archive: Archivable, Comparable {
         Data()
             .adding(UInt8(boards.count))
             .adding(boards.flatMap(\.data))
+            .adding(UInt16(capacity))
             .compressed
     }
     
@@ -30,6 +35,9 @@ public struct Archive: Archivable, Comparable {
             .map { _ in
                 .init(data: &data)
             }
+        if !data.isEmpty {
+            capacity = .init(data.uInt16())
+        }
     }
     
     public func isEmpty(_ path: Path) -> Bool {
@@ -118,10 +126,6 @@ public struct Archive: Archivable, Comparable {
 
     public mutating func drop(_ path: Path) {
         self[path].drop(path)
-    }
-    
-    public static func < (lhs: Archive, rhs: Archive) -> Bool {
-        lhs.date(.archive) < rhs.date(.archive)
     }
     
     subscript(_ path: Path) -> Board {
