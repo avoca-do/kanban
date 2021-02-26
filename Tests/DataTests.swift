@@ -83,4 +83,10 @@ final class DataTests: XCTestCase {
         let action = Board.Action.drop(254)
         XCTAssertEqual(action, action.data.mutating(transform: Board.Action.init(data:)))
     }
+    
+    func testCapacity() {
+        var archive = Archive()
+        archive.capacity = 300
+        XCTAssertEqual(300, archive.data.mutating(transform: Archive.init(data:)).capacity)
+    }
 }

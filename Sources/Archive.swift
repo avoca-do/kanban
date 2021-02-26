@@ -1,6 +1,8 @@
 import Foundation
 
 public struct Archive: Archivable, Comparable {
+    public var capacity = 1
+    
     public var available: Bool {
         Defaults.capacity > boards.count
     }

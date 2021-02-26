@@ -13,15 +13,30 @@ final class ArchiveTests: XCTestCase {
         Memory.shared.subs = .init()
     }
     
-    func testSave() {
+    func testSaveBoards() {
         let expect = expectation(description: "")
         let date = Date()
         Memory.shared.save.sink {
             XCTAssertGreaterThanOrEqual($0.date(.archive), date)
+            XCTAssertFalse($0.boards.isEmpty)
             expect.fulfill()
         }
         .store(in: &subs)
         archive.boards = [.init()]
+        
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testSaveCapacity() {
+        let expect = expectation(description: "")
+        let date = Date()
+        Memory.shared.save.sink {
+            XCTAssertGreaterThanOrEqual($0.date(.archive), date)
+            XCTAssertEqual(3, $0.capacity)
+            expect.fulfill()
+        }
+        .store(in: &subs)
+        archive.capacity = 3
         
         waitForExpectations(timeout: 1)
     }
