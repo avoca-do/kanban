@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Archive: Archivable, Equatable {
+public struct Archive: Archivable, Comparable {
     public var available: Bool {
         capacity > boards.count
     }
@@ -126,6 +126,10 @@ public struct Archive: Archivable, Equatable {
 
     public mutating func drop(_ path: Path) {
         self[path].drop(path)
+    }
+    
+    public static func < (lhs: Archive, rhs: Archive) -> Bool {
+        lhs.date(.archive) < rhs.date(.archive) && lhs.capacity <= rhs.capacity
     }
     
     subscript(_ path: Path) -> Board {

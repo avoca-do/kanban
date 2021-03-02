@@ -8,7 +8,7 @@ public final class Memory {
     var subs = Set<AnyCancellable>()
     let save = PassthroughSubject<Archive, Never>()
     private var first = true
-    private let local = PassthroughSubject<Archive, Never>()
+    private let local = PassthroughSubject<Archive?, Never>()
     private let remote = PassthroughSubject<Archive, Never>()
     private let pull = PassthroughSubject<Void, Never>()
     private let push = PassthroughSubject<Void, Never>()
@@ -27,11 +27,14 @@ public final class Memory {
         .store(in: &subs)
         
         local
+            .compactMap {
+                $0
+            }
             .removeDuplicates()
             .merge(with: remote.removeDuplicates())
             .scan(nil) {
                 guard let previous = $0 else { return $1 }
-                return $1.date(.archive) > previous.date(.archive) && $1.capacity >= previous.capacity ? $1 : nil
+                return $1 > previous ? $1 : nil
             }
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
@@ -69,12 +72,18 @@ public final class Memory {
                 self?.container.publicCloudDatabase.add(operation)
             }
             .store(in: &subs)
+        
+//        local
+//            .combineLatest(remote)
+//            .filter {
+//                $0.0 == nil ||
+//            }
     }
     
     public func refresh() {
         if first {
             first = false
-            FileManager.archive.map(local.send)
+            local.send(FileManager.archive)
         }
         if record.value == nil {
             container.fetchUserRecordID { [weak self] user, _ in
