@@ -8,6 +8,7 @@ public final class Memory {
     var subs = Set<AnyCancellable>()
     let save = PassthroughSubject<Archive, Never>()
     private var first = true
+    private let store = PassthroughSubject<Archive, Never>()
     private let local = PassthroughSubject<Archive?, Never>()
     private let remote = PassthroughSubject<Archive?, Never>()
     private let pull = PassthroughSubject<Void, Never>()
@@ -20,11 +21,12 @@ public final class Memory {
     }
     
     init() {
-        save.debounce(for: .seconds(1), scheduler: queue).removeDuplicates().sink { [weak self] in
-            FileManager.archive = $0
-            self?.push.send()
-        }
-        .store(in: &subs)
+        save
+            .sink { [weak self] in
+                self?.store.send($0)
+                self?.push.send()
+            }
+            .store(in: &subs)
         
         local
             .compactMap { $0 }
@@ -88,7 +90,7 @@ public final class Memory {
                 $0.0 == nil || $0.0! < $0.1
             }
             .map { $1 }
-            .sink(receiveValue: save.send)
+            .sink(receiveValue: store.send)
             .store(in: &subs)
         
         remote
@@ -100,6 +102,14 @@ public final class Memory {
             }
             .sink { [weak self] _, _ in
                 self?.push.send()
+            }
+            .store(in: &subs)
+        
+        store
+            .debounce(for: .seconds(1), scheduler: queue)
+            .removeDuplicates()
+            .sink {
+                FileManager.archive = $0
             }
             .store(in: &subs)
     }
