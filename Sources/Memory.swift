@@ -73,8 +73,8 @@ public final class Memory {
                 let record = CKRecord(recordType: "Archive", recordID: id)
                 record["asset"] = CKAsset(fileURL: FileManager.url)
                 let operation = CKModifyRecordsOperation(recordsToSave: [record])
-                operation.configuration.timeoutIntervalForRequest = 20
-                operation.configuration.timeoutIntervalForResource = 25
+                operation.configuration.timeoutIntervalForRequest = 15
+                operation.configuration.timeoutIntervalForResource = 20
                 operation.savePolicy = .allKeys
                 self?.container.publicCloudDatabase.add(operation)
             }
@@ -91,9 +91,17 @@ public final class Memory {
             .sink(receiveValue: save.send)
             .store(in: &subs)
         
-//        local
-//            .compactMap { $0 }
-//            .combineLatest(<#T##other: Publisher##Publisher#>)
+        remote
+            .combineLatest(local
+                            .compactMap { $0 }
+                            .removeDuplicates())
+            .filter {
+                $0.0 == nil || $0.0! < $0.1
+            }
+            .sink { [weak self] _, _ in
+                self?.push.send()
+            }
+            .store(in: &subs)
     }
     
     public func refresh() {
