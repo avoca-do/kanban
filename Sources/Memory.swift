@@ -9,7 +9,7 @@ public final class Memory {
     let save = PassthroughSubject<Archive, Never>()
     private var first = true
     private let local = PassthroughSubject<Archive?, Never>()
-    private let remote = PassthroughSubject<Archive, Never>()
+    private let remote = PassthroughSubject<Archive?, Never>()
     private let pull = PassthroughSubject<Void, Never>()
     private let push = PassthroughSubject<Void, Never>()
     private let record = CurrentValueSubject<CKRecord.ID?, Never>(nil)
@@ -27,11 +27,11 @@ public final class Memory {
         .store(in: &subs)
         
         local
-            .compactMap {
-                $0
-            }
+            .compactMap { $0 }
             .removeDuplicates()
-            .merge(with: remote.removeDuplicates())
+            .merge(with: remote
+                            .compactMap { $0 }
+                            .removeDuplicates())
             .scan(nil) {
                 guard let previous = $0 else { return $1 }
                 return $1 > previous ? $1 : nil
@@ -51,8 +51,15 @@ public final class Memory {
                 operation.configuration.timeoutIntervalForRequest = 15
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.fetchRecordsCompletionBlock = { [weak self] records, _ in
-                    guard let value = records?.values.first else { return }
-                    self?.remote.send((try! Data(contentsOf: (value["asset"] as! CKAsset).fileURL!)).mutating(transform: Archive.init(data:)))
+                    self?.remote.send(records?.values.first.flatMap {
+                        ($0["asset"] as? CKAsset).flatMap {
+                            $0.fileURL.flatMap {
+                                (try? Data(contentsOf: $0)).map {
+                                    $0.mutating(transform: Archive.init(data:))
+                                }
+                            }
+                        }
+                    })
                 }
                 self?.container.publicCloudDatabase.add(operation)
             }
@@ -74,15 +81,19 @@ public final class Memory {
             .store(in: &subs)
         
         local
-            .combineLatest(remote)
+            .combineLatest(remote
+                            .compactMap { $0 }
+                            .removeDuplicates())
             .filter {
                 $0.0 == nil || $0.0! < $0.1
             }
-            .map {
-                $1
-            }
+            .map { $1 }
             .sink(receiveValue: save.send)
             .store(in: &subs)
+        
+//        local
+//            .compactMap { $0 }
+//            .combineLatest(<#T##other: Publisher##Publisher#>)
     }
     
     public func refresh() {
