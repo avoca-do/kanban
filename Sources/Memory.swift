@@ -73,11 +73,16 @@ public final class Memory {
             }
             .store(in: &subs)
         
-//        local
-//            .combineLatest(remote)
-//            .filter {
-//                $0.0 == nil ||
-//            }
+        local
+            .combineLatest(remote)
+            .filter {
+                $0.0 == nil || $0.0! < $0.1
+            }
+            .map {
+                $1
+            }
+            .sink(receiveValue: save.send)
+            .store(in: &subs)
     }
     
     public func refresh() {
