@@ -35,9 +35,7 @@ public struct Archive: Archivable, Comparable {
             .map { _ in
                 .init(data: &data)
             }
-        if !data.isEmpty {
-            capacity = .init(data.uInt16())
-        }
+        capacity = .init(data.uInt16())
     }
     
     public func isEmpty(_ path: Path) -> Bool {
