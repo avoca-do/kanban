@@ -50,6 +50,24 @@ final class EditTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(board.snaps.last!.state.date, date)
     }
     
+    func testUpdateDateToLastIfEmpty() {
+        let date = Date()
+        var data0 = Data()
+            .adding(Date(timeIntervalSinceNow: -7202).timestamp)
+            .adding(UInt8(board.snaps[0].state.actions.count))
+            .adding(board.snaps[0].state.actions.flatMap(\.data))
+        var data1 = Data()
+            .adding(Date(timeIntervalSinceNow: -3601).timestamp)
+            .adding(UInt8(0))
+        board.snaps[0] = Board.Snap(data: &data0, after: nil)
+        board.card()
+        board.snaps[1] = Board.Snap(data: &data1, after: board.snaps[0])
+        board.card()
+        XCTAssertEqual(2, board.snaps.count)
+        XCTAssertLessThanOrEqual(board.snaps.first!.state.date, date)
+        XCTAssertGreaterThanOrEqual(board.snaps.last!.state.date, date)
+    }
+    
     func testColumn() {
         board.column()
         XCTAssertEqual(4, board.count)

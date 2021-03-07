@@ -111,7 +111,8 @@ struct Board: Archivable, Equatable {
     }
     
     mutating func add(_ action: Action) {
-        if snaps.isEmpty || Calendar.current.dateComponents([.hour], from: date, to: .init()).hour! > 0 {
+        if snaps.isEmpty || (Calendar.current.dateComponents([.hour], from: date, to: .init()).hour! > 0
+                                && !snap.state.actions.isEmpty) {
             snaps.append(.init(after: snaps.last))
         }
         snaps[snaps.count - 1].add(action, snaps.count > 1 ? snaps[snaps.count - 2] : nil)
