@@ -37,6 +37,6 @@ final class ActivityTests: XCTestCase {
         XCTAssertEqual([
                         [1, 1, 0, 0, 0, 0],
                         [0, 0, 1, 1, 0, 0],
-                        [0, 0, 0, 0, 0, 0]], archive[activity: .week])
+                        [0, 0, 0, 0, 0, 1]], archive[activity: .week])
     }
 }

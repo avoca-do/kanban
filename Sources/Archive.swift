@@ -95,7 +95,32 @@ public struct Archive: Archivable, Comparable {
     }
     
     public subscript(activity period: Period) -> [[Double]] {
-        []
+        let start = period.date.timeIntervalSince1970
+        let interval = (Date().timeIntervalSince1970 - start) / .init(Period.divisions)
+        let ranges = (0 ..< Period.divisions).map {
+            (.init($0) * interval) + start
+        }
+        
+        let array = boards.map {
+            $0.snaps
+                .map(\.state.date.timeIntervalSince1970)
+                .reduce(into: (Array(repeating: Double(), count: Period.divisions), 0)) {
+                    while $0.1 < Period.divisions - 1 && ranges[$0.1 + 1] < $1 {
+                        $0.1 += 1
+                    }
+                    $0.0[$0.1] += 1
+                }.0
+        }
+        
+        let max = array.map {
+            $0.max()!
+        }.max()!
+        
+        return array.map {
+            $0.map {
+                $0 / max
+            }
+        }
     }
     
     public mutating func move(_ path: Path, vertical: Int) {
