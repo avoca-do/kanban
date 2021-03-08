@@ -8,7 +8,7 @@ public enum Period {
     month,
     year
     
-    var date: Date {
+    public var date: Date {
         switch self {
         case .hour: return Calendar.current.date(byAdding: .hour, value: -1, to: .init())!
         case .day: return Calendar.current.date(byAdding: .day, value: -1, to: .init())!
