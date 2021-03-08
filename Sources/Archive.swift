@@ -94,6 +94,10 @@ public struct Archive: Archivable, Comparable {
         }
     }
     
+    public subscript(activity period: Period) -> [[Double]] {
+        []
+    }
+    
     public mutating func move(_ path: Path, vertical: Int) {
         self[path].move(path, vertical: vertical)
     }
