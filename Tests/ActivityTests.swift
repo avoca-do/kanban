@@ -8,10 +8,11 @@ final class ActivityTests: XCTestCase {
         archive = .init()
         Memory.shared = .init()
         Memory.shared.subs = .init()
-        archive.boards = [.init(), .init(), .init()]
     }
     
     func testWeek() {
+        archive.boards = [.init(), .init(), .init()]
+        
         var data0 = Data()
             .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 6).timestamp)
             .adding(UInt8(archive.boards[0].snaps[0].state.actions.count))
@@ -38,5 +39,17 @@ final class ActivityTests: XCTestCase {
                         [1, 1, 0, 0, 0, 0],
                         [0, 0, 1, 1, 0, 0],
                         [0, 0, 0, 0, 0, 1]], archive[activity: .week])
+    }
+    
+    func testIgnoreOlder() {
+        archive.boards = [.init()]
+        
+        var data = Data()
+            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 2).timestamp)
+            .adding(UInt8(archive.boards[0].snaps[0].state.actions.count))
+            .adding(archive.boards[0].snaps[0].state.actions.flatMap(\.data))
+        archive.boards[0].snaps[0] = Board.Snap(data: &data, after: nil)
+        
+        XCTAssertEqual([[0, 0, 0, 0, 0, 0]], archive[activity: .day])
     }
 }

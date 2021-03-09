@@ -108,17 +108,19 @@ public struct Archive: Archivable, Comparable {
                     while $0.1 < Period.divisions - 1 && ranges[$0.1 + 1] < $1 {
                         $0.1 += 1
                     }
-                    $0.0[$0.1] += 1
+                    if $1 >= ranges[$0.1] {
+                        $0.0[$0.1] += 1
+                    }
                 }.0
         }
         
-        let max = array.map {
+        let maximum = max(array.map {
             $0.max()!
-        }.max()!
+        }.max()!, 1)
         
         return array.map {
             $0.map {
-                $0 / max
+                $0 / maximum
             }
         }
     }
