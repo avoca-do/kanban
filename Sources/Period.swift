@@ -2,7 +2,6 @@ import Foundation
 
 public enum Period {
     case
-    hour,
     day,
     week,
     month,
@@ -10,7 +9,6 @@ public enum Period {
     
     public var date: Date {
         switch self {
-        case .hour: return Calendar.current.date(byAdding: .hour, value: -1, to: .init())!
         case .day: return Calendar.current.date(byAdding: .day, value: -1, to: .init())!
         case .week: return Calendar.current.date(byAdding: .day, value: -7, to: .init())!
         case .month: return Calendar.current.date(byAdding: .month, value: -1, to: .init())!
