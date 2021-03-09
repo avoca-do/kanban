@@ -16,5 +16,5 @@ public enum Period {
         }
     }
     
-    static let divisions = 6
+    static let divisions = 5
 }

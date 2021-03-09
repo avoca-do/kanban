@@ -25,20 +25,20 @@ final class ActivityTests: XCTestCase {
         archive.boards[0].snaps[1] = Board.Snap(data: &data1, after: nil)
         
         data0 = Data()
-            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 4).timestamp)
+            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 3).timestamp)
             .adding(UInt8(archive.boards[1].snaps[0].state.actions.count))
             .adding(archive.boards[1].snaps[0].state.actions.flatMap(\.data))
         data1 = Data()
-            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 3).timestamp)
+            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 2).timestamp)
             .adding(UInt8(0))
         archive.boards[1].snaps[0] = Board.Snap(data: &data0, after: nil)
         archive.boards[1].card()
         archive.boards[1].snaps[1] = Board.Snap(data: &data1, after: nil)
         
         XCTAssertEqual([
-                        [1, 1, 0, 0, 0, 0],
-                        [0, 0, 1, 1, 0, 0],
-                        [0, 0, 0, 0, 0, 1]], archive[activity: .week])
+                        [1, 1, 0, 0, 0],
+                        [0, 0, 1, 1, 0],
+                        [0, 0, 0, 0, 1]], archive[activity: .week])
     }
     
     func testIgnoreOlder() {
@@ -50,6 +50,6 @@ final class ActivityTests: XCTestCase {
             .adding(archive.boards[0].snaps[0].state.actions.flatMap(\.data))
         archive.boards[0].snaps[0] = Board.Snap(data: &data, after: nil)
         
-        XCTAssertEqual([[0, 0, 0, 0, 0, 0]], archive[activity: .day])
+        XCTAssertEqual([[0, 0, 0, 0, 0]], archive[activity: .day])
     }
 }
