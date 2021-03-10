@@ -7,15 +7,14 @@ public final class Memory {
     private static let type = "Archive"
     private static let asset = "asset"
     public let archive = PassthroughSubject<Archive, Never>()
+    public let pull = PassthroughSubject<Void, Never>()
     var subs = Set<AnyCancellable>()
     let save = PassthroughSubject<Archive, Never>()
-    private var first = true
     private let store = PassthroughSubject<Archive, Never>()
     private let local = PassthroughSubject<Archive?, Never>()
     private let remote = PassthroughSubject<Archive?, Never>()
-    private let pull = PassthroughSubject<Void, Never>()
     private let push = PassthroughSubject<Void, Never>()
-    private let record = CurrentValueSubject<CKRecord.ID?, Never>(nil)
+    private let record = PassthroughSubject<CKRecord.ID?, Never>()
     private let queue = DispatchQueue(label: "", qos: .utility)
     
     private var container: CKContainer {
@@ -46,6 +45,23 @@ public final class Memory {
                 self?.archive.send($0)
             }
             .store(in: &subs)
+        
+        pull
+            .combineLatest(record)
+            .filter {
+                $1 == nil
+            }
+            .sink { [weak self] _, _ in
+                self?.container.accountStatus { status, _ in
+                    if status == .available {
+                        self?.container.fetchUserRecordID { user, _ in
+                            user.map {
+                                self?.record.send(.init(recordName: "archive_" + $0.recordName))
+                            }
+                        }
+                    }
+                }
+            }.store(in: &subs)
         
         record
             .compactMap { $0 }
@@ -140,18 +156,8 @@ public final class Memory {
             .store(in: &subs)
     }
     
-    public func refresh() {
-        if first {
-            first = false
-            local.send(FileManager.archive)
-        }
-        if record.value == nil {
-            container.fetchUserRecordID { [weak self] user, _ in
-                user.map {
-                    self?.record.value = .init(recordName: "archive_" + $0.recordName)
-                }
-            }
-        }
-        pull.send()
+    public func load() {
+        local.send(FileManager.archive)
+        record.send(nil)
     }
 }
