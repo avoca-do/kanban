@@ -2,10 +2,10 @@ import Foundation
 
 public enum Period: CaseIterable {
     case
-    day,
-    week,
+    year,
     month,
-    year
+    week,
+    day
     
     public var date: Date {
         switch self {
