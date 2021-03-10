@@ -92,10 +92,11 @@ public final class Memory {
             .sink { [weak self] id in
                 
                 let subscription = CKQuerySubscription(recordType: Self.type,
-                                                       predicate: NSPredicate(value: true),
+                                                       predicate: NSPredicate(format: "recordID = %@", id),
                                                        options: [.firesOnRecordUpdate])
                 
                 let info = CKSubscription.NotificationInfo()
+                info.alertLocalizationKey = "Avocado"
                 subscription.notificationInfo = info
                 
                 self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, error in
