@@ -75,7 +75,7 @@ public final class Memory {
             .sink { [weak self] id in
                 
                 let subscription = CKQuerySubscription(recordType: Self.type,
-                                                       predicate: NSPredicate(format: "recordID = %@", id),
+                                                       predicate: NSPredicate(value: true),
                                                        options: [.firesOnRecordUpdate])
                 
                 let info = CKSubscription.NotificationInfo()
