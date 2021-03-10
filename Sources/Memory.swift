@@ -50,6 +50,7 @@ public final class Memory {
             .combineLatest(pull)
             .sink { [weak self] id, _ in
                 let operation = CKFetchRecordsOperation(recordIDs: [id])
+                operation.qualityOfService = .userInitiated
                 operation.configuration.timeoutIntervalForRequest = 15
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.fetchRecordsCompletionBlock = { [weak self] records, _ in
@@ -75,6 +76,7 @@ public final class Memory {
                 let record = CKRecord(recordType: "Archive", recordID: id)
                 record["asset"] = CKAsset(fileURL: FileManager.url)
                 let operation = CKModifyRecordsOperation(recordsToSave: [record])
+                operation.qualityOfService = .userInitiated
                 operation.configuration.timeoutIntervalForRequest = 15
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.savePolicy = .allKeys
