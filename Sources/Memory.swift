@@ -78,7 +78,7 @@ public final class Memory {
                                                        predicate: NSPredicate(format: "recordName = %@", id),
                                                        options: [.firesOnRecordUpdate])
                 
-                let info = CKNotificationInfo()
+                let info = CKSubscription.NotificationInfo()
                 info.desiredKeys = [Self.asset]
                 subscription.notificationInfo = info
                 
