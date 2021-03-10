@@ -78,6 +78,10 @@ public final class Memory {
                                                        predicate: NSPredicate(format: "recordName = %@", id),
                                                        options: [.firesOnRecordUpdate])
                 
+                let info = CKNotificationInfo()
+                info.desiredKeys = [Self.asset]
+                subscription.notificationInfo = info
+                
                 self?.container.publicCloudDatabase.save(subscription) { [weak self] _, error in
                     guard error == nil else {
                         print("error \(error)")
