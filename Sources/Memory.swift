@@ -76,10 +76,11 @@ public final class Memory {
                 
                 let subscription = CKQuerySubscription(recordType: Self.type,
                                                        predicate: NSPredicate(value: true),
-                                                       options: [.firesOnRecordUpdate])
+                                                       options: [.firesOnRecordUpdate, .firesOnRecordCreation])
                 
                 let info = CKSubscription.NotificationInfo()
-                info.desiredKeys = []
+                info.alertLocalizationKey = "notificationInfo.alertLocalizationKey"
+//                info.desiredKeys = []
                 subscription.notificationInfo = info
                 
                 self?.container.publicCloudDatabase.save(subscription) { [weak self] _, error in
