@@ -96,8 +96,6 @@ public final class Memory {
                                                        options: [.firesOnRecordUpdate])
                 
                 let info = CKSubscription.NotificationInfo()
-                info.alertLocalizationKey = "notificationInfo.alertLocalizationKey"
-//                info.desiredKeys = []
                 subscription.notificationInfo = info
                 
                 self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, error in
