@@ -15,6 +15,7 @@ public final class Memory {
     private let remote = PassthroughSubject<Archive?, Never>()
     private let push = PassthroughSubject<Void, Never>()
     private let record = PassthroughSubject<CKRecord.ID?, Never>()
+    private let subscription = PassthroughSubject<CKSubscription.ID?, Never>()
     private let queue = DispatchQueue(label: "", qos: .utility)
     
     private var container: CKContainer {
@@ -99,12 +100,29 @@ public final class Memory {
 //                info.desiredKeys = []
                 subscription.notificationInfo = info
                 
-                self?.container.publicCloudDatabase.save(subscription) { [weak self] _, error in
+                self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, error in
                     guard error == nil else {
                         print("error \(error)")
                         return }
                     print("saved subs")
+                    subscription.map {
+                        self?.subscription.send($0.subscriptionID)
+                    }
+                    
                 }
+            }
+            .store(in: &subs)
+        
+        subscription
+            .scan(nil) {
+                guard $0 != nil else { return nil }
+                return $1
+            }
+            .compactMap {
+                $0
+            }
+            .sink { [weak self] in
+                self?.container.publicCloudDatabase.delete(withSubscriptionID: $0) { _, _ in }
             }
             .store(in: &subs)
         
