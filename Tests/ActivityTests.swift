@@ -10,6 +10,10 @@ final class ActivityTests: XCTestCase {
         Memory.shared.subs = .init()
     }
     
+    func testEmpty() {
+        XCTAssertEqual([], archive[activity: .week])
+    }
+    
     func testWeek() {
         archive.boards = [.init(), .init(), .init()]
         
