@@ -90,24 +90,17 @@ public final class Memory {
         record
             .compactMap { $0 }
             .sink { [weak self] id in
-                
-                let subscription = CKQuerySubscription(recordType: Self.type,
-                                                       predicate: NSPredicate(format: "recordID = %@", id),
-                                                       options: [.firesOnRecordUpdate])
-                
-                let info = CKSubscription.NotificationInfo()
-                info.alertLocalizationKey = "Avocado"
-                subscription.notificationInfo = info
+                let subscription = CKQuerySubscription(
+                    recordType: Self.type,
+                    predicate: .init(format: "recordID = %@", id),
+                    options: [.firesOnRecordUpdate])
+                subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
                 
                 self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, error in
-                    guard error == nil else {
-                        print("error \(error)")
-                        return }
-                    print("saved subs")
+                    guard error == nil else { return }
                     subscription.map {
                         self?.subscription.send($0.subscriptionID)
                     }
-                    
                 }
             }
             .store(in: &subs)
