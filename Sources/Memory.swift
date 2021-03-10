@@ -93,7 +93,7 @@ public final class Memory {
                 
                 let subscription = CKQuerySubscription(recordType: Self.type,
                                                        predicate: NSPredicate(value: true),
-                                                       options: [.firesOnRecordUpdate, .firesOnRecordCreation])
+                                                       options: [.firesOnRecordUpdate])
                 
                 let info = CKSubscription.NotificationInfo()
                 info.alertLocalizationKey = "notificationInfo.alertLocalizationKey"
