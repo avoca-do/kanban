@@ -115,8 +115,8 @@ public struct Archive: Archivable, Comparable {
         }
         
         let maximum = max(array.map {
-            $0.max()!
-        }.max()!, 1)
+            $0.max() ?? 1
+        }.max() ?? 1, 1)
         
         return array.map {
             $0.map {
