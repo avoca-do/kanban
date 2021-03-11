@@ -7,12 +7,12 @@ public final class Memory {
     private static let type = "Archive"
     private static let asset = "asset"
     public let archive = PassthroughSubject<Archive, Never>()
-    public let pull = PassthroughSubject<Void, Never>()
     var subs = Set<AnyCancellable>()
     let save = PassthroughSubject<Archive, Never>()
     private let store = PassthroughSubject<Archive, Never>()
     private let local = PassthroughSubject<Archive?, Never>()
     private let remote = PassthroughSubject<Archive?, Never>()
+    private let pull = PassthroughSubject<Date, Never>()
     private let push = PassthroughSubject<Void, Never>()
     private let record = PassthroughSubject<CKRecord.ID?, Never>()
     private let subscription = PassthroughSubject<CKSubscription.ID?, Never>()
@@ -67,6 +67,9 @@ public final class Memory {
         record
             .compactMap { $0 }
             .combineLatest(pull)
+            .removeDuplicates {
+                Calendar.current.dateComponents([.minute], from: $0.1, to: $1.1).minute! > 0
+            }
             .sink { [weak self] id, _ in
                 let operation = CKFetchRecordsOperation(recordIDs: [id])
                 operation.qualityOfService = .userInitiated
@@ -169,5 +172,9 @@ public final class Memory {
     public func load() {
         local.send(FileManager.archive)
         record.send(nil)
+    }
+    
+    public func fetch() {
+        pull.send(.init())
     }
 }
