@@ -18,6 +18,10 @@ public final class Memory {
     private let subscription = PassthroughSubject<CKSubscription.ID?, Never>()
     private let queue = DispatchQueue(label: "", qos: .utility)
     
+    public var saved: AnyPublisher<Archive, Never> {
+        save.eraseToAnyPublisher()
+    }
+    
     private var container: CKContainer {
         .init(identifier: "iCloud.avoca.do")
     }
