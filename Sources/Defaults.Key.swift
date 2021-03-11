@@ -6,6 +6,7 @@ public extension Defaults {
         rated,
         created,
         spell,
-        correction
+        correction,
+        archive
     }
 }
