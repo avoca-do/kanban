@@ -7,8 +7,8 @@ public final class Memory {
     private static let type = "Archive"
     private static let asset = "asset"
     public let archive = PassthroughSubject<Archive, Never>()
+    public let save = PassthroughSubject<Archive, Never>()
     var subs = Set<AnyCancellable>()
-    let save = PassthroughSubject<Archive, Never>()
     private let store = PassthroughSubject<Archive, Never>()
     private let local = PassthroughSubject<Archive?, Never>()
     private let remote = PassthroughSubject<Archive?, Never>()
@@ -17,10 +17,6 @@ public final class Memory {
     private let record = PassthroughSubject<CKRecord.ID?, Never>()
     private let subscription = PassthroughSubject<CKSubscription.ID?, Never>()
     private let queue = DispatchQueue(label: "", qos: .utility)
-    
-    public var saved: AnyPublisher<Archive, Never> {
-        save.eraseToAnyPublisher()
-    }
     
     private var container: CKContainer {
         .init(identifier: "iCloud.avoca.do")
