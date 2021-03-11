@@ -7,7 +7,7 @@ public final class Defaults: UserDefaults {
         }
         set {
             newValue.map {
-                cross.setValue($0, forKey: Key.archive.rawValue)
+                cross.setValue($0.data, forKey: Key.archive.rawValue)
             }
         }
     }
