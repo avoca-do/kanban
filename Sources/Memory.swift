@@ -68,7 +68,7 @@ public final class Memory {
             .compactMap { $0 }
             .combineLatest(pull)
             .removeDuplicates {
-                Calendar.current.dateComponents([.minute], from: $0.1, to: $1.1).minute! > 0
+                Calendar.current.dateComponents([.minute], from: $0.1, to: $1.1).minute! == 0
             }
             .sink { [weak self] id, _ in
                 let operation = CKFetchRecordsOperation(recordIDs: [id])
