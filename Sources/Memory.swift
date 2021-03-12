@@ -57,6 +57,7 @@ public final class Memory {
                     if status == .available {
                         self?.container.fetchUserRecordID { user, error in
                             error.map {
+                                print("account")
                                 print($0)
                             }
                             user.map {
@@ -82,6 +83,7 @@ public final class Memory {
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.fetchRecordsCompletionBlock = { [weak self] records, error in
                     error.map {
+                        print("pull")
                         print($0)
                     }
                     self?.remote.send(records?.values.first.flatMap {
@@ -103,13 +105,13 @@ public final class Memory {
             .sink { [weak self] id in
                 let subscription = CKQuerySubscription(
                     recordType: Self.type,
-                    predicate: .init(value: true),
-                    options: [.firesOnRecordUpdate, .firesOnRecordCreation])
+                    predicate: .init(format: "recordID = %@", id),
+                    options: [.firesOnRecordUpdate])
                 subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
                 
                 self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, error in
                     guard error == nil else {
-                        print(error)
+                        print(error!)
                         return
                     }
                     subscription.map {
@@ -144,6 +146,12 @@ public final class Memory {
                 operation.configuration.timeoutIntervalForRequest = 15
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.savePolicy = .allKeys
+                operation.modifyRecordsCompletionBlock = { _, _, error in
+                    error.map {
+                        print("push")
+                        print($0)
+                    }
+                }
                 self?.container.publicCloudDatabase.add(operation)
             }
             .store(in: &subs)
