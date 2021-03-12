@@ -55,11 +55,16 @@ public final class Memory {
             .sink { [weak self] _, _ in
                 self?.container.accountStatus { status, _ in
                     if status == .available {
-                        self?.container.fetchUserRecordID { user, _ in
+                        self?.container.fetchUserRecordID { user, error in
+                            error.map {
+                                print($0)
+                            }
                             user.map {
                                 self?.record.send(.init(recordName: "archive_" + $0.recordName))
                             }
                         }
+                    } else {
+                        print("status \(status)")
                     }
                 }
             }.store(in: &subs)
@@ -68,14 +73,17 @@ public final class Memory {
             .compactMap { $0 }
             .combineLatest(pull)
             .removeDuplicates {
-                Calendar.current.dateComponents([.minute], from: $0.1, to: $1.1).minute! == 0
+                Calendar.current.dateComponents([.second], from: $0.1, to: $1.1).second! < 10
             }
             .sink { [weak self] id, _ in
                 let operation = CKFetchRecordsOperation(recordIDs: [id])
                 operation.qualityOfService = .userInitiated
                 operation.configuration.timeoutIntervalForRequest = 15
                 operation.configuration.timeoutIntervalForResource = 20
-                operation.fetchRecordsCompletionBlock = { [weak self] records, _ in
+                operation.fetchRecordsCompletionBlock = { [weak self] records, error in
+                    error.map {
+                        print($0)
+                    }
                     self?.remote.send(records?.values.first.flatMap {
                         ($0[Self.asset] as? CKAsset).flatMap {
                             $0.fileURL.flatMap {
@@ -100,7 +108,10 @@ public final class Memory {
                 subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
                 
                 self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, error in
-                    guard error == nil else { return }
+                    guard error == nil else {
+                        print(error)
+                        return
+                    }
                     subscription.map {
                         self?.subscription.send($0.subscriptionID)
                     }
