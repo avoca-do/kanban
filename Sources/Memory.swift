@@ -111,6 +111,7 @@ public final class Memory {
                 
                 self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, error in
                     guard error == nil else {
+                        print("subscription")
                         print(error!)
                         return
                     }
