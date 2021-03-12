@@ -158,7 +158,7 @@ public struct Archive: Archivable, Comparable {
     }
     
     public static func < (lhs: Archive, rhs: Archive) -> Bool {
-        lhs.date(.archive) < rhs.date(.archive) && lhs.capacity <= rhs.capacity
+        lhs.date(.archive) < rhs.date(.archive) || lhs.capacity < rhs.capacity
     }
     
     subscript(_ path: Path) -> Board {
