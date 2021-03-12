@@ -105,7 +105,7 @@ public final class Memory {
             .sink { [weak self] id in
                 let subscription = CKQuerySubscription(
                     recordType: Self.type,
-                    predicate: .init(format: "recordI = %@", id),
+                    predicate: .init(format: "recordId = %@", id),
                     options: [.firesOnRecordUpdate])
                 subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
                 
