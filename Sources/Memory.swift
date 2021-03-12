@@ -115,7 +115,6 @@ public final class Memory {
                         print(error!)
                         return
                     }
-                    print("subscribed")
                     subscription.map {
                         self?.subscription.send($0.subscriptionID)
                     }
