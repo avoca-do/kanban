@@ -164,13 +164,15 @@ public final class Memory {
             .store(in: &subs)
         
         local
-            .combineLatest(remote
+            .combineLatest(archive
+                            .removeDuplicates(),
+                           remote
                             .compactMap { $0 }
                             .removeDuplicates())
             .filter {
-                $0.0 == nil || $0.0! < $0.1
+                $0.0 == nil || $0.1 < $0.2
             }
-            .map { $1 }
+            .map { $2 }
             .sink(receiveValue: store.send)
             .store(in: &subs)
         
