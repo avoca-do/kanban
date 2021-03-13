@@ -145,6 +145,7 @@ public final class Memory {
             .combineLatest(push)
             .debounce(for: .seconds(2), scheduler: queue)
             .sink { [weak self] id, _ in
+                print("pushing : \(FileManager.archive?.date(.archive))")
                 let record = CKRecord(recordType: Self.type, recordID: id)
                 record[Self.asset] = CKAsset(fileURL: FileManager.url)
                 let operation = CKModifyRecordsOperation(recordsToSave: [record])
