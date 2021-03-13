@@ -189,6 +189,9 @@ public final class Memory {
             .store(in: &subs)
         
         store
+            .removeDuplicates {
+                $1 <= $0
+            }
             .sink {
                 FileManager.archive = $0
                 print("storing: \($0.date(.archive))")
