@@ -189,6 +189,7 @@ public final class Memory {
         store
             .sink {
                 FileManager.archive = $0
+                print("storing: \($0.date(.archive))")
             }
             .store(in: &subs)
     }
