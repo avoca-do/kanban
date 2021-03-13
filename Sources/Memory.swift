@@ -24,6 +24,8 @@ public final class Memory {
     
     init() {
         save
+            .debounce(for: .seconds(1), scheduler: queue)
+            .removeDuplicates()
             .sink { [weak self] in
                 self?.store.send($0)
                 self?.push.send()
@@ -77,7 +79,7 @@ public final class Memory {
             .compactMap { $0 }
             .combineLatest(pull)
             .removeDuplicates {
-                Calendar.current.dateComponents([.second], from: $0.1, to: $1.1).second! < 9
+                Calendar.current.dateComponents([.second], from: $0.1, to: $1.1).second! < 6
             }
             .sink { [weak self] id, _ in
                 let operation = CKFetchRecordsOperation(recordIDs: [id])
@@ -184,8 +186,6 @@ public final class Memory {
             .store(in: &subs)
         
         store
-            .debounce(for: .seconds(1), scheduler: queue)
-            .removeDuplicates()
             .sink {
                 FileManager.archive = $0
             }
