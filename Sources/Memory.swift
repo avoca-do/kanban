@@ -27,6 +27,7 @@ public final class Memory {
             .debounce(for: .seconds(1), scheduler: queue)
             .removeDuplicates()
             .sink { [weak self] in
+                print("saving: \($0.date(.archive))")
                 self?.store.send($0)
                 self?.push.send()
             }
@@ -173,7 +174,10 @@ public final class Memory {
                 $0.0 == nil || $0.1 < $0.2
             }
             .map { $2 }
-            .sink(receiveValue: store.send)
+            .sink { [weak self] in
+                print("sending to store: \($0.date(.archive))")
+                self?.store.send($0)
+            }
             .store(in: &subs)
         
         remote
@@ -190,7 +194,8 @@ public final class Memory {
         
         store
             .removeDuplicates {
-                $1 <= $0
+                print("comparing")
+                return $1 <= $0
             }
             .sink {
                 FileManager.archive = $0
