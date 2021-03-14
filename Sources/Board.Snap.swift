@@ -36,9 +36,9 @@ extension Board {
         
         mutating func add(_ action: Action, _ previous: Snap?) {
             self = applying(action)
-                .with(state: state
-                        .filtering(action: action, on: self)
-                        .validating(action: action, from: previous, to: self))
+                    .with(state: state
+                            .filtering(action: action, on: self)
+                            .validating(action: action, from: previous, to: self))
         }
         
         private func with(state: State) -> Self {

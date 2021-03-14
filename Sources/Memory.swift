@@ -168,10 +168,8 @@ public final class Memory {
             .combineLatest(remote
                             .compactMap { $0 }
                             .removeDuplicates())
-            .filter {
-                $0.0 == nil || $0.1 < $0.2
-            }
-            .map { $2 }
+            .filter { $0.0 == nil ? true : $0.0! < $0.1 }
+            .map { $1 }
             .sink { [weak self] in
                 print("sending to store: \($0.date(.archive))")
                 self?.store.send($0)

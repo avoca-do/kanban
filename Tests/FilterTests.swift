@@ -56,6 +56,20 @@ final class FilterTests: XCTestCase {
         XCTAssertEqual(2, board.snaps.first!.state.actions.count)
     }
     
+    func testHorizontalRedundantButUpdateDate() {
+        let date = Date()
+        board.card()
+        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+        
+        var data = Data()
+            .adding(Date(timeIntervalSinceNow: -100).timestamp)
+            .adding(UInt8(board.snaps[0].state.actions.count))
+            .adding(board.snaps[0].state.actions.flatMap(\.data))
+        board.snaps[0] = Board.Snap(data: &data, after: nil)
+        board.move(.card(.column(.archive, 1), 0), horizontal: 0)
+        XCTAssertGreaterThanOrEqual(board.snaps[0].state.date.timeIntervalSince1970, date.timeIntervalSince1970)
+    }
+    
     func testHorizontalRedundantUpdate() {
         board.card()
         board.move(.card(.column(.archive, 0), 0), horizontal: 1)

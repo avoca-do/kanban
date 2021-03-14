@@ -37,7 +37,7 @@ extension Board {
         }
         
         func validating(action: Action, from: Snap?, to: Snap) -> Self {
-            action.redundant(from, to) ? self : .init(date: .init(), actions: actions + action)
+            action.redundant(from, to) ? .init(date: .init(), actions: actions) : .init(date: .init(), actions: actions + action)
         }
     }
 }
