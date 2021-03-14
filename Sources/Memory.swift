@@ -27,7 +27,6 @@ public final class Memory {
             .debounce(for: .seconds(1), scheduler: queue)
             .removeDuplicates()
             .sink { [weak self] in
-                print("saving: \($0.date(.archive))")
                 self?.store.send($0)
                 self?.push.send()
             }
@@ -40,10 +39,7 @@ public final class Memory {
                             .compactMap { $0 }
                             .removeDuplicates())
             .scan(nil) { previous, next in
-                print(previous?.date(.archive))
-                print(next.date(.archive))
                 guard let previous = previous else { return next }
-                print(next > previous)
                 return next > previous ? next : nil
             }
             .compactMap { $0 }
@@ -61,17 +57,11 @@ public final class Memory {
             .sink { [weak self] _, _ in
                 self?.container.accountStatus { status, _ in
                     if status == .available {
-                        self?.container.fetchUserRecordID { user, error in
-                            error.map {
-                                print("account")
-                                print($0)
-                            }
+                        self?.container.fetchUserRecordID { user, _ in
                             user.map {
                                 self?.record.send(.init(recordName: "archive_" + $0.recordName))
                             }
                         }
-                    } else {
-                        print("status \(status)")
                     }
                 }
             }.store(in: &subs)
@@ -87,11 +77,7 @@ public final class Memory {
                 operation.qualityOfService = .userInitiated
                 operation.configuration.timeoutIntervalForRequest = 15
                 operation.configuration.timeoutIntervalForResource = 20
-                operation.fetchRecordsCompletionBlock = { [weak self] records, error in
-                    error.map {
-                        print("pull")
-                        print($0)
-                    }
+                operation.fetchRecordsCompletionBlock = { [weak self] records, _ in
                     self?.remote.send(records?.values.first.flatMap {
                         ($0[Self.asset] as? CKAsset).flatMap {
                             $0.fileURL.flatMap {
@@ -115,12 +101,7 @@ public final class Memory {
                     options: [.firesOnRecordUpdate])
                 subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
                 
-                self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, error in
-                    guard error == nil else {
-                        print("subscription")
-                        print(error!)
-                        return
-                    }
+                self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, _ in
                     subscription.map {
                         self?.subscription.send($0.subscriptionID)
                     }
@@ -146,7 +127,6 @@ public final class Memory {
             .combineLatest(push)
             .debounce(for: .seconds(2), scheduler: queue)
             .sink { [weak self] id, _ in
-                print("pushing : \(FileManager.archive?.date(.archive))")
                 let record = CKRecord(recordType: Self.type, recordID: id)
                 record[Self.asset] = CKAsset(fileURL: FileManager.url)
                 let operation = CKModifyRecordsOperation(recordsToSave: [record])
@@ -154,12 +134,6 @@ public final class Memory {
                 operation.configuration.timeoutIntervalForRequest = 15
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.savePolicy = .allKeys
-                operation.modifyRecordsCompletionBlock = { _, _, error in
-                    error.map {
-                        print("push")
-                        print($0)
-                    }
-                }
                 self?.container.publicCloudDatabase.add(operation)
             }
             .store(in: &subs)
@@ -171,7 +145,6 @@ public final class Memory {
             .filter { $0.0 == nil ? true : $0.0! < $0.1 }
             .map { $1 }
             .sink { [weak self] in
-                print("sending to store: \($0.date(.archive))")
                 self?.store.send($0)
             }
             .store(in: &subs)
@@ -180,9 +153,7 @@ public final class Memory {
             .combineLatest(local
                             .compactMap { $0 }
                             .removeDuplicates())
-            .filter {
-                $0.0 == nil || $0.0! < $0.1
-            }
+            .filter { $0.0 == nil ? true : $0.0! < $0.1 }
             .sink { [weak self] _, _ in
                 self?.push.send()
             }
@@ -190,12 +161,10 @@ public final class Memory {
         
         store
             .removeDuplicates {
-                print("comparing")
-                return $1 <= $0
+                $1 <= $0
             }
             .sink {
                 FileManager.archive = $0
-                print("storing: \($0.date(.archive))")
             }
             .store(in: &subs)
     }
