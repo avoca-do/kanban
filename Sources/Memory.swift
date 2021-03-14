@@ -75,8 +75,8 @@ public final class Memory {
             .sink { [weak self] id, _ in
                 let operation = CKFetchRecordsOperation(recordIDs: [id])
                 operation.qualityOfService = .userInitiated
-                operation.configuration.timeoutIntervalForRequest = 15
-                operation.configuration.timeoutIntervalForResource = 20
+                operation.configuration.timeoutIntervalForRequest = 10
+                operation.configuration.timeoutIntervalForResource = 10
                 operation.fetchRecordsCompletionBlock = { [weak self] records, _ in
                     self?.remote.send(records?.values.first.flatMap {
                         ($0[Self.asset] as? CKAsset).flatMap {
@@ -131,8 +131,8 @@ public final class Memory {
                 record[Self.asset] = CKAsset(fileURL: FileManager.url)
                 let operation = CKModifyRecordsOperation(recordsToSave: [record])
                 operation.qualityOfService = .userInitiated
-                operation.configuration.timeoutIntervalForRequest = 15
-                operation.configuration.timeoutIntervalForResource = 20
+                operation.configuration.timeoutIntervalForRequest = 10
+                operation.configuration.timeoutIntervalForResource = 10
                 operation.savePolicy = .allKeys
                 self?.container.publicCloudDatabase.add(operation)
             }
