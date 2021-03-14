@@ -165,9 +165,7 @@ public final class Memory {
             .store(in: &subs)
         
         local
-            .combineLatest(archive
-                            .removeDuplicates(),
-                           remote
+            .combineLatest(remote
                             .compactMap { $0 }
                             .removeDuplicates())
             .filter {
