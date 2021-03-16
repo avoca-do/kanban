@@ -32,10 +32,9 @@ public struct Archive: Archivable, Comparable {
     
     public init(data: inout Data) {
         data.decompress()
-        boards = (0 ..< .init(data.removeFirst()))
-            .map { _ in
-                .init(data: &data)
-            }
+        boards = (0 ..< .init(data.removeFirst())).map { _ in
+            .init(data: &data)
+        }
         capacity = .init(data.uInt16())
     }
     
