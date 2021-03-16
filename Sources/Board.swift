@@ -1,4 +1,5 @@
 import Foundation
+import Archivable
 
 struct Board: Archivable, Equatable {
     var name: String

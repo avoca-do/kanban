@@ -1,4 +1,5 @@
 import Foundation
+import Archivable
 
 public struct Archive: Archivable, Comparable {
     public var available: Bool {
@@ -11,13 +12,7 @@ public struct Archive: Archivable, Comparable {
         }
     }
     
-    var boards: [Board] {
-        didSet {
-            Memory.shared.save.send(self)
-        }
-    }
-    
-    var data: Data {
+    public var data: Data {
         Data()
             .adding(UInt8(boards.count))
             .adding(boards.flatMap(\.data))
@@ -25,11 +20,17 @@ public struct Archive: Archivable, Comparable {
             .compressed
     }
     
+    var boards: [Board] {
+        didSet {
+            Memory.shared.save.send(self)
+        }
+    }
+    
     public init() {
         boards = []
     }
     
-    init(data: inout Data) {
+    public init(data: inout Data) {
         data.decompress()
         boards = (0 ..< .init(data.removeFirst()))
             .map { _ in

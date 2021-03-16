@@ -1,4 +1,5 @@
 import Foundation
+import Archivable
 
 extension Board {
     enum Action: Archivable, Equatable {
