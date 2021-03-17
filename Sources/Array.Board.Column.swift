@@ -1,4 +1,5 @@
 import Foundation
+import Archivable
 
 extension Array where Element == Board.Column {
     subscript(_ id: Int) -> Path? {
