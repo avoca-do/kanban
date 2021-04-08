@@ -2,7 +2,7 @@ import CloudKit
 import Combine
 
 public struct Memory {
-    private static let container = CKContainer(identifier: "iCloud.avoce.do")
+    private static let container = CKContainer(identifier: "iCloud.avoca.do")
     public static internal(set) var shared = Memory()
     public let archive = PassthroughSubject<Archive, Never>()
     public let save = PassthroughSubject<Archive, Never>()
