@@ -1,84 +1,91 @@
 import CloudKit
 import Combine
 
-public final class Memory {
+public struct Memory {
+    private static let container = CKContainer(identifier: "iCloud.avoce.do")
     public static internal(set) var shared = Memory()
-    private static let type = "Archive"
-    private static let asset = "asset"
     public let archive = PassthroughSubject<Archive, Never>()
     public let save = PassthroughSubject<Archive, Never>()
+    public let pull = PassthroughSubject<Void, Never>()
     var subs = Set<AnyCancellable>()
-    private let store = PassthroughSubject<Archive, Never>()
     private let local = PassthroughSubject<Archive?, Never>()
-    private let remote = PassthroughSubject<Archive?, Never>()
-    private let pull = PassthroughSubject<Date, Never>()
-    private let push = PassthroughSubject<Void, Never>()
-    private let record = PassthroughSubject<CKRecord.ID?, Never>()
-    private let subscription = PassthroughSubject<CKSubscription.ID?, Never>()
     private let queue = DispatchQueue(label: "", qos: .utility)
     
-    private var container: CKContainer {
-        .init(identifier: "iCloud.avoca.do")
-    }
-    
     init() {
-        save
+        let store = PassthroughSubject<Archive, Never>()
+        let remote = PassthroughSubject<Archive?, Never>()
+        let push = PassthroughSubject<Void, Never>()
+        let subscription = PassthroughSubject<CKSubscription.ID?, Never>()
+        let record = CurrentValueSubject<CKRecord.ID?, Never>(nil)
+        let type = "Archive"
+        let asset = "asset"
+        
+        ;{
+            $0.subscribe(store)
+                .store(in: &subs)
+            $0.map { _ in }
+                .subscribe(push)
+                .store(in: &subs)
+        } (save
             .debounce(for: .seconds(1), scheduler: queue)
             .removeDuplicates()
-            .sink { [weak self] in
-                self?.store.send($0)
-                self?.push.send()
-            }
-            .store(in: &subs)
+            .share())
         
         local
-            .compactMap { $0 }
-            .removeDuplicates()
+            .compactMap {
+                $0
+            }
             .merge(with: remote
-                            .compactMap { $0 }
-                            .removeDuplicates())
-            .scan(nil) { previous, next in
-                guard let previous = previous else { return next }
-                return next > previous ? next : nil
+                            .compactMap { $0 })
+            .removeDuplicates {
+                $0 >= $1
             }
-            .compactMap { $0 }
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.archive.send($0)
-            }
+            .subscribe(archive)
             .store(in: &subs)
         
         pull
+            .merge(with: push)
             .combineLatest(record)
             .filter {
                 $1 == nil
             }
-            .sink { [weak self] _, _ in
-                self?.container.accountStatus { status, _ in
+            .map { _, _ in }
+            .sink {
+                Self.container.accountStatus { status, _ in
                     if status == .available {
-                        self?.container.fetchUserRecordID { user, _ in
+                        Self.container.fetchUserRecordID { user, _ in
                             user.map {
-                                self?.record.send(.init(recordName: "archive_" + $0.recordName))
+                                record.send(.init(recordName: "archive_" + $0.recordName))
                             }
                         }
                     }
                 }
-            }.store(in: &subs)
+            }
+            .store(in: &subs)
         
         record
-            .compactMap { $0 }
-            .combineLatest(pull)
-            .removeDuplicates {
-                Calendar.current.dateComponents([.second], from: $0.1, to: $1.1).second! < 6
+            .compactMap {
+                $0
             }
-            .sink { [weak self] id, _ in
-                let operation = CKFetchRecordsOperation(recordIDs: [id])
+            .combineLatest(pull)
+            .map {
+                ($0.0, Date())
+            }
+            .removeDuplicates {
+                Calendar.current.dateComponents([.second], from: $0.1, to: $1.1).second! < 2
+            }
+            .map {
+                $0.0
+            }
+            .sink {
+                let operation = CKFetchRecordsOperation(recordIDs: [$0])
                 operation.qualityOfService = .userInitiated
-                operation.configuration.timeoutIntervalForRequest = 10
-                operation.configuration.timeoutIntervalForResource = 10
-                operation.fetchRecordsCompletionBlock = { [weak self] records, _ in
-                    self?.remote.send(records?.values.first.flatMap {
-                        ($0[Self.asset] as? CKAsset).flatMap {
+                operation.configuration.timeoutIntervalForRequest = 20
+                operation.configuration.timeoutIntervalForResource = 20
+                operation.fetchRecordsCompletionBlock = { records, _ in
+                    remote.send(records?.values.first.flatMap {
+                        ($0[asset] as? CKAsset).flatMap {
                             $0.fileURL.flatMap {
                                 (try? Data(contentsOf: $0)).map {
                                     $0.mutating(transform: Archive.init(data:))
@@ -87,80 +94,77 @@ public final class Memory {
                         }
                     })
                 }
-                self?.container.publicCloudDatabase.add(operation)
+                Self.container.publicCloudDatabase.add(operation)
             }
             .store(in: &subs)
         
         record
-            .compactMap { $0 }
-            .sink { [weak self] id in
-                let subscription = CKQuerySubscription(
-                    recordType: Self.type,
-                    predicate: .init(format: "recordID = %@", id),
+            .compactMap {
+                $0
+            }
+            .sink {
+                let query = CKQuerySubscription(
+                    recordType: type,
+                    predicate: .init(format: "recordID = %@", $0),
                     options: [.firesOnRecordUpdate])
-                subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
+                query.notificationInfo = .init(alertLocalizationKey: "Avocado")
                 
-                self?.container.publicCloudDatabase.save(subscription) { [weak self] subscription, _ in
-                    subscription.map {
-                        self?.subscription.send($0.subscriptionID)
+                Self.container.publicCloudDatabase.save(query) { result, _ in
+                    result.map {
+                        subscription.send($0.subscriptionID)
                     }
                 }
             }
             .store(in: &subs)
         
-        subscription
-            .scan(nil) {
-                guard $0 != nil else { return nil }
-                return $1
-            }
+        record
             .compactMap {
                 $0
             }
-            .sink { [weak self] in
-                self?.container.publicCloudDatabase.delete(withSubscriptionID: $0) { _, _ in }
-            }
-            .store(in: &subs)
-        
-        record
-            .compactMap { $0 }
             .combineLatest(push)
-            .debounce(for: .seconds(2), scheduler: queue)
-            .sink { [weak self] id, _ in
-                let record = CKRecord(recordType: Self.type, recordID: id)
-                record[Self.asset] = CKAsset(fileURL: FileManager.url)
+            .sink { id, _ in
+                let record = CKRecord(recordType: type, recordID: id)
+                record[asset] = CKAsset(fileURL: FileManager.url)
                 let operation = CKModifyRecordsOperation(recordsToSave: [record])
                 operation.qualityOfService = .userInitiated
-                operation.configuration.timeoutIntervalForRequest = 10
-                operation.configuration.timeoutIntervalForResource = 10
+                operation.configuration.timeoutIntervalForRequest = 20
+                operation.configuration.timeoutIntervalForResource = 20
                 operation.savePolicy = .allKeys
-                self?.container.publicCloudDatabase.add(operation)
+                Self.container.publicCloudDatabase.add(operation)
             }
             .store(in: &subs)
         
         local
             .combineLatest(remote
-                            .compactMap { $0 }
+                            .compactMap {
+                                $0
+                            }
                             .removeDuplicates())
-            .filter { $0.0 == nil ? true : $0.0! < $0.1 }
-            .map { $1 }
-            .sink { [weak self] in
-                self?.store.send($0)
+            .filter {
+                $0.0 == nil ? true : $0.0! < $0.1
             }
+            .map {
+                $1
+            }
+            .subscribe(store)
             .store(in: &subs)
         
         remote
             .combineLatest(local
-                            .compactMap { $0 }
+                            .compactMap {
+                                $0
+                            }
                             .removeDuplicates())
-            .filter { $0.0 == nil ? true : $0.0! < $0.1 }
-            .sink { [weak self] _, _ in
-                self?.push.send()
+            .filter {
+                $0.0 == nil ? true : $0.0! < $0.1
             }
+            .map { _, _ in }
+            .subscribe(push)
             .store(in: &subs)
         
         store
             .removeDuplicates {
-                $1 <= $0
+                $0 >= $1
             }
             .receive(on: queue)
             .sink {
@@ -169,12 +173,27 @@ public final class Memory {
             .store(in: &subs)
     }
     
-    public func load() {
-        local.send(FileManager.archive)
-        record.send(nil)
+    public var receipt: Future<Bool, Never> {
+        let archive = self.archive
+        let pull = self.pull
+        let queue = self.queue
+        return .init { promise in
+            var sub: AnyCancellable?
+            sub = archive
+                    .map { _ in }
+                    .timeout(.seconds(15), scheduler: queue)
+                    .sink { _ in
+                        sub?.cancel()
+                        promise(.success(false))
+                    } receiveValue: {
+                        sub?.cancel()
+                        promise(.success(true))
+                    }
+            pull.send()
+        }
     }
     
-    public func fetch() {
-        pull.send(.init())
+    public func load() {
+        local.send(FileManager.archive)
     }
 }
