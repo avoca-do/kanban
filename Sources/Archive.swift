@@ -2,6 +2,8 @@ import Foundation
 import Archivable
 
 public struct Archive: Archivable, Comparable {
+    public static let new = Self()
+    
     public var available: Bool {
         capacity > boards.count
     }
@@ -26,7 +28,7 @@ public struct Archive: Archivable, Comparable {
         }
     }
     
-    public init() {
+    private init() {
         boards = []
     }
     

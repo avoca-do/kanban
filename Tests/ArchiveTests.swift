@@ -7,7 +7,7 @@ final class ArchiveTests: XCTestCase {
     private var subs: Set<AnyCancellable>!
     
     override func setUp() {
-        archive = .init()
+        archive = .new
         subs = .init()
         Memory.shared = .init()
         Memory.shared.subs = .init()

@@ -25,7 +25,7 @@ final class DataTests: XCTestCase {
         boardB.card()
         boardB[content: .card(.column(.archive, 0), 0)] = "hello world"
         
-        var archive = Archive()
+        var archive = Archive.new
         archive.boards = [boardB, boardA]
         
         let archived = archive.data.mutating(transform: Archive.init(data:))
@@ -85,7 +85,7 @@ final class DataTests: XCTestCase {
     }
     
     func testCapacity() {
-        var archive = Archive()
+        var archive = Archive.new
         archive.capacity = 300
         XCTAssertEqual(300, archive.data.mutating(transform: Archive.init(data:)).capacity)
     }
