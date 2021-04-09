@@ -116,8 +116,9 @@ public struct Memory {
                     recordType: type,
                     predicate: .init(format: "recordID = %@", $0),
                     options: [.firesOnRecordUpdate])
-                subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
-                subscription.notificationInfo!.shouldSendContentAvailable = true
+                let a = CKSubscription.NotificationInfo(alertLocalizationKey: "Avocado")
+                a.shouldSendContentAvailable = true
+                subscription.notificationInfo = a
                 
                 Self.container.publicCloudDatabase.save(subscription) { _, _ in }
             }
