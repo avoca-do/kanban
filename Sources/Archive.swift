@@ -2,9 +2,13 @@ import Foundation
 import Combine
 import Archivable
 
-public struct Archive: Archivable, Comparable {
+public struct Archive: Archivable, Dateable {
     public static let new = Self()
     public weak var save: PassthroughSubject<Archive, Never>?
+    
+    public var date: Date {
+        date(.archive)
+    }
     
     public var available: Bool {
         capacity > boards.count
@@ -162,11 +166,11 @@ public struct Archive: Archivable, Comparable {
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.date(.archive) == rhs.date(.archive) && lhs.capacity == rhs.capacity
+        lhs.date == rhs.date && lhs.capacity == rhs.capacity
     }
     
     public static func < (lhs: Archive, rhs: Archive) -> Bool {
-        lhs.date(.archive) < rhs.date(.archive) || lhs.capacity < rhs.capacity
+        lhs.date < rhs.date || lhs.capacity < rhs.capacity
     }
     
     subscript(_ path: Path) -> Board {
