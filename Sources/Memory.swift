@@ -18,11 +18,24 @@ public struct Memory {
     private let queue = DispatchQueue(label: "", qos: .utility)
     
     init() {
-        let remote = PassthroughSubject<Archive?, Never>()
         let push = PassthroughSubject<Void, Never>()
+        let store = PassthroughSubject<Archive, Never>()
+        let remote = PassthroughSubject<Archive?, Never>()
         let record = CurrentValueSubject<CKRecord.ID?, Never>(nil)
         let type = "Archive"
         let asset = "asset"
+        
+        save
+            .subscribe(store)
+            .store(in: &subs)
+        
+        save
+            .removeDuplicates {
+                $0 >= $1
+            }
+            .map { _ in }
+            .subscribe(push)
+            .store(in: &subs)
         
         local
             .compactMap {
@@ -113,8 +126,13 @@ public struct Memory {
                 $0
             }
             .combineLatest(push)
-            .sink { id, _ in
-                let record = CKRecord(recordType: type, recordID: id)
+            .map { id, _ in
+                id
+            }
+            .debounce(for: .seconds(2), scheduler: queue)
+            .sink {
+                NSLog("[kanban] push starts")
+                let record = CKRecord(recordType: type, recordID: $0)
                 record[asset] = CKAsset(fileURL: URL)
                 let operation = CKModifyRecordsOperation(recordsToSave: [record])
                 operation.qualityOfService = .userInitiated
@@ -137,7 +155,7 @@ public struct Memory {
             .map {
                 $1
             }
-            .subscribe(save)
+            .subscribe(store)
             .store(in: &subs)
         
         remote
@@ -153,17 +171,14 @@ public struct Memory {
             .subscribe(push)
             .store(in: &subs)
         
-        save
+        store
             .removeDuplicates {
                 $0 >= $1
             }
             .debounce(for: .seconds(1), scheduler: queue)
             .map(\.data)
             .sink {
-                do {
-                    try $0.write(to: URL, options: .atomic)
-                    push.send()
-                } catch { }
+                try? $0.write(to: URL, options: .atomic)
             }
             .store(in: &subs)
     }
