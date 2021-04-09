@@ -1,6 +1,12 @@
 import CloudKit
 import Combine
 
+#if DEBUG
+    private let URL = "avocado.debug.archive".file
+#else
+    private let URL = "avocado.archive".file
+#endif
+
 public struct Memory {
     private static let container = CKContainer(identifier: "iCloud.avoca.do")
     public static internal(set) var shared = Memory()
@@ -12,24 +18,11 @@ public struct Memory {
     private let queue = DispatchQueue(label: "", qos: .utility)
     
     init() {
-        let store = PassthroughSubject<Archive, Never>()
         let remote = PassthroughSubject<Archive?, Never>()
         let push = PassthroughSubject<Void, Never>()
-        let subscription = PassthroughSubject<CKSubscription.ID?, Never>()
         let record = CurrentValueSubject<CKRecord.ID?, Never>(nil)
         let type = "Archive"
         let asset = "asset"
-        
-        ;{
-            $0.subscribe(store)
-                .store(in: &subs)
-            $0.map { _ in }
-                .subscribe(push)
-                .store(in: &subs)
-        } (save
-            .debounce(for: .seconds(1), scheduler: queue)
-            .removeDuplicates()
-            .share())
         
         local
             .compactMap {
@@ -103,17 +96,13 @@ public struct Memory {
                 $0
             }
             .sink {
-                let query = CKQuerySubscription(
+                let subscription = CKQuerySubscription(
                     recordType: type,
                     predicate: .init(format: "recordID = %@", $0),
                     options: [.firesOnRecordUpdate])
-                query.notificationInfo = .init(alertLocalizationKey: "Avocado")
+                subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
                 
-                Self.container.publicCloudDatabase.save(query) { result, _ in
-                    result.map {
-                        subscription.send($0.subscriptionID)
-                    }
-                }
+                Self.container.publicCloudDatabase.save(subscription) { _, _ in }
             }
             .store(in: &subs)
         
@@ -124,7 +113,7 @@ public struct Memory {
             .combineLatest(push)
             .sink { id, _ in
                 let record = CKRecord(recordType: type, recordID: id)
-                record[asset] = CKAsset(fileURL: FileManager.url)
+                record[asset] = CKAsset(fileURL: URL)
                 let operation = CKModifyRecordsOperation(recordsToSave: [record])
                 operation.qualityOfService = .userInitiated
                 operation.configuration.timeoutIntervalForRequest = 20
@@ -146,7 +135,7 @@ public struct Memory {
             .map {
                 $1
             }
-            .subscribe(store)
+            .subscribe(save)
             .store(in: &subs)
         
         remote
@@ -162,13 +151,17 @@ public struct Memory {
             .subscribe(push)
             .store(in: &subs)
         
-        store
+        save
             .removeDuplicates {
                 $0 >= $1
             }
-            .receive(on: queue)
+            .debounce(for: .seconds(1), scheduler: queue)
+            .map(\.data)
             .sink {
-                FileManager.archive = $0
+                do {
+                    try $0.write(to: URL, options: .atomic)
+                    push.send()
+                } catch { }
             }
             .store(in: &subs)
     }
@@ -194,6 +187,18 @@ public struct Memory {
     }
     
     public func load() {
-        local.send(FileManager.archive)
+        local.send(try? Data(contentsOf: URL)
+                    .mutating(transform: Archive
+                                .init(data:)))
+    }
+}
+
+private extension String {
+    var file: URL {
+        var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(self)
+        var resources = URLResourceValues()
+        resources.isExcludedFromBackup = true
+        try? url.setResourceValues(resources)
+        return url
     }
 }
