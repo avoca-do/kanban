@@ -134,19 +134,7 @@ public struct Memory {
                 let notification = CKSubscription.NotificationInfo(alertLocalizationKey: "Avocado")
                 notification.shouldSendContentAvailable = true
                 subscription.notificationInfo = notification
-                
-                let operation = CKModifySubscriptionsOperation(
-                    subscriptionsToSave: [subscription], subscriptionIDsToDelete: nil)
-
-                operation.modifySubscriptionsCompletionBlock = { subscriptions, deleted, error in
-                    
-                }
-                        
-                // Set an appropriate QoS and add the operation to the private
-                // database's operation queue to execute it.
-                operation.qualityOfService = .utility
-                
-                Self.container.publicCloudDatabase.add(operation)
+                Self.container.publicCloudDatabase.save(subscription) { _, _ in }
             }
             .store(in: &subs)
         
