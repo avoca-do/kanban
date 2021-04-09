@@ -79,7 +79,8 @@ public struct Memory {
                 ($0.0, Date())
             }
             .removeDuplicates {
-                Calendar.current.dateComponents([.second], from: $0.1, to: $1.1).second! < 2
+                NSLog("\(Calendar.current.dateComponents([.second], from: $0.1, to: $1.1).second!)")
+                return Calendar.current.dateComponents([.second], from: $0.1, to: $1.1).second! < 2
             }
             .map {
                 $0.0
@@ -91,7 +92,7 @@ public struct Memory {
                 operation.configuration.timeoutIntervalForRequest = 20
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.fetchRecordsCompletionBlock = { records, _ in
-                    NSLog("[kanban] pull receied")
+                    NSLog("[kanban] pull received")
                     remote.send(records?.values.first.flatMap {
                         ($0[asset] as? CKAsset).flatMap {
                             $0.fileURL.flatMap {
