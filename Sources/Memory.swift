@@ -134,7 +134,7 @@ public struct Memory {
                 let a = CKSubscription.NotificationInfo(alertLocalizationKey: "Avocado")
                 a.shouldSendContentAvailable = true
                 subscription.notificationInfo = a
-                
+                NSLog("[kanban] subscription starts")
                 Self.container.publicCloudDatabase.save(subscription) { _, _ in }
             }
             .store(in: &subs)
