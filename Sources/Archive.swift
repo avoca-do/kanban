@@ -166,7 +166,7 @@ public struct Archive: Archivable, Dateable {
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.date == rhs.date && lhs.capacity == rhs.capacity
+        lhs.boards == rhs.boards && lhs.capacity == rhs.capacity
     }
     
     public static func < (lhs: Archive, rhs: Archive) -> Bool {
