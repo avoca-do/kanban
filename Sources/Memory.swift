@@ -42,7 +42,22 @@ public struct Memory {
                 $0
             }
             .merge(with: remote
-                            .compactMap { $0 })
+                            .compactMap {
+                                $0
+                            }
+                            .map {
+                                ($0, $0.date(.archive))
+                            }
+                            .merge(with: save
+                                    .map { _ in
+                                        (nil, .init())
+                                    })
+                            .removeDuplicates {
+                                $0.1 >= $1.1
+                            }
+                            .compactMap {
+                                $0.0
+                            })
             .removeDuplicates {
                 $0 >= $1
             }
