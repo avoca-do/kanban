@@ -126,7 +126,7 @@ public struct Memory {
             .compactMap {
                 $0
             }
-            .debounce(for: .seconds(5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(5), scheduler: queue)
             .sink {
                 let subscription = CKQuerySubscription(
                     recordType: type,
