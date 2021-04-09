@@ -8,16 +8,15 @@ import Combine
 #endif
 
 public struct Memory {
-    private static let container = CKContainer(identifier: "iCloud.avoca.do")
-    public static internal(set) var shared = Memory()
     public let archive = PassthroughSubject<Archive, Never>()
     public let save = PassthroughSubject<Archive, Never>()
     public let pull = PassthroughSubject<Void, Never>()
-    var subs = Set<AnyCancellable>()
+    private var subs = Set<AnyCancellable>()
     private let local = PassthroughSubject<Archive?, Never>()
     private let queue = DispatchQueue(label: "", qos: .utility)
     
     init() {
+        let container = CKContainer(identifier: "iCloud.avoca.do")
         let push = PassthroughSubject<Void, Never>()
         let store = PassthroughSubject<Archive, Never>()
         let remote = PassthroughSubject<Archive?, Never>()
@@ -73,9 +72,9 @@ public struct Memory {
             }
             .map { _, _ in }
             .sink {
-                Self.container.accountStatus { status, _ in
+                container.accountStatus { status, _ in
                     if status == .available {
-                        Self.container.fetchUserRecordID { user, _ in
+                        container.fetchUserRecordID { user, _ in
                             user.map {
                                 record.send(.init(recordName: "archive_" + $0.recordName))
                             }
@@ -118,7 +117,7 @@ public struct Memory {
                         }
                     })
                 }
-                Self.container.publicCloudDatabase.add(operation)
+                container.publicCloudDatabase.add(operation)
             }
             .store(in: &subs)
         
@@ -134,7 +133,7 @@ public struct Memory {
                 let notification = CKSubscription.NotificationInfo(alertLocalizationKey: "Avocado")
                 notification.shouldSendContentAvailable = true
                 subscription.notificationInfo = notification
-                Self.container.publicCloudDatabase.save(subscription) { _, _ in }
+                container.publicCloudDatabase.save(subscription) { _, _ in }
             }
             .store(in: &subs)
         
@@ -156,7 +155,7 @@ public struct Memory {
                 operation.configuration.timeoutIntervalForRequest = 20
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.savePolicy = .allKeys
-                Self.container.publicCloudDatabase.add(operation)
+                container.publicCloudDatabase.add(operation)
             }
             .store(in: &subs)
         

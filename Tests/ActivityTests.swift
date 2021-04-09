@@ -6,8 +6,6 @@ final class ActivityTests: XCTestCase {
     
     override func setUp() {
         archive = .new
-        Memory.shared = .init()
-        Memory.shared.subs = .init()
     }
     
     func testEmpty() {

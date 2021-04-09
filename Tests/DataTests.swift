@@ -2,11 +2,6 @@ import XCTest
 @testable import Kanban
 
 final class DataTests: XCTestCase {
-    override func setUp() {
-        Memory.shared = .init()
-        Memory.shared.subs = .init()
-    }
-    
     func testArchive() {
         var boardA = Board()
         var data = Data()

@@ -5,21 +5,22 @@ import Combine
 final class ArchiveTests: XCTestCase {
     private var archive: Archive!
     private var subs: Set<AnyCancellable>!
+    private var save: PassthroughSubject<Archive, Never>!
     
     override func setUp() {
         archive = .new
         subs = .init()
-        Memory.shared = .init()
-        Memory.shared.subs = .init()
+        save = .init()
     }
     
     func testSaveBoards() {
         let expect = expectation(description: "")
         let date = Date()
-        Memory.shared.save.sink {
+        save.sink {
             XCTAssertGreaterThanOrEqual($0.date(.archive), date)
             expect.fulfill()         }
         .store(in: &subs)
+        archive.save = save
         archive.boards = [.init()]
         
         waitForExpectations(timeout: 1)
@@ -27,11 +28,12 @@ final class ArchiveTests: XCTestCase {
     
     func testSaveCapacity() {
         let expect = expectation(description: "")
-        Memory.shared.save.sink {
+        save.sink {
             XCTAssertEqual(3, $0.capacity)
             expect.fulfill()
         }
         .store(in: &subs)
+        archive.save = save
         archive.capacity = 3
         
         waitForExpectations(timeout: 1)
