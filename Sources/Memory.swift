@@ -117,6 +117,7 @@ public struct Memory {
                     predicate: .init(format: "recordID = %@", $0),
                     options: [.firesOnRecordUpdate])
                 subscription.notificationInfo = .init(alertLocalizationKey: "Avocado")
+                subscription.notificationInfo!.shouldSendContentAvailable = true
                 
                 Self.container.publicCloudDatabase.save(subscription) { _, _ in }
             }
