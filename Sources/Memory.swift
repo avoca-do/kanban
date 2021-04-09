@@ -72,11 +72,13 @@ public struct Memory {
                 $0.0
             }
             .sink {
+                NSLog("[kanban] pull operation")
                 let operation = CKFetchRecordsOperation(recordIDs: [$0])
                 operation.qualityOfService = .userInitiated
                 operation.configuration.timeoutIntervalForRequest = 20
                 operation.configuration.timeoutIntervalForResource = 20
                 operation.fetchRecordsCompletionBlock = { records, _ in
+                    NSLog("[kanban] pull receied")
                     remote.send(records?.values.first.flatMap {
                         ($0[asset] as? CKAsset).flatMap {
                             $0.fileURL.flatMap {
@@ -167,22 +169,27 @@ public struct Memory {
     }
     
     public var receipt: Future<Bool, Never> {
+        NSLog("[kanban] receipt starts")
         let archive = self.archive
         let pull = self.pull
         let queue = self.queue
         return .init { promise in
+            NSLog("[kanban] promise starts")
             var sub: AnyCancellable?
             sub = archive
                     .map { _ in }
                     .timeout(.seconds(15), scheduler: queue)
                     .sink { _ in
+                        NSLog("[kanban] sink ends")
                         sub?.cancel()
                         promise(.success(false))
                     } receiveValue: {
+                        NSLog("[kanban] sink received")
                         sub?.cancel()
                         promise(.success(true))
                     }
             pull.send()
+            NSLog("[kanban] pull sent")
         }
     }
     
