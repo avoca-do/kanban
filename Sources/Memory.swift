@@ -131,12 +131,22 @@ public struct Memory {
                     recordType: type,
                     predicate: .init(format: "recordID = %@", $0),
                     options: [.firesOnRecordUpdate])
-                let a = CKSubscription.NotificationInfo(alertLocalizationKey: "Avocado")
-                a.shouldSendContentAvailable = true
-                a.shouldSendMutableContent = true
-                subscription.notificationInfo = a
-                NSLog("[kanban] subscription starts")
-                Self.container.publicCloudDatabase.save(subscription) { _, _ in }
+                let notification = CKSubscription.NotificationInfo(alertLocalizationKey: "Avocado")
+                notification.shouldSendContentAvailable = true
+                subscription.notificationInfo = notification
+                
+                let operation = CKModifySubscriptionsOperation(
+                    subscriptionsToSave: [subscription], subscriptionIDsToDelete: nil)
+
+                operation.modifySubscriptionsCompletionBlock = { subscriptions, deleted, error in
+                    
+                }
+                        
+                // Set an appropriate QoS and add the operation to the private
+                // database's operation queue to execute it.
+                operation.qualityOfService = .utility
+                
+                Self.container.publicCloudDatabase.add(operation)
             }
             .store(in: &subs)
         
