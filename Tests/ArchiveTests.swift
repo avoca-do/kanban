@@ -1,26 +1,26 @@
 import XCTest
 import Combine
 @testable import Kanban
+@testable import Archivable
 
 final class ArchiveTests: XCTestCase {
     private var archive: Archive!
     private var subs: Set<AnyCancellable>!
-    private var save: PassthroughSubject<Archive, Never>!
     
     override func setUp() {
+        Repository.override = .init()
         archive = .new
         subs = .init()
-        save = .init()
+        Repository.override = .init()
     }
     
     func testSaveBoards() {
         let expect = expectation(description: "")
         let date = Date()
-        save.sink {
+        Repository.override!.sink {
             XCTAssertGreaterThanOrEqual($0.date(.archive), date)
             expect.fulfill()         }
         .store(in: &subs)
-        archive.save = save
         archive.boards = [.init()]
         
         waitForExpectations(timeout: 1)
@@ -28,12 +28,11 @@ final class ArchiveTests: XCTestCase {
     
     func testSaveCapacity() {
         let expect = expectation(description: "")
-        save.sink {
+        Repository.override!.sink {
             XCTAssertEqual(3, $0.capacity)
             expect.fulfill()
         }
         .store(in: &subs)
-        archive.save = save
         archive.capacity = 3
         
         waitForExpectations(timeout: 1)

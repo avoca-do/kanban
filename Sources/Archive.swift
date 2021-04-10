@@ -1,10 +1,8 @@
 import Foundation
-import Combine
 import Archivable
 
 public struct Archive: Archivable, Dateable {
     public static let new = Self()
-    public weak var save: PassthroughSubject<Archive, Never>?
     
     public var date: Date {
         date(.archive)
@@ -16,7 +14,7 @@ public struct Archive: Archivable, Dateable {
     
     public var capacity = 1 {
         didSet {
-            save?.send(self)
+            Repository.save.send(self)
         }
     }
     
@@ -30,7 +28,7 @@ public struct Archive: Archivable, Dateable {
     
     var boards: [Board] {
         didSet {
-            save?.send(self)
+            Repository.save.send(self)
         }
     }
     

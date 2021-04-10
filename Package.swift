@@ -25,6 +25,8 @@ let package = Package(
         .testTarget(
             name: "Tests",
             dependencies: ["Kanban"],
-            path: "Tests"),
+            path: "Tests",
+            swiftSettings: [
+                .define("ENABLE")])
     ]
 )
