@@ -14,9 +14,5 @@ public struct Repository: Repo {
     
     public static let container = "iCloud.avoca.do"
     public static let prefix = "archive_"
-    
-    static var save: PassthroughSubject<Archive, Never> {
-        override ?? memory.save
-    }
-    static var override: PassthroughSubject<Archive, Never>?
+    public static internal(set) var override: PassthroughSubject<Archive, Never>?
 }

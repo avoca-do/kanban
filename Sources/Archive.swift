@@ -14,7 +14,7 @@ public struct Archive: Archivable, Dateable {
     
     public var capacity = 1 {
         didSet {
-            Repository.save.send(self)
+            Repository.save(self)
         }
     }
     
@@ -28,7 +28,7 @@ public struct Archive: Archivable, Dateable {
     
     var boards: [Board] {
         didSet {
-            Repository.save.send(self)
+            Repository.save(self)
         }
     }
     
