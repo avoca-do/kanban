@@ -4,7 +4,6 @@ import Archivable
 
 public struct Repository: Repo {
     public static let memory = Memory<Self>()
-    public typealias A = Archive
     
     #if DEBUG
         public static let file = URL.manifest("avocado.debug.archive")
