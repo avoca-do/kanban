@@ -1,7 +1,7 @@
 import Foundation
 import Archivable
 
-public struct Archive: Archivable, Dateable {
+public struct Archive: Archived {
     public static let new = Self()
     
     public var date: Date {
