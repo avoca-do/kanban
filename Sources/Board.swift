@@ -1,7 +1,7 @@
 import Foundation
 import Archivable
 
-struct Board: Archivable, Equatable {
+struct Board: Archiving, Equatable {
     var name: String
     
     var count: Int {

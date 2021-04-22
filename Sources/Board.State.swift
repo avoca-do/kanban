@@ -2,7 +2,7 @@ import Foundation
 import Archivable
 
 extension Board {
-    struct State: Archivable {
+    struct State: Archiving {
         let date: Date
         let actions: [Action]
         

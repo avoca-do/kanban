@@ -2,7 +2,7 @@ import Foundation
 import Archivable
 
 extension Board {
-    enum Action: Archivable, Equatable {
+    enum Action: Archiving, Equatable {
         case
         create,
         card,
