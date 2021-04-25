@@ -19,7 +19,8 @@ final class ArchiveTests: XCTestCase {
         let date = Date()
         Repository.override!.sink {
             XCTAssertGreaterThanOrEqual($0.date(.archive), date)
-            expect.fulfill()         }
+            expect.fulfill()
+        }
         .store(in: &subs)
         archive.boards = [.init()]
         
