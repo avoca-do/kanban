@@ -2,7 +2,7 @@ import Foundation
 import Combine
 import Archivable
 
-public struct Repository: Repo {
+public struct Repository: Controller {
     public static let memory = Memory<Self>()
     
     #if DEBUG

@@ -80,4 +80,13 @@ final class ArchiveTests: XCTestCase {
     func testIndexOutOfBounds() {
         XCTAssertNotNil(archive[.board(0)])
     }
+    
+    func testComparison() {
+        var archiveA = Archive.new
+        let archiveB = Archive.new
+        XCTAssertEqual(archiveA, archiveB)
+        archiveA.capacity = 2
+        XCTAssertNotEqual(archiveA, archiveB)
+        XCTAssertGreaterThan(archiveA, archiveB)
+    }
 }
