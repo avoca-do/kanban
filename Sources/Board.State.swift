@@ -8,7 +8,7 @@ extension Board {
         
         var data: Data {
             Data()
-                .adding(date.timestamp)
+                .adding(date)
                 .adding(UInt8(actions.count))
                 .adding(actions.flatMap(\.data))
         }
@@ -19,7 +19,7 @@ extension Board {
         }
         
         init(data: inout Data) {
-            date = .init(timestamp: data.uInt32())
+            date = data.date()
             actions = (0 ..< .init(data.removeFirst()))
                 .map { _ in
                     .init(data: &data)
