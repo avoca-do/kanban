@@ -5,18 +5,19 @@ public struct Archive: Archived {
     public static let new = Self()
     
     public var date: Date {
-        date(.archive)
+        get {
+            date(.archive)
+        }
+        set {
+            
+        }
     }
     
     public var available: Bool {
         capacity > boards.count
     }
     
-    public var capacity = 1 {
-        didSet {
-            Repository.save(self)
-        }
-    }
+    public internal(set) var capacity = 1
     
     public var data: Data {
         Data()
@@ -26,11 +27,7 @@ public struct Archive: Archived {
             .compressed
     }
     
-    var boards: [Board] {
-        didSet {
-            Repository.save(self)
-        }
-    }
+    var boards: [Board]
     
     private init() {
         boards = []

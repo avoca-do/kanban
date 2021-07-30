@@ -1,17 +1,15 @@
 import XCTest
 import Combine
+import Archivable
 @testable import Kanban
-@testable import Archivable
 
-final class ArchiveTests: XCTestCase {
-    private var archive: Archive!
+final class CloudTests: XCTestCase {/*
+    private var cloud: Cloud<Archive>!
     private var subs: Set<AnyCancellable>!
     
     override func setUp() {
-        Repository.override = .init()
-        archive = .new
-        subs = .init()
-        Repository.override = .init()
+        cloud = .init(manifest: nil)
+        subs = []
     }
     
     func testSaveBoards() {
@@ -89,5 +87,5 @@ final class ArchiveTests: XCTestCase {
         archiveA.capacity = 2
         XCTAssertNotEqual(archiveA, archiveB)
         XCTAssertGreaterThan(archiveA, archiveB)
-    }
+    }*/
 }

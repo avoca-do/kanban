@@ -2,10 +2,6 @@ import XCTest
 @testable import Kanban
 
 final class DataTests: XCTestCase {
-    override func setUp() {
-        Repository.override = .init()
-    }
-    
     func testArchive() {
         var boardA = Board()
         var data = Data()

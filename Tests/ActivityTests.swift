@@ -6,7 +6,6 @@ final class ActivityTests: XCTestCase {
     
     override func setUp() {
         archive = .new
-        Repository.override = .init()
     }
     
     func testEmpty() {
