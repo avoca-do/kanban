@@ -3,7 +3,7 @@ import Combine
 import Archivable
 @testable import Kanban
 
-final class CloudTests: XCTestCase {/*
+final class CloudTests: XCTestCase {
     private var cloud: Cloud<Archive>!
     private var subs: Set<AnyCancellable>!
     
@@ -12,55 +12,59 @@ final class CloudTests: XCTestCase {/*
         subs = []
     }
     
-    func testSaveBoards() {
+    func testAdd() {
         let expect = expectation(description: "")
         let date = Date()
-        Repository.override!.sink {
-            XCTAssertGreaterThanOrEqual($0.date(.archive), date)
-            expect.fulfill()
-        }
-        .store(in: &subs)
-        archive.boards = [.init()]
-        
+        XCTAssertTrue(cloud.archive.value.isEmpty(.archive))
+        cloud
+            .archive
+            .dropFirst()
+            .sink {
+                XCTAssertEqual(1, $0.count(.archive))
+                XCTAssertEqual(1, $0[.board(0)].snaps.first!.state.actions.count)
+                XCTAssertEqual(.create, $0[.board(0)].snaps.first!.state.actions.first!)
+                XCTAssertGreaterThanOrEqual($0[.board(0)].snaps.first!.state.date, date)
+                XCTAssertGreaterThanOrEqual($0.date(.archive), date)
+                XCTAssertFalse($0.isEmpty(.board(0)))
+                XCTAssertTrue($0.isEmpty(.column(.board(0), 0)))
+                XCTAssertFalse($0.isEmpty(.archive))
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.add()
         waitForExpectations(timeout: 1)
     }
     
     func testSaveCapacity() {
         let expect = expectation(description: "")
-        Repository.override!.sink {
-            XCTAssertEqual(3, $0.capacity)
-            expect.fulfill()
-        }
-        .store(in: &subs)
-        archive.capacity = 3
-        
+        cloud
+            .archive
+            .dropFirst()
+            .sink {
+                XCTAssertEqual(2, $0.capacity)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.purschase()
         waitForExpectations(timeout: 1)
     }
     
-    func testAdd() {
-        let date = Date()
-        archive.add()
-        
-        XCTAssertEqual(1, archive.count(.archive))
-        XCTAssertEqual(1, archive[.board(0)].snaps.first!.state.actions.count)
-        XCTAssertEqual(.create, archive[.board(0)].snaps.first!.state.actions.first!)
-        XCTAssertGreaterThanOrEqual(archive[.board(0)].snaps.first!.state.date, date)
-        XCTAssertGreaterThanOrEqual(archive.date(.archive), date)
-    }
-    
     func testDelete() {
-        archive.add()
-        archive.delete(.board(0))
-        
-        XCTAssertTrue(archive.isEmpty(.archive))
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(2)
+            .sink {
+                XCTAssertTrue($0.isEmpty(.archive))
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.add()
+        cloud.delete(.board(0))
+        waitForExpectations(timeout: 1)
     }
     
-    func testEmpty() {
-        XCTAssertEqual(true, archive.isEmpty(.archive))
-        archive.add()
-        XCTAssertEqual(false, archive.isEmpty(.board(0)))
-        XCTAssertEqual(true, archive.isEmpty(.column(.board(0), 0)))
-    }
+    /*
     
     func testCount() {
         XCTAssertEqual(0, archive.count(.archive))

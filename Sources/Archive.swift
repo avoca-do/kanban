@@ -136,14 +136,6 @@ public struct Archive: Archived {
         self[path].move(path, horizontal: horizontal)
     }
     
-    public mutating func add() {
-        boards.insert(.init(), at: 0)
-    }
-    
-    public mutating func delete(_ path: Path) {
-        boards.remove(at: path._board)
-    }
-    
     public mutating func column(_ path: Path) {
         self[path].column()
     }

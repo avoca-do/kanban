@@ -2,6 +2,18 @@ import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
+    public func add() {
+        mutating {
+            $0.boards.insert(.init(), at: 0)
+        }
+    }
+    
+    public mutating func delete(_ path: Path) {
+        mutating {
+            $0.boards.remove(at: path._board)
+        }
+    }
+    
 //    public func browse(_ search: String, browse: Int?, completion: @escaping (Int, Page.Access) -> Void) {
 //        mutating {
 //            $0.browse(search, browse: browse)
