@@ -21,42 +21,42 @@ final class DataTests: XCTestCase {
         boardB[content: .card(.column(.archive, 0), 0)] = "hello world"
         
         var archive = Archive.new
-        archive.boards = [boardB, boardA]
+        archive.items = [boardB, boardA]
         
         let archived = archive.data.mutating(transform: Archive.init(data:))
         
-        XCTAssertEqual(2, archived.boards.count)
+        XCTAssertEqual(2, archived.items.count)
         XCTAssertEqual(1, archived.count(.column(.board(0), 0)))
         XCTAssertTrue(archived.isEmpty(.column(.board(1), 0)))
         XCTAssertEqual("hello world", archived[content: .card(.column(.board(0), 0), 0)])
         
-        XCTAssertEqual(2, archived.boards.first!.snaps.count)
-        XCTAssertEqual(1, archived.boards.first!.snaps.first!.state.actions.count)
-        XCTAssertEqual(.create, archived.boards.first!.snaps.first!.state.actions.first!)
-        XCTAssertEqual(2, archived.boards.first!.snaps.last!.state.actions.count)
-        XCTAssertEqual(500, Int(archived.boards.first!.snaps.first!.state.date.timeIntervalSince1970))
-        XCTAssertEqual(.init(boardB.snaps[1].state.date.timeIntervalSince1970), Int(archived.boards.first!.snaps.last!.state.date.timeIntervalSince1970))
-        XCTAssertEqual("total recall", archived.boards.first!.name)
+        XCTAssertEqual(2, archived.items.first!.snaps.count)
+        XCTAssertEqual(1, archived.items.first!.snaps.first!.state.actions.count)
+        XCTAssertEqual(.create, archived.items.first!.snaps.first!.state.actions.first!)
+        XCTAssertEqual(2, archived.items.first!.snaps.last!.state.actions.count)
+        XCTAssertEqual(500, Int(archived.items.first!.snaps.first!.state.date.timeIntervalSince1970))
+        XCTAssertEqual(.init(boardB.snaps[1].state.date.timeIntervalSince1970), Int(archived.items.first!.snaps.last!.state.date.timeIntervalSince1970))
+        XCTAssertEqual("total recall", archived.items.first!.name)
         
-        XCTAssertEqual(.card, archived.boards.first!.snaps.last!.state.actions.first)
+        XCTAssertEqual(.card, archived.items.first!.snaps.last!.state.actions.first)
         
-        if case let .content(id, content) = archived.boards.first!.snaps.last!.state.actions.last {
+        if case let .content(id, content) = archived.items.first!.snaps.last!.state.actions.last {
             XCTAssertEqual("hello world", content)
             XCTAssertEqual(0, id)
         } else {
             XCTFail()
         }
 
-        XCTAssertEqual(1, archived.boards[1].snaps.count)
-        XCTAssertEqual(1, archived.boards[1].snaps.first!.state.actions.count)
-        XCTAssertEqual(.create, archived.boards[1].snaps.first!.state.actions.first!)
-        XCTAssertEqual(300, Int(archived.boards[1].snaps.first!.state.date.timeIntervalSince1970))
-        XCTAssertEqual(.init(boardA.snaps[0].state.date.timeIntervalSince1970), Int(archived.boards[1].snaps.last!.state.date.timeIntervalSince1970))
+        XCTAssertEqual(1, archived.items[1].snaps.count)
+        XCTAssertEqual(1, archived.items[1].snaps.first!.state.actions.count)
+        XCTAssertEqual(.create, archived.items[1].snaps.first!.state.actions.first!)
+        XCTAssertEqual(300, Int(archived.items[1].snaps.first!.state.date.timeIntervalSince1970))
+        XCTAssertEqual(.init(boardA.snaps[0].state.date.timeIntervalSince1970), Int(archived.items[1].snaps.last!.state.date.timeIntervalSince1970))
         
-        XCTAssertEqual(3, archived.boards[0].count)
-        XCTAssertEqual("DO", archived[title: .column(.board(0), 0)])
-        XCTAssertEqual("DOING", archived[title: .column(.board(0), 1)])
-        XCTAssertEqual("DONE", archived[title: .column(.board(0), 2)])
+        XCTAssertEqual(3, archived.items[0].count)
+        XCTAssertEqual("DO", archived[name: .column(.board(0), 0)])
+        XCTAssertEqual("DOING", archived[name: .column(.board(0), 1)])
+        XCTAssertEqual("DONE", archived[name: .column(.board(0), 2)])
     }
     
     func testVertical() {

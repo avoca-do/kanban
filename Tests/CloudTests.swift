@@ -35,7 +35,7 @@ final class CloudTests: XCTestCase {
                 XCTAssertFalse($0.isEmpty(.archive))
                 XCTAssertEqual(3, $0.count(.board(0)))
                 XCTAssertEqual(0, $0.count(.column(.board(0), 0)))
-                XCTAssertEqual("DO", $0[title: .column(.board(0), 0)])
+                XCTAssertEqual("DO", $0[.board(0)].name)
                 expect.fulfill()
             }
             .store(in: &subs)
@@ -83,7 +83,7 @@ final class CloudTests: XCTestCase {
             }
             .store(in: &subs)
         cloud.add()
-        cloud.board(index: 0, name: "hello world")
+        cloud.board(path: .board(0), name: "hello world")
         waitForExpectations(timeout: 1)
     }
 }

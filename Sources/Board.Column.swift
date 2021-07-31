@@ -2,35 +2,23 @@ import Foundation
 import Archivable
 
 extension Board {
-    struct Column: Equatable {
+    public struct Column: Pather, PatherItem {
         let title: String
+
+        public let items: [Card]
         
-        var count: Int {
-            cards.count
-        }
-        
-        var isEmpty: Bool {
-            cards.isEmpty
-        }
-        
-        let cards: [Card]
-        
-        init() {
+        public init() {
             title = ""
-            cards = []
+            items = []
         }
         
         private init(title: String, cards: [Card]) {
             self.title = title
-            self.cards = cards
-        }
-        
-        subscript(_ path: Path) -> Card {
-            path._card >= 0 && path._card < count ? cards[path._card] : .init(id: 0)
+            self.items = cards
         }
         
         func adding(id: Int) -> Self {
-            with(cards: .init(id: id) + cards)
+            with(cards: .init(id: id) + items)
         }
         
         func with(cards: [Card]) -> Self {
@@ -38,7 +26,7 @@ extension Board {
         }
         
         func with(title: String) -> Self {
-            .init(title: title, cards: cards)
+            .init(title: title, cards: items)
         }
     }
 }

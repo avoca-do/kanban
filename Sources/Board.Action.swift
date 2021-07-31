@@ -107,7 +107,7 @@ extension Board {
                     }
                 }
             case let .title(column, title):
-                if let from = from, from.columns.count > column, from.columns[column].title == title {
+                if let from = from, from.items.count > column, from.items[column].title == title {
                     return true
                 }
             default: break

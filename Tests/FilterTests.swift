@@ -12,7 +12,7 @@ final class FilterTests: XCTestCase {
         XCTAssertEqual(board, board.data.mutating(transform: Board.init(data:)))
         XCTAssertEqual(board.snaps.count, board.data.mutating(transform: Board.init(data:)).snaps.count)
         (0 ..< board.snaps.count).forEach {
-            XCTAssertEqual(board.snaps[$0].columns, board.data.mutating(transform: Board.init(data:)).snaps[$0].columns)
+            XCTAssertEqual(board.snaps[$0].items, board.data.mutating(transform: Board.init(data:)).snaps[$0].items)
         }
     }
     

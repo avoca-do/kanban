@@ -1,16 +1,45 @@
 import Foundation
 import Archivable
 
-struct Board: Property, Equatable {
-    var name: String
+public struct Board: Property, Pather, PatherItem {
+    public let name: String
+    let snaps: [Snap]
     
-    var count: Int {
-        columns.count
+    public var items: [Column] {
+        snap.items
     }
     
-    var isEmpty: Bool {
-        columns.isEmpty
+    func with(name: String) -> Self {
+        .init(name: name, snaps: snaps)
     }
+    
+    private init(name: String, snaps: [Snap]) {
+        self.name = name
+        self.snaps = snaps
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     var date: Date {
         snap.state.date
@@ -19,68 +48,34 @@ struct Board: Property, Equatable {
     var progress: Progress {
         {
             Progress(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
-        } (columns.map(\.count).reduce(0, +), columns.last!.count)
+        } (items.map(\.count).reduce(0, +), items.last!.count)
     }
     
-    var snaps: [Snap]
     
-    var data: Data {
+    
+    public var data: Data {
         Data()
             .adding(name)
             .adding(UInt16(snaps.count))
             .adding(snaps.map(\.state).flatMap(\.data))
     }
     
-    private var columns: [Column] {
-        snap.columns
-    }
+    
     
     private var snap: Snap {
         snaps.last!
     }
     
-    init() {
+    public init() {
         name = ""
         snaps = []
         add(.create)
     }
     
-    init(data: inout Data) {
+    public init(data: inout Data) {
         name = data.string()
         snaps = (0 ..< .init(data.uInt16())).reduce(into: []) { list, _ in
             list.append(Snap(data: &data, after: list.last))
-        }
-    }
-    
-    subscript(_ path: Path) -> Column {
-        path._column >= 0 && path._column < count ? columns[path._column] : .init()
-    }
-    
-    subscript(content path: Path) -> String {
-        get {
-            self[path][path].content
-        }
-        set {
-            let content = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard
-                !content.isEmpty,
-                content != self[path][path].content
-            else { return }
-            add(.content(self[path][path].id, content))
-        }
-    }
-    
-    subscript(title path: Path) -> String {
-        get {
-            self[path].title
-        }
-        set {
-            let title = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard
-                !title.isEmpty,
-                title != self[path].title
-            else { return }
-            add(.title(path._column, title))
         }
     }
     
@@ -120,6 +115,6 @@ struct Board: Property, Equatable {
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.name == rhs.name && lhs.columns == rhs.columns
+        lhs.name == rhs.name && lhs.items == rhs.items
     }
 }

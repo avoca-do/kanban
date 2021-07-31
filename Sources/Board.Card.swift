@@ -1,9 +1,13 @@
 import Foundation
 
 extension Board {
-    struct Card: Equatable {
+    public struct Card: PatherItem {
         let id: Int
         let content: String
+        
+        public init() {
+            self.init(id: 0)
+        }
         
         init(id: Int) {
             self.id = id

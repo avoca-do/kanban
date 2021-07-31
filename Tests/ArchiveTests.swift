@@ -11,4 +11,12 @@ final class ArchiveTests: XCTestCase {
         XCTAssertNotEqual(archiveA, archiveB)
         XCTAssertGreaterThan(archiveA, archiveB)
     }
+    
+    func testColumn() {
+        var archive = Archive.new
+        archive.items = [.init()]
+        XCTAssertTrue(archive.isEmpty(.column(.board(0), 0)))
+        archive.items[0].card()
+        XCTAssertFalse(archive.isEmpty(.column(.board(0), 0)))
+    }
 }

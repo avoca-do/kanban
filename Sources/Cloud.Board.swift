@@ -4,21 +4,58 @@ import Archivable
 extension Cloud where A == Archive {
     public func add() {
         mutating {
-            $0.boards.insert(.init(), at: 0)
+            $0.items.insert(.init(), at: 0)
         }
     }
     
     public mutating func delete(_ path: Path) {
         mutating {
-            $0.boards.remove(at: path._board)
+            $0.items.remove(at: path._board)
         }
     }
     
     public mutating func board(index: Int, name: String) {
         mutating {
-            $0.boards[index].name = name
+            $0
+                .items
+                .mutate(index: index) {
+                    $0.with(name: name)
+                }
         }
     }
+    
+    /*
+     subscript(content path: Path) -> String {
+         get {
+             self[path][path].content
+         }
+         set {
+             let content = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+             guard
+                 !content.isEmpty,
+                 content != self[path][path].content
+             else { return }
+             add(.content(self[path][path].id, content))
+         }
+     }
+     
+     subscript(title path: Path) -> String {
+         get {
+             self[path].title
+         }
+         set {
+             let title = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+             guard
+                 !title.isEmpty,
+                 title != self[path].title
+             else { return }
+             add(.title(path._column, title))
+         }
+     }
+     
+     */
+    
+    
     
 //    public func browse(_ search: String, browse: Int?, completion: @escaping (Int, Page.Access) -> Void) {
 //        mutating {

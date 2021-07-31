@@ -2,14 +2,14 @@ import Foundation
 import Archivable
 
 extension Board {
-    struct Snap {
+    struct Snap: Pather {
         let state: State
-        let columns: [Column]
+        let items: [Column]
         let counter: Int
 
         init(after: Snap?) {
             state = .init()
-            columns = after?.columns ?? []
+            items = after?.items ?? []
             counter = after?.counter ?? 0
         }
         
@@ -23,16 +23,12 @@ extension Board {
         
         private init(state: State, columns: [Column], counter: Int) {
             self.state = state
-            self.columns = columns
+            self.items = columns
             self.counter = counter
         }
         
         func path(_ id: Int) -> Path? {
-            columns[id]
-        }
-        
-        subscript(_ path: Path) -> Column {
-            path._column >= 0 && path._column < columns.count ? columns[path._column] : .init()
+            items[id]
         }
         
         mutating func add(_ action: Action, _ previous: Snap?) {
@@ -43,7 +39,7 @@ extension Board {
         }
         
         private func with(state: State) -> Self {
-            .init(state: state, columns: columns, counter: counter)
+            .init(state: state, columns: items, counter: counter)
         }
         
         private func applying(_ action: Board.Action) -> Self {
@@ -56,27 +52,27 @@ extension Board {
                     .applying(.column)
                     .applying(.title(2, "DONE"))
             case .card:
-                return .init(state: state, columns: columns.mutating(index: 0) {
+                return .init(state: state, columns: items.mutating(index: 0) {
                                 $0.adding(id: counter)
                 }, counter: counter + 1)
             case .column:
-                return .init(state: state, columns: columns + Column(), counter: counter)
+                return .init(state: state, columns: items + Column(), counter: counter)
             case let .title(column, title):
-                return .init(state: state, columns: columns.mutating(index: column) {
+                return .init(state: state, columns: items.mutating(index: column) {
                     $0.with(title: title)
                 }, counter: counter)
             case let .content(id, content):
-                return .init(state: state, columns: columns.mutating(id: id) {
+                return .init(state: state, columns: items.mutating(id: id) {
                     $0.with(content: content)
                 }, counter: counter)
             case let .vertical(id, card):
-                return .init(state: state, columns: columns.moving(id: id, vertical: card), counter: counter)
+                return .init(state: state, columns: items.moving(id: id, vertical: card), counter: counter)
             case let .horizontal(id, column):
-                return .init(state: state, columns: columns.moving(id: id, horizontal: column), counter: counter)
+                return .init(state: state, columns: items.moving(id: id, horizontal: column), counter: counter)
             case let .remove(id):
-                return .init(state: state, columns: columns.removing(id: id), counter: counter)
+                return .init(state: state, columns: items.removing(id: id), counter: counter)
             case let .drop(column):
-                return .init(state: state, columns: columns.removing(index: column), counter: counter)
+                return .init(state: state, columns: items.removing(index: column), counter: counter)
             }
         }
     }
