@@ -14,6 +14,12 @@ extension Cloud where A == Archive {
         }
     }
     
+    public mutating func board(index: Int, name: String) {
+        mutating {
+            $0.boards[index].name = name
+        }
+    }
+    
 //    public func browse(_ search: String, browse: Int?, completion: @escaping (Int, Page.Access) -> Void) {
 //        mutating {
 //            $0.browse(search, browse: browse)

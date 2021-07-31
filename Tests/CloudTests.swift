@@ -12,10 +12,15 @@ final class CloudTests: XCTestCase {
         subs = []
     }
     
+    func testIndexOutOfBounds() {
+        XCTAssertNotNil(cloud.archive.value[.board(0)])
+    }
+    
     func testAdd() {
         let expect = expectation(description: "")
         let date = Date()
         XCTAssertTrue(cloud.archive.value.isEmpty(.archive))
+        XCTAssertEqual(0, cloud.archive.value.count(.archive))
         cloud
             .archive
             .dropFirst()
@@ -28,6 +33,9 @@ final class CloudTests: XCTestCase {
                 XCTAssertFalse($0.isEmpty(.board(0)))
                 XCTAssertTrue($0.isEmpty(.column(.board(0), 0)))
                 XCTAssertFalse($0.isEmpty(.archive))
+                XCTAssertEqual(3, $0.count(.board(0)))
+                XCTAssertEqual(0, $0.count(.column(.board(0), 0)))
+                XCTAssertEqual("DO", $0[title: .column(.board(0), 0)])
                 expect.fulfill()
             }
             .store(in: &subs)
@@ -64,32 +72,18 @@ final class CloudTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
     
-    /*
-    
-    func testCount() {
-        XCTAssertEqual(0, archive.count(.archive))
-        archive.add()
-        XCTAssertEqual(3, archive.count(.board(0)))
-        XCTAssertEqual(0, archive.count(.column(.board(0), 0)))
-    }
-    
     func testName() {
-        archive.add()
-        archive.boards[0].name = "hello world"
-        XCTAssertEqual("hello world", archive[name: .board(0)])
-        XCTAssertEqual("DO", archive[title: .column(.board(0), 0)])
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(2)
+            .sink {
+                XCTAssertEqual("hello world", $0[name: .board(0)])
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.add()
+        cloud.board(index: 0, name: "hello world")
+        waitForExpectations(timeout: 1)
     }
-    
-    func testIndexOutOfBounds() {
-        XCTAssertNotNil(archive[.board(0)])
-    }
-    
-    func testComparison() {
-        var archiveA = Archive.new
-        let archiveB = Archive.new
-        XCTAssertEqual(archiveA, archiveB)
-        archiveA.capacity = 2
-        XCTAssertNotEqual(archiveA, archiveB)
-        XCTAssertGreaterThan(archiveA, archiveB)
-    }*/
 }
