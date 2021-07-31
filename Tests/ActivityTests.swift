@@ -22,9 +22,25 @@ final class ActivityTests: XCTestCase {
         var data1 = Data()
             .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 5).timestamp)
             .adding(UInt8(0))
-        archive.items[0].snaps[0] = Board.Snap(data: &data0, after: nil)
-        archive.items[0].card()
-        archive.items[0].snaps[1] = Board.Snap(data: &data1, after: nil)
+        archive
+            .items
+            .mutate(index: 0) {
+                $0
+                    .with(snaps: [.init(data: &data0, after: nil)])
+            }
+        archive
+            .items
+            .mutate(index: 0) {
+                $0.with(snaps: $0
+                                .snaps
+                                .adding(action: .card))
+            }
+        archive
+            .items
+            .mutate(index: 0) {
+                $0
+                    .with(snaps: [$0.snaps[0], .init(data: &data1, after: nil)])
+            }
         
         data0 = Data()
             .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 3).timestamp)
@@ -33,9 +49,25 @@ final class ActivityTests: XCTestCase {
         data1 = Data()
             .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 2).timestamp)
             .adding(UInt8(0))
-        archive.items[1].snaps[0] = Board.Snap(data: &data0, after: nil)
-        archive.items[1].card()
-        archive.items[1].snaps[1] = Board.Snap(data: &data1, after: nil)
+        archive
+            .items
+            .mutate(index: 1) {
+                $0
+                    .with(snaps: [.init(data: &data0, after: nil)])
+            }
+        archive
+            .items
+            .mutate(index: 1) {
+                $0.with(snaps: $0
+                                .snaps
+                                .adding(action: .card))
+            }
+        archive
+            .items
+            .mutate(index: 1) {
+                $0
+                    .with(snaps: [$0.snaps[0], .init(data: &data1, after: nil)])
+            }
         
         XCTAssertEqual([
                         [1, 1, 0, 0, 0],
@@ -50,7 +82,12 @@ final class ActivityTests: XCTestCase {
             .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 2).timestamp)
             .adding(UInt8(archive.items[0].snaps[0].state.actions.count))
             .adding(archive.items[0].snaps[0].state.actions.flatMap(\.data))
-        archive.items[0].snaps[0] = Board.Snap(data: &data, after: nil)
+        archive
+            .items
+            .mutate(index: 0) {
+                $0
+                    .with(snaps: [.init(data: &data, after: nil)])
+            }
         
         XCTAssertEqual([[0, 0, 0, 0, 0]], archive[activity: .day])
     }
