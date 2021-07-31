@@ -46,20 +46,20 @@ extension Board {
             switch action {
             case .create:
                 return applying(.column)
-                    .applying(.title(0, "DO"))
+                    .applying(.name(0, "DO"))
                     .applying(.column)
-                    .applying(.title(1, "DOING"))
+                    .applying(.name(1, "DOING"))
                     .applying(.column)
-                    .applying(.title(2, "DONE"))
+                    .applying(.name(2, "DONE"))
             case .card:
                 return .init(state: state, columns: items.mutating(index: 0) {
                                 $0.adding(id: counter)
                 }, counter: counter + 1)
             case .column:
                 return .init(state: state, columns: items + Column(), counter: counter)
-            case let .title(column, title):
+            case let .name(column, name):
                 return .init(state: state, columns: items.mutating(index: column) {
-                    $0.with(title: title)
+                    $0.with(name: name)
                 }, counter: counter)
             case let .content(id, content):
                 return .init(state: state, columns: items.mutating(id: id) {

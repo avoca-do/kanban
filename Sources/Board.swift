@@ -6,10 +6,14 @@ public struct Board: Property, Pather, PatherItem {
     let snaps: [Snap]
     
     public var items: [Column] {
-        snap.items
+        snaps.last!.items
     }
     
     func with(name: String) -> Self {
+        .init(name: name, snaps: snaps)
+    }
+    
+    func with(snaps: [Snap]) -> Self {
         .init(name: name, snaps: snaps)
     }
     
@@ -36,15 +40,6 @@ public struct Board: Property, Pather, PatherItem {
     
     
     
-    
-    
-    
-    
-    
-    var date: Date {
-        snap.state.date
-    }
-    
     var progress: Progress {
         {
             Progress(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
@@ -60,12 +55,7 @@ public struct Board: Property, Pather, PatherItem {
             .adding(snaps.map(\.state).flatMap(\.data))
     }
     
-    
-    
-    private var snap: Snap {
-        snaps.last!
-    }
-    
+
     public init() {
         name = ""
         snaps = []
@@ -81,25 +71,17 @@ public struct Board: Property, Pather, PatherItem {
     
     mutating func move(_ path: Path, vertical: Int) {
         guard path._card != vertical else { return }
-        add(.vertical(self[path][path].id, vertical))
+//        add(.vertical(self[path][path].id, vertical))
     }
     
     mutating func move(_ path: Path, horizontal: Int) {
         guard path._column != horizontal else { return }
-        add(.horizontal(self[path][path].id, horizontal))
-    }
-    
-    mutating func column() {
-        add(.column)
-    }
-    
-    mutating func card() {
-        add(.card)
+//        add(.horizontal(self[path][path].id, horizontal))
     }
     
     mutating func remove(_ path: Path) {
-        guard snap.path(self[path][path].id) != nil else { return }
-        add(.remove(self[path][path].id))
+//        guard snap.path(self[path][path].id) != nil else { return }
+//        add(.remove(self[path][path].id))
     }
     
     mutating func drop(_ path: Path) {
@@ -107,14 +89,14 @@ public struct Board: Property, Pather, PatherItem {
     }
     
     mutating func add(_ action: Action) {
-        if snaps.isEmpty || (Calendar.current.dateComponents([.hour], from: date, to: .init()).hour! > 0
-                                && !snap.state.actions.isEmpty) {
-            snaps.append(.init(after: snaps.last))
-        }
-        snaps[snaps.count - 1].add(action, snaps.count > 1 ? snaps[snaps.count - 2] : nil)
+//        if snaps.isEmpty || (Calendar.current.dateComponents([.hour], from: date, to: .init()).hour! > 0
+//                                && !snap.state.actions.isEmpty) {
+//            snaps.append(.init(after: snaps.last))
+//        }
+//        snaps[snaps.count - 1].add(action, snaps.count > 1 ? snaps[snaps.count - 2] : nil)
     }
     
-    static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.name == rhs.name && lhs.items == rhs.items
     }
 }

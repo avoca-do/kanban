@@ -7,7 +7,7 @@ extension Board {
         create,
         card,
         column,
-        title(Int, String),
+        name(Int, String),
         content(Int, String),
         vertical(Int, Int),
         horizontal(Int, Int),
@@ -28,8 +28,8 @@ extension Board {
                 self = .card
             case .column:
                 self = .column
-            case .title:
-                self = .title(.init(data.removeFirst()), data.string())
+            case .name:
+                self = .name(.init(data.removeFirst()), data.string())
             case .content:
                 self = .content(.init(data.uInt16()), data.string())
             case .vertical:
@@ -59,8 +59,8 @@ extension Board {
                 if case let .vertical(other, _) = action, id == other {
                     return false
                 }
-            case let .title(column, _):
-                if case let .title(other, _) = action, column == other {
+            case let .name(column, _):
+                if case let .name(other, _) = action, column == other {
                     return false
                 }
             case let .remove(id):
@@ -71,7 +71,7 @@ extension Board {
                 }
             case let .drop(column):
                 switch action {
-                case let .title(other, _):
+                case let .name(other, _):
                     return column != other
                 case let .content(id, _), let .vertical(id, _):
                     return column != on.path(id)!._column
@@ -85,11 +85,14 @@ extension Board {
         func redundant(_ from: Snap?, _ to: Snap) -> Bool {
             switch self {
             case let .content(id, content):
-                return from.flatMap { snap in
-                    snap.path(id).map {
-                        snap[$0][$0].content == content
+                return from
+                    .flatMap { snap in
+                        snap
+                            .path(id).map {
+                                snap[$0._column][$0._card].content == content
+                            }
                     }
-                } ?? false
+                    ?? false
             case let .horizontal(id, column):
                 if let previous = from?.path(id) {
                     return previous._column == column
@@ -106,8 +109,8 @@ extension Board {
                         return true
                     }
                 }
-            case let .title(column, title):
-                if let from = from, from.items.count > column, from.items[column].title == title {
+            case let .name(column, name):
+                if let from = from, from.items.count > column, from.items[column].name == name {
                     return true
                 }
             default: break
@@ -119,7 +122,7 @@ extension Board {
             switch self {
             case .create, .card, .column:
                 return .init()
-            case let .title(column, title):
+            case let .name(column, title):
                 return Data()
                     .adding(UInt8(column))
                     .adding(title)
@@ -149,7 +152,7 @@ extension Board {
             case .create: return .create
             case .card: return .card
             case .column: return .column
-            case .title: return .title
+            case .name: return .name
             case .content: return .content
             case .vertical: return .vertical
             case .horizontal: return .horizontal

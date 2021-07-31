@@ -6,7 +6,11 @@ public struct Archive: Archived, Pather {
     
     public var date: Date {
         get {
-            date(.archive)
+            items
+                .compactMap(\.snaps.last)
+                .map(\.state.date)
+                .max()
+                ?? .distantPast
         }
         set {
             
@@ -41,13 +45,6 @@ public struct Archive: Archived, Pather {
         capacity = .init(data.uInt16())
     }
     
-    public func date(_ path: Path) -> Date {
-        switch path {
-        case .board: return self[path].date
-        default: return items.map(\.date).max() ?? .distantPast
-        }
-    }
-    
     public subscript(activity period: Period) -> [[Double]] {
         let start = period.date.timeIntervalSince1970
         let interval = (Date().timeIntervalSince1970 - start) / .init(Period.divisions)
@@ -77,30 +74,6 @@ public struct Archive: Archived, Pather {
                 $0 / maximum
             }
         }
-    }
-    
-    public mutating func move(_ path: Path, vertical: Int) {
-        self[path].move(path, vertical: vertical)
-    }
-    
-    public mutating func move(_ path: Path, horizontal: Int) {
-        self[path].move(path, horizontal: horizontal)
-    }
-    
-    public mutating func column(_ path: Path) {
-        self[path].column()
-    }
-    
-    public mutating func card(_ path: Path) {
-        self[path].card()
-    }
-    
-    public mutating func remove(_ path: Path) {
-        self[path].remove(path)
-    }
-
-    public mutating func drop(_ path: Path) {
-        self[path].drop(path)
     }
     
     public static func < (lhs: Archive, rhs: Archive) -> Bool {

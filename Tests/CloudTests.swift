@@ -13,33 +13,34 @@ final class CloudTests: XCTestCase {
     }
     
     func testIndexOutOfBounds() {
-        XCTAssertNotNil(cloud.archive.value[.board(0)])
+        XCTAssertNotNil(cloud.archive.value[3])
     }
     
-    func testAdd() {
+    func testNewBoard() {
         let expect = expectation(description: "")
         let date = Date()
-        XCTAssertTrue(cloud.archive.value.isEmpty(.archive))
-        XCTAssertEqual(0, cloud.archive.value.count(.archive))
+        XCTAssertTrue(cloud.archive.value.isEmpty)
+        XCTAssertEqual(0, cloud.archive.value.count)
         cloud
             .archive
             .dropFirst()
             .sink {
-                XCTAssertEqual(1, $0.count(.archive))
-                XCTAssertEqual(1, $0[.board(0)].snaps.first!.state.actions.count)
-                XCTAssertEqual(.create, $0[.board(0)].snaps.first!.state.actions.first!)
-                XCTAssertGreaterThanOrEqual($0[.board(0)].snaps.first!.state.date, date)
-                XCTAssertGreaterThanOrEqual($0.date(.archive), date)
-                XCTAssertFalse($0.isEmpty(.board(0)))
-                XCTAssertTrue($0.isEmpty(.column(.board(0), 0)))
-                XCTAssertFalse($0.isEmpty(.archive))
-                XCTAssertEqual(3, $0.count(.board(0)))
-                XCTAssertEqual(0, $0.count(.column(.board(0), 0)))
-                XCTAssertEqual("DO", $0[.board(0)].name)
+                XCTAssertEqual(1, $0.count)
+                XCTAssertFalse($0.isEmpty)
+                XCTAssertEqual(1, $0[0].snaps.first!.state.actions.count)
+                XCTAssertEqual(.create, $0[0].snaps.first!.state.actions.first!)
+                XCTAssertGreaterThanOrEqual($0[0].snaps.first!.state.date, date)
+                XCTAssertGreaterThanOrEqual($0.date, date)
+                XCTAssertFalse($0[0].isEmpty)
+                XCTAssertTrue($0[0][0].isEmpty)
+                
+                XCTAssertEqual(3, $0[0].count)
+                XCTAssertEqual(0, $0[0][0].count)
+                XCTAssertEqual("DO", $0[0][0].name)
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.add()
+        cloud.newBoard()
         waitForExpectations(timeout: 1)
     }
     
@@ -63,27 +64,89 @@ final class CloudTests: XCTestCase {
             .archive
             .dropFirst(2)
             .sink {
-                XCTAssertTrue($0.isEmpty(.archive))
+                XCTAssertTrue($0.isEmpty)
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.add()
-        cloud.delete(.board(0))
+        cloud.newBoard()
+        cloud.delete(board: 0)
         waitForExpectations(timeout: 1)
     }
     
-    func testName() {
+    func testBoardName() {
         let expect = expectation(description: "")
         cloud
             .archive
             .dropFirst(2)
             .sink {
-                XCTAssertEqual("hello world", $0[name: .board(0)])
+                XCTAssertEqual("hello world", $0[0].name)
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.add()
-        cloud.board(path: .board(0), name: "hello world")
+        cloud.newBoard()
+        cloud.rename(board: 0, name: "hello world")
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testAddColumn() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(2)
+            .sink {
+                XCTAssertEqual(4, $0[0].count)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.addColumn(board: 0)
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testColumnName() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(2)
+            .sink {
+                XCTAssertEqual("hello world", $0[0][0].name)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.rename(board: 0, column: 0, name: "hello world")
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testAddCard() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(2)
+            .sink {
+                XCTAssertEqual(1, $0[0][0].count)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.addCard(board: 0)
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testContent() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(3)
+            .sink {
+                XCTAssertEqual("hello world", $0[0][0][1].content)
+                XCTAssertEqual(4, $0[0].snaps.last!.state.actions.count)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.addCard(board: 0)
+        cloud.update(board: 0, column: 0, card: 1, content: "hello world")
         waitForExpectations(timeout: 1)
     }
 }

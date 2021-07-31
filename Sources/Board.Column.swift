@@ -3,17 +3,17 @@ import Archivable
 
 extension Board {
     public struct Column: Pather, PatherItem {
-        let title: String
+        let name: String
 
         public let items: [Card]
         
         public init() {
-            title = ""
+            name = ""
             items = []
         }
         
-        private init(title: String, cards: [Card]) {
-            self.title = title
+        private init(name: String, cards: [Card]) {
+            self.name = name
             self.items = cards
         }
         
@@ -22,11 +22,11 @@ extension Board {
         }
         
         func with(cards: [Card]) -> Self {
-            .init(title: title, cards: cards)
+            .init(name: name, cards: cards)
         }
         
-        func with(title: String) -> Self {
-            .init(title: title, cards: items)
+        func with(name: String) -> Self {
+            .init(name: name, cards: items)
         }
     }
 }

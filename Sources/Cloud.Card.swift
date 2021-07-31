@@ -2,51 +2,21 @@ import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
-    public mutating func delete(board: Int) {
+    public mutating func update(board: Int, column: Int, card: Int, content: String) {
+        let content = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !content.isEmpty else { return }
         mutating {
-            $0
-                .items
-                .remove(at: board)
-        }
-    }
-    
-    public mutating func rename(board: Int, name: String) {
-        mutating {
-            $0
-                .items
-                .mutate(index: board) {
-                    $0.with(name: name)
-                }
-        }
-    }
-    
-    public mutating func addColumn(board: Int) {
-        mutating {
+            guard $0[board][column][card].content != content else { return }
             $0
                 .items
                 .mutate(index: board) {
                     $0
                         .with(snaps: $0
                                 .snaps
-                                .adding(action: .column))
+                                .adding(action: .content($0[column][card].id, content)))
                 }
         }
     }
-    
-    public mutating func addCard(board: Int) {
-        mutating {
-            $0
-                .items
-                .mutate(index: board) {
-                    $0
-                        .with(snaps: $0
-                                .snaps
-                                .adding(action: .card))
-                }
-        }
-    }
-    
-    
     
     /*
      subscript(content path: Path) -> String {
@@ -88,7 +58,7 @@ extension Cloud where A == Archive {
 //            completion($0.browse, $0.access)
 //        }
 //    }
-//    
+//
 //    public func navigate(_ url: URL, completion: @escaping (Int, Page.Access) -> Void) {
 //        mutating {
 //            let access = Page.Access(url: url)
@@ -97,14 +67,14 @@ extension Cloud where A == Archive {
 //            completion(browse, access)
 //        }
 //    }
-//    
+//
 //    public func revisit(_ browse: Int) {
 //        mutating {
 //            guard let browse = $0.browses.remove(where: { $0.id == browse })?.revisit else { return }
 //            $0.browses.insert(browse, at: 0)
 //        }
 //    }
-//    
+//
 //    public func update(_ browse: Int, title: String) {
 //        mutating {
 //            guard let page = $0.browses.remove(where: { $0.id == browse })?
@@ -112,7 +82,7 @@ extension Cloud where A == Archive {
 //            $0.browses.insert(page, at: 0)
 //        }
 //    }
-//    
+//
 //    public func update(_ browse: Int, url: URL) {
 //        mutating {
 //            guard let page = $0.browses.remove(where: { $0.id == browse })?
@@ -120,7 +90,7 @@ extension Cloud where A == Archive {
 //            $0.browses.insert(page, at: 0)
 //        }
 //    }
-//    
+//
 //    public func open(_ bookmark: Int, completion: @escaping (Int) -> Void) {
 //        mutating(transform: { archive in
 //            guard bookmark < archive.bookmarks.count else { return nil }

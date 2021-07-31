@@ -9,6 +9,6 @@ final class ColumnTests: XCTestCase {
     }
     
     func testIndexOutOfBounds() {
-        XCTAssertNotNil(board[.column(.archive, 0)][.card(.column(.archive, 3), 0)])
+        XCTAssertNotNil(board[4][5])
     }
 }

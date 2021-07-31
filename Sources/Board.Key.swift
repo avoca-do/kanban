@@ -6,7 +6,7 @@ extension Board {
         create,
         card,
         column,
-        title,
+        name,
         content,
         vertical,
         horizontal,
