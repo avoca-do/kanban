@@ -27,6 +27,7 @@ extension Board {
             self.counter = counter
         }
         
+        #warning("check if still necessary")
         func path(_ id: Int) -> Path? {
             items[id]
         }

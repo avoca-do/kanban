@@ -8,6 +8,14 @@ extension Cloud where A == Archive {
         }
     }
     
+    public mutating func delete(board: Int) {
+        mutating {
+            $0
+                .items
+                .remove(at: board)
+        }
+    }
+    
     public func purschase() {
         mutating {
             $0.capacity += 1

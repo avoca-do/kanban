@@ -46,6 +46,30 @@ extension Cloud where A == Archive {
         }
     }
     
+    public mutating func delete(board: Int, column: Int, card: Int) {
+        mutating {
+            guard
+                $0.count > board,
+                $0[board].count > column,
+                $0[board][column].count > card
+            else { return }
+            $0
+                .items
+                .mutate(index: board) {
+                    $0
+                        .with(snaps: $0
+                                .snaps
+                                .adding(action: .remove($0[column][card].id)))
+                }
+        }
+    }
+    
+    
+    mutating func remove(_ path: Path) {
+//        guard snap.path(self[path][path].id) != nil else { return }
+//        add(.remove(self[path][path].id))
+    }
+    
     /*
      subscript(content path: Path) -> String {
          get {

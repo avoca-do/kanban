@@ -63,8 +63,12 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-//        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
-//        board.move(.card(.column(.archive, 1), 0), horizontal: 2)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[1][0].id, 2)))
         XCTAssertEqual(1, board[2].count)
         XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
@@ -73,8 +77,12 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-//        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
-//        board.move(.card(.column(.archive, 1), 0), horizontal: 0)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[1][0].id, 0)))
         XCTAssertEqual(0, board[0][0].id)
         XCTAssertEqual(2, board.snaps.first!.state.actions.count)
     }
@@ -84,14 +92,18 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
         
         var data = Data()
             .adding(Date(timeIntervalSinceNow: -100).timestamp)
             .adding(UInt8(board.snaps[0].state.actions.count))
             .adding(board.snaps[0].state.actions.flatMap(\.data))
         board = board.with(snaps: [.init(data: &data, after: nil)])
-        board.move(.card(.column(.archive, 1), 0), horizontal: 0)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[1][0].id, 0)))
         XCTAssertGreaterThanOrEqual(board.snaps[0].state.date.timeIntervalSince1970, date.timeIntervalSince1970)
     }
     
@@ -99,15 +111,21 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
+        
         var data = Data()
             .adding(Date(timeIntervalSince1970: 300).timestamp)
             .adding(UInt8(board.snaps[0].state.actions.count))
             .adding(board.snaps[0].state.actions.flatMap(\.data))
         board = board.with(snaps: [.init(data: &data, after: nil)])
-        
-        board.move(.card(.column(.archive, 1), 0), horizontal: 0)
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[1][0].id, 0)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
         XCTAssertEqual(0, board[1][0].id)
         XCTAssertTrue(board.snaps.last!.state.actions.isEmpty)
     }
@@ -122,8 +140,12 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), vertical: 1)
-        board.move(.card(.column(.archive, 0), 1), vertical: 2)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][0].id, 1)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][1].id, 2)))
         XCTAssertEqual(2, board[0][2].id)
         XCTAssertEqual(5, board.snaps.first!.state.actions.count)
     }
@@ -135,9 +157,13 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), vertical: 1)
-        board.move(.card(.column(.archive, 0), 1), vertical: 0)
-        XCTAssertEqual(1, board[0][1].id)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][0].id, 1)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][1].id, 0)))
+        XCTAssertEqual(1, board[0][0].id)
         XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
     
@@ -148,15 +174,20 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), vertical: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][0].id, 1)))
         var data = Data()
             .adding(Date(timeIntervalSince1970: 300).timestamp)
             .adding(UInt8(board.snaps[0].state.actions.count))
             .adding(board.snaps[0].state.actions.flatMap(\.data))
         board = board.with(snaps: [.init(data: &data, after: nil)])
-        
-        board.move(.card(.column(.archive, 0), 1), vertical: 0)
-        board.move(.card(.column(.archive, 0), 0), vertical: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][1].id, 0)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][0].id, 1)))
         XCTAssertEqual(1, board[0][1].id)
         XCTAssertTrue(board.snaps.last!.state.actions.isEmpty)
     }
@@ -168,8 +199,12 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), vertical: 1)
-        board.move(.card(.column(.archive, 0), 1), horizontal: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][0].id, 1)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][1].id, 1)))
         XCTAssertEqual(1, board[1][0].id)
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
@@ -181,12 +216,24 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), vertical: 1) // id 1
-        board.move(.card(.column(.archive, 0), 1), horizontal: 1) // id 1
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1) // id 0
-        board.move(.card(.column(.archive, 1), 0), vertical: 1) // id 0
-        board.move(.card(.column(.archive, 1), 0), vertical: 1) // id 1
-        board.move(.card(.column(.archive, 1), 1), horizontal: 2) // id 1
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][0].id, 1))) // id 1
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][1].id, 1))) // id 1
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1))) // id 0
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[1][0].id, 1))) // id 0
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[1][0].id, 1))) // id 1
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[1][1].id, 2))) // id 1
         XCTAssertEqual(1, board[2][0].id)
         XCTAssertEqual(0, board[1][0].id)
         XCTAssertEqual(6, board.snaps.first!.state.actions.count)
@@ -199,7 +246,9 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 1), vertical: 0)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][1].id, 0)))
         XCTAssertEqual(0, board[0][0].id)
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
@@ -211,8 +260,12 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 1), horizontal: 1)
-        board.move(.card(.column(.archive, 1), 0), horizontal: 0)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][1].id, 1)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[1][0].id, 0)))
         XCTAssertEqual(0, board[0][0].id)
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }
@@ -253,7 +306,9 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
@@ -261,8 +316,12 @@ final class FilterTests: XCTestCase {
             .with(snaps: board
                     .snaps
                     .adding(action: .name(0, "hello world")))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
-        board.move(.card(.column(.archive, 1), 0), vertical: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[1][0].id, 1)))
         board.remove(.card(.column(.archive, 1), 1))
         XCTAssertEqual(5, board.snaps.first!.state.actions.count)
     }
@@ -284,8 +343,12 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .content(0, "lorem ipsum")))
-        board.move(.card(.column(.archive, 0), 0), vertical: 1)
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(board[0][0].id, 1)))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
         board.drop(.column(.archive, 0))
         XCTAssertEqual(6, board.snaps.first!.state.actions.count)
     }
@@ -294,7 +357,9 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .horizontal(board[0][0].id, 1)))
         board.drop(.column(.archive, 1))
         XCTAssertEqual(4, board.snaps.first!.state.actions.count)
     }

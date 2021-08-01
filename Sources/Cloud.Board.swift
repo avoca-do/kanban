@@ -2,14 +2,6 @@ import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
-    public mutating func delete(board: Int) {
-        mutating {
-            $0
-                .items
-                .remove(at: board)
-        }
-    }
-    
     public mutating func rename(board: Int, name: String) {
         mutating {
             $0
