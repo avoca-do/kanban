@@ -137,16 +137,19 @@ final class CloudTests: XCTestCase {
         let expect = expectation(description: "")
         cloud
             .archive
-            .dropFirst(3)
+            .dropFirst(6)
             .sink {
-                XCTAssertEqual("hello world", $0[0][0][1].content)
-                XCTAssertEqual(4, $0[0].snaps.last!.state.actions.count)
+                XCTAssertEqual("hello world", $0[0][0][2].content)
+                XCTAssertEqual(6, $0[0].snaps.last!.state.actions.count)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.newBoard()
         cloud.addCard(board: 0)
-        cloud.update(board: 0, column: 0, card: 1, content: "hello world")
+        cloud.addCard(board: 0)
+        cloud.addCard(board: 0)
+        cloud.addCard(board: 0)
+        cloud.update(board: 0, column: 0, card: 2, content: "hello world")
         waitForExpectations(timeout: 1)
     }
 }

@@ -58,8 +58,7 @@ public struct Board: Property, Pather, PatherItem {
 
     public init() {
         name = ""
-        snaps = []
-        add(.create)
+        snaps = ([Snap]()).adding(action: .create)
     }
     
     public init(data: inout Data) {
@@ -85,15 +84,7 @@ public struct Board: Property, Pather, PatherItem {
     }
     
     mutating func drop(_ path: Path) {
-        add(.drop(path._column))
-    }
-    
-    mutating func add(_ action: Action) {
-//        if snaps.isEmpty || (Calendar.current.dateComponents([.hour], from: date, to: .init()).hour! > 0
-//                                && !snap.state.actions.isEmpty) {
-//            snaps.append(.init(after: snaps.last))
-//        }
-//        snaps[snaps.count - 1].add(action, snaps.count > 1 ? snaps[snaps.count - 2] : nil)
+//        add(.drop(path._column))
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {

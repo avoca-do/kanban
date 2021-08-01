@@ -80,8 +80,8 @@ final class ActivityTests: XCTestCase {
         
         var data = Data()
             .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 2).timestamp)
-            .adding(UInt8(archive.items[0].snaps[0].state.actions.count))
-            .adding(archive.items[0].snaps[0].state.actions.flatMap(\.data))
+            .adding(UInt8(archive[0].snaps[0].state.actions.count))
+            .adding(archive[0].snaps[0].state.actions.flatMap(\.data))
         archive
             .items
             .mutate(index: 0) {
