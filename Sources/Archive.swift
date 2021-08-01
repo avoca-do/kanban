@@ -3,19 +3,7 @@ import Archivable
 
 public struct Archive: Archived, Pather {
     public static let new = Self()
-    
-    public var date: Date {
-        get {
-            items
-                .compactMap(\.snaps.last)
-                .map(\.state.date)
-                .max()
-                ?? .distantPast
-        }
-        set {
-            
-        }
-    }
+    public var date: Date
     
     public var available: Bool {
         capacity > items.count
@@ -28,6 +16,7 @@ public struct Archive: Archived, Pather {
             .adding(UInt8(items.count))
             .adding(items.flatMap(\.data))
             .adding(UInt16(capacity))
+            .adding(date)
             .compressed
     }
     
@@ -35,6 +24,7 @@ public struct Archive: Archived, Pather {
     
     private init() {
         items = []
+        date = .init()
     }
     
     public init(data: inout Data) {
@@ -43,6 +33,15 @@ public struct Archive: Archived, Pather {
             .init(data: &data)
         }
         capacity = .init(data.uInt16())
+        if data.isEmpty {
+            date = items
+                .compactMap(\.snaps.last)
+                .map(\.state.date)
+                .max()
+                ?? .distantPast
+        } else {
+            date = .init(timestamp: data.uInt32())
+        }
     }
     
     public subscript(activity period: Period) -> [[Double]] {
@@ -74,9 +73,5 @@ public struct Archive: Archived, Pather {
                 $0 / maximum
             }
         }
-    }
-    
-    public static func < (lhs: Archive, rhs: Archive) -> Bool {
-        lhs.date < rhs.date || lhs.capacity < rhs.capacity
     }
 }
