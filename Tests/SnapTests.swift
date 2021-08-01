@@ -28,9 +28,6 @@ final class EditTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .card))
         
         XCTAssertEqual(1, board.snaps.count)
         XCTAssertEqual(5, board.snaps.first!.state.actions.count)
@@ -115,42 +112,17 @@ final class EditTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.remove(.card(.column(.archive, 0), 0))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .remove(0)))
         XCTAssertTrue(board[0].isEmpty)
     }
     
     func testDrop() {
-        board.drop(.column(.archive, 1))
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .drop(1)))
         XCTAssertEqual(2, board.count)
-    }
-    
-    func testContentEmpty() {
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .card))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .content(0, "")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .content(0, "\n")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .content(0, "\r\n")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .content(0, "\n\r")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .content(0, " ")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .content(0, "\t")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .content(0, "\n \t\n")))
-        XCTAssertEqual(2, board.snaps.first!.state.actions.count)
-        XCTAssertTrue(board[0][0].content.isEmpty)
     }
     
     func testContentSame() {
@@ -192,22 +164,5 @@ final class EditTests: XCTestCase {
                                 .adding(action: .horizontal(0, 1)))
         XCTAssertTrue(board[0].isEmpty)
         XCTAssertEqual(1, board[1].count)
-    }
-    
-    func testColumnName() {
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .name(0, "Lorem ipsum ")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .name(0, "\n")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .name(0, "Lorem ipsum")))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .name(0, " Lorem ipsum")))
-        XCTAssertEqual(2, board.snaps.first!.state.actions.count)
-        XCTAssertEqual("Lorem ipsum", board[0].name)
     }
 }

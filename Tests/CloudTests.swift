@@ -235,14 +235,28 @@ final class CloudTests: XCTestCase {
             .archive
             .dropFirst(3)
             .sink {
-                XCTAssertEqual(2, $0[0].snaps.last!.state.actions.count)
-                XCTAssertFalse($0[0][0].isEmpty)
+                XCTAssertTrue($0[0][0].isEmpty)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.newBoard()
         cloud.addCard(board: 0)
         cloud.delete(board: 0, column: 0, card: 0)
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testDeleteColumn() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(2)
+            .sink {
+                XCTAssertEqual(2, $0[0].count)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.delete(board: 0, column: 1)
         waitForExpectations(timeout: 1)
     }
 }

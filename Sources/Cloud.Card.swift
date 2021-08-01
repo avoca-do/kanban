@@ -64,12 +64,6 @@ extension Cloud where A == Archive {
         }
     }
     
-    
-    mutating func remove(_ path: Path) {
-//        guard snap.path(self[path][path].id) != nil else { return }
-//        add(.remove(self[path][path].id))
-    }
-    
     /*
      subscript(content path: Path) -> String {
          get {

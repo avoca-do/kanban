@@ -68,15 +68,6 @@ public struct Board: Property, Pather, PatherItem {
         }
     }
     
-    mutating func remove(_ path: Path) {
-//        guard snap.path(self[path][path].id) != nil else { return }
-//        add(.remove(self[path][path].id))
-    }
-    
-    mutating func drop(_ path: Path) {
-//        add(.drop(path._column))
-    }
-    
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.name == rhs.name && lhs.items == rhs.items
     }
