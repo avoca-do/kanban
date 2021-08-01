@@ -3,7 +3,7 @@ import Foundation
 public final class Defaults: UserDefaults {
     public class var archive: Archive? {
         get {
-            cross.data(forKey: Key.archive.rawValue)?.mutating(transform: Archive.init(data:))
+            cross.data(forKey: Key.archive.rawValue)?.prototype()
         }
         set {
             newValue.map {
