@@ -176,37 +176,22 @@ final class EditTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 1), vertical: 0)
+        board = board.with(snaps: board
+                                .snaps
+                                .adding(action: .vertical(0, 0)))
         XCTAssertEqual("hello world", board[0][0].content)
         XCTAssertEqual(2, board[0].count)
-    }
-    
-    func testVerticalSameIndex() {
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .card))
-        board = board.with(snaps: board
-                                .snaps
-                                .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 1), vertical: 1)
-        XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
     
     func testHorizontal() {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
-        XCTAssertTrue(board[0].isEmpty)
-        XCTAssertEqual(1, board[1].count)
-    }
-    
-    func testHorizontalSameColumn() {
         board = board.with(snaps: board
                                 .snaps
-                                .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 0)
-        XCTAssertEqual(2, board.snaps.first!.state.actions.count)
+                                .adding(action: .horizontal(0, 1)))
+        XCTAssertTrue(board[0].isEmpty)
+        XCTAssertEqual(1, board[1].count)
     }
     
     func testColumnName() {

@@ -63,8 +63,8 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
-        board.move(.card(.column(.archive, 1), 0), horizontal: 2)
+//        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+//        board.move(.card(.column(.archive, 1), 0), horizontal: 2)
         XCTAssertEqual(1, board[2].count)
         XCTAssertEqual(3, board.snaps.first!.state.actions.count)
     }
@@ -73,8 +73,8 @@ final class FilterTests: XCTestCase {
         board = board.with(snaps: board
                                 .snaps
                                 .adding(action: .card))
-        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
-        board.move(.card(.column(.archive, 1), 0), horizontal: 0)
+//        board.move(.card(.column(.archive, 0), 0), horizontal: 1)
+//        board.move(.card(.column(.archive, 1), 0), horizontal: 0)
         XCTAssertEqual(0, board[0][0].id)
         XCTAssertEqual(2, board.snaps.first!.state.actions.count)
     }

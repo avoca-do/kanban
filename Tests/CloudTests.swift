@@ -152,4 +152,80 @@ final class CloudTests: XCTestCase {
         cloud.update(board: 0, column: 0, card: 2, content: "hello world")
         waitForExpectations(timeout: 1)
     }
+    
+    func testMoveVertical() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(5)
+            .sink {
+                XCTAssertEqual("hello world", $0[0][0][0].content)
+                XCTAssertEqual(5, $0[0].snaps.last!.state.actions.count)
+                XCTAssertEqual(2, $0[0][0].count)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.addCard(board: 0)
+        cloud.update(board: 0, column: 0, card: 0, content: "hello world")
+        cloud.addCard(board: 0)
+        cloud.move(board: 0, column: 0, card: 1, vertical: 0)
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testMoveVerticalSameIndex() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(4)
+            .sink {
+                XCTAssertEqual("hello world", $0[0][0][1].content)
+                XCTAssertEqual(4, $0[0].snaps.last!.state.actions.count)
+                XCTAssertEqual(2, $0[0][0].count)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.addCard(board: 0)
+        cloud.update(board: 0, column: 0, card: 0, content: "hello world")
+        cloud.addCard(board: 0)
+        cloud.move(board: 0, column: 0, card: 1, vertical: 1)
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testMoveHorizontal() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(3)
+            .sink {
+                XCTAssertEqual(3, $0[0].snaps.last!.state.actions.count)
+                XCTAssertTrue($0[0][0].isEmpty)
+                XCTAssertFalse($0[0][1].isEmpty)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.addCard(board: 0)
+        cloud.move(board: 0, column: 0, card: 0, horizontal: 1)
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testMoveHorizontalSameIndex() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(2)
+            .sink {
+                XCTAssertEqual(2, $0[0].snaps.last!.state.actions.count)
+                XCTAssertFalse($0[0][0].isEmpty)
+                XCTAssertTrue($0[0][1].isEmpty)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.newBoard()
+        cloud.addCard(board: 0)
+        cloud.move(board: 0, column: 0, card: 0, horizontal: 0)
+        waitForExpectations(timeout: 1)
+    }
 }

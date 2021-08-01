@@ -68,16 +68,6 @@ public struct Board: Property, Pather, PatherItem {
         }
     }
     
-    mutating func move(_ path: Path, vertical: Int) {
-        guard path._card != vertical else { return }
-//        add(.vertical(self[path][path].id, vertical))
-    }
-    
-    mutating func move(_ path: Path, horizontal: Int) {
-        guard path._column != horizontal else { return }
-//        add(.horizontal(self[path][path].id, horizontal))
-    }
-    
     mutating func remove(_ path: Path) {
 //        guard snap.path(self[path][path].id) != nil else { return }
 //        add(.remove(self[path][path].id))
