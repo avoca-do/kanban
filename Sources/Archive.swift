@@ -35,8 +35,7 @@ public struct Archive: Archived, Pather {
         capacity = .init(data.uInt16())
         if data.isEmpty {
             date = items
-                .compactMap(\.snaps.last)
-                .map(\.state.date)
+                .map(\.date)
                 .max()
                 ?? .distantPast
         } else {

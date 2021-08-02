@@ -3,7 +3,6 @@ import Archivable
 
 public struct Board: Property, Pather, PatherItem {
     public let name: String
-    let snaps: [Snap]
     
     public var items: [Column] {
         snaps.last!.items
@@ -16,11 +15,20 @@ public struct Board: Property, Pather, PatherItem {
             .adding(snaps.map(\.state).flatMap(\.data))
     }
     
+    public var date: Date {
+        snaps
+            .last
+            .map(\.state.date)
+            ?? .distantPast
+    }
+    
     var progress: Progress {
         {
             Progress(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
         } (items.map(\.count).reduce(0, +), items.last!.count)
     }
+    
+    let snaps: [Snap]
     
     public init() {
         name = ""
