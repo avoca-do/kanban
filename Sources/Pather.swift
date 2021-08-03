@@ -6,7 +6,7 @@ public protocol Pather {
     var items: [Item] { get }
 }
 
-extension Pather {
+public extension Pather {
     var count: Int {
         items.count
     }
