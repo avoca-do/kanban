@@ -2,8 +2,8 @@ import Foundation
 
 extension Board {
     public struct Card: PatherItem {
+        public let content: String
         let id: Int
-        let content: String
         
         public init() {
             self.init(id: 0)

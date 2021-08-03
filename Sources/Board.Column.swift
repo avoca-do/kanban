@@ -3,8 +3,7 @@ import Archivable
 
 extension Board {
     public struct Column: Pather, PatherItem {
-        let name: String
-
+        public let name: String
         public let items: [Card]
         
         public init() {
