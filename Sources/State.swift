@@ -1,8 +1,9 @@
 import Foundation
 
-public enum Write: Equatable {
+public enum State: Equatable {
     case
     none,
+    view(Path),
     new(Path),
     edit(Path)
 }
