@@ -24,7 +24,7 @@ extension Array where Element == Board.Column {
                 $0.with(cards: $0.items.removing(index: card))
             }
             .mutating(index: horizontal) {
-                $0.with(cards: self[column].items[card] + $0.items)
+                $0.with(cards: self[column][card] + $0.items)
             }
         }
     }

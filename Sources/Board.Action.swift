@@ -116,8 +116,8 @@ extension Board {
                 }
             case let .name(column, name):
                 if let from = from,
-                   from.items.count > column,
-                   from.items[column].name == name {
+                   from.count > column,
+                   from[column].name == name {
                     return true
                 }
             default:

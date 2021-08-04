@@ -3,7 +3,7 @@ import Foundation
 public enum State: Equatable {
     case
     none,
-    view(Path),
+    view(Int),
     new(Path),
     edit(Path)
 }
