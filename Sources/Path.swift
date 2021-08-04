@@ -6,54 +6,36 @@ public indirect enum Path: Identifiable, Hashable {
     }
     
     case
-    archive,
     board(Int),
     column(Self, Int),
     card(Self, Int)
     
-    public var board: Self {
+    public var board: Int {
         switch self {
-        case .board: return self
-        case let .column(parent, _), let .card(parent, _): return parent.board
-        default: return .archive
+        case let .board(board):
+            return board
+        case let .column(parent, _), let .card(parent, _):
+            return parent.board
         }
     }
     
-    public var column: Self {
+    public var column: Int {
         switch self {
-        case .column: return self
-        case let .card(parent, _): return parent.column
-        default: return .archive
+        case let .column(_, column):
+            return column
+        case let .card(parent, _):
+            return parent.column
+        default:
+            return 0
         }
     }
     
-    public var card: Self {
+    public var card: Int {
         switch self {
-        case .card: return self
-        default: return .archive
-        }
-    }
-    
-    public var _board: Int {
-        switch self {
-        case let .board(board): return board
-        case let .column(parent, _), let .card(parent, _): return parent._board
-        default: return 0
-        }
-    }
-    
-    public var _column: Int {
-        switch self {
-        case let .column(_, column): return column
-        case let .card(parent, _): return parent._column
-        default: return 0
-        }
-    }
-    
-    public var _card: Int {
-        switch self {
-        case let .card(_, card): return card
-        default: return 0
+        case let .card(_, card):
+            return card
+        default:
+            return 0
         }
     }
 }

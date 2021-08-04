@@ -74,7 +74,7 @@ extension Board {
                 case let .name(other, _):
                     return column != other
                 case let .content(id, _), let .vertical(id, _):
-                    return column != on.path(id)!._column
+                    return column != on.path(id)!.column
                 default: break
                 }
             default: break
@@ -89,13 +89,13 @@ extension Board {
                     .flatMap { snap in
                         snap
                             .path(id).map {
-                                snap[$0._column][$0._card].content == content
+                                snap[$0.column][$0.card].content == content
                             }
                     }
                     ?? false
             case let .horizontal(id, column):
                 if let previous = from?.path(id) {
-                    return previous._column == column
+                    return previous.column == column
                 } else {
                     if column == 0 && to.counter == id + 1 {
                         return true
@@ -103,9 +103,9 @@ extension Board {
                 }
             case let .vertical(id, card):
                 if let previous = from?.path(id) {
-                    return previous._column == to.path(id)!._column && previous._card == card
+                    return previous.column == to.path(id)!.column && previous.card == card
                 } else {
-                    if to.path(id)!._column == 0, card == 0 && to.counter == id + 1 {
+                    if to.path(id)!.column == 0, card == 0 && to.counter == id + 1 {
                         return true
                     }
                 }
