@@ -53,7 +53,8 @@ extension Board {
                 switch action {
                 case let .horizontal(other, _), let .vertical(other, _):
                     return id != other
-                default: break
+                default:
+                    break
                 }
             case let .vertical(id, _):
                 if case let .vertical(other, _) = action, id == other {
@@ -67,17 +68,20 @@ extension Board {
                 switch action {
                 case let .content(other, _), let .horizontal(other, _), let .vertical(other, _):
                     return id != other
-                default: break
+                default:
+                    break
                 }
             case let .drop(column):
                 switch action {
                 case let .name(other, _):
                     return column != other
                 case let .content(id, _), let .vertical(id, _):
-                    return column != on.path(id)!.column
-                default: break
+                    return column != on.items.position(for: id)!.column
+                default:
+                    break
                 }
-            default: break
+            default:
+                break
             }
             return true
         }
@@ -88,32 +92,36 @@ extension Board {
                 return from
                     .flatMap { snap in
                         snap
-                            .path(id).map {
+                            .items
+                            .position(for: id)
+                            .map {
                                 snap[$0.column][$0.card].content == content
                             }
                     }
                     ?? false
             case let .horizontal(id, column):
-                if let previous = from?.path(id) {
-                    return previous.column == column
+                if let previous = from?.items.position(for: id)?.column {
+                    return previous == column
                 } else {
                     if column == 0 && to.counter == id + 1 {
                         return true
                     }
                 }
             case let .vertical(id, card):
-                if let previous = from?.path(id) {
-                    return previous.column == to.path(id)!.column && previous.card == card
-                } else {
-                    if to.path(id)!.column == 0, card == 0 && to.counter == id + 1 {
-                        return true
-                    }
-                }
-            case let .name(column, name):
-                if let from = from, from.items.count > column, from.items[column].name == name {
+                let next = to.items.position(for: id)!.column
+                if let previous = from?.items.position(for: id) {
+                    return previous.column == next && previous.card == card
+                } else if next == 0 && card == 0 && to.counter == id + 1 {
                     return true
                 }
-            default: break
+            case let .name(column, name):
+                if let from = from,
+                   from.items.count > column,
+                   from.items[column].name == name {
+                    return true
+                }
+            default:
+                break
             }
             return false
         }
@@ -147,17 +155,26 @@ extension Board {
             }
         }
         
-        var key: Key {
+        private var key: Key {
             switch self {
-            case .create: return .create
-            case .card: return .card
-            case .column: return .column
-            case .name: return .name
-            case .content: return .content
-            case .vertical: return .vertical
-            case .horizontal: return .horizontal
-            case .remove: return .remove
-            case .drop: return .drop
+            case .create:
+                return .create
+            case .card:
+                return .card
+            case .column:
+                return .column
+            case .name:
+                return .name
+            case .content:
+                return .content
+            case .vertical:
+                return .vertical
+            case .horizontal:
+                return .horizontal
+            case .remove:
+                return .remove
+            case .drop:
+                return .drop
             }
         }
     }

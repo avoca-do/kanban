@@ -27,11 +27,6 @@ extension Board {
             self.counter = counter
         }
         
-        func path2(_ id: Int) -> Path? {
-            //items[id]
-            nil
-        }
-        
         mutating func add(_ action: Action, _ previous: Snap?) {
             self = applying(action)
                     .with(state: state

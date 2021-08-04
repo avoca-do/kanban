@@ -2,57 +2,63 @@ import Foundation
 import Archivable
 
 extension Array where Element == Board.Column {
-//    subscript(id: Int) -> Path? {
-//        enumerated()
-//            .map {
-//                ($0.0, $0.1.items.enumerated())
-//            }
-//            .reduce(into: [:]) { map, column in
-//                column
-//                    .1
-//                    .forEach {
-//                        map[$0.1.id] = .card(.column(.board(9), 9), $0.0)
-//                    }
-//            } [id]
-//    }
-    
     func mutating(id: Int, transform: (Board.Card) -> Board.Card) -> Self {
-        mutating(id) { path in
-            mutating(index: path.column) {
-                $0.with(cards: $0.items.mutating(index: path.card, transform: transform))
+        position(for: id) { column, card in
+            mutating(index: column) {
+                $0.with(cards: $0.items.mutating(index: card, transform: transform))
             }
         }
     }
     
     func moving(id: Int, vertical: Int) -> Self {
-        mutating(id) { path in
-            mutating(index: path.column) {
-                $0.with(cards: $0.items.moving(from: path.card, to: vertical))
+        position(for: id) { column, card in
+            mutating(index: column) {
+                $0.with(cards: $0.items.moving(from: card, to: vertical))
             }
         }
     }
     
     func moving(id: Int, horizontal: Int) -> Self {
-        mutating(id) { path in
-            mutating(index: path.column) {
-                $0.with(cards: $0.items.removing(index: path.card))
+        position(for: id) { column, card in
+            mutating(index: column) {
+                $0.with(cards: $0.items.removing(index: card))
             }
             .mutating(index: horizontal) {
-                $0.with(cards: self[path.column].items[path.card] + $0.items)
+                $0.with(cards: self[column].items[card] + $0.items)
             }
         }
     }
     
     func removing(id: Int) -> Self {
-        mutating(id) { path in
-            mutating(index: path.column) {
-                $0.with(cards: $0.items.removing(index: path.card))
+        position(for: id) { column, card in
+            mutating(index: column) {
+                $0.with(cards: $0.items.removing(index: card))
             }
         }
     }
     
-    private func mutating(_ id: Int, transform: (Path) -> Self) -> Self {
-//        transform(self[id]!)
-        self
+    func position(for id: Int) -> (column: Int, card: Int)? {
+        enumerated()
+            .flatMap { column in
+                column
+                    .1
+                    .items
+                    .enumerated()
+                    .map {
+                        (id: $0.1.id, column: column.0, card: $0.0)
+                    }
+            }
+            .first {
+                $0.0 == id
+            }
+            .map {
+                (column: $0.column, card: $0.card)
+            }
+    }
+    
+    private func position(for id: Int, transform: (Int, Int) -> Self) -> Self {
+        {
+            transform($0.column, $0.card)
+        } (position(for: id)!)
     }
 }
