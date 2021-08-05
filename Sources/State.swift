@@ -5,6 +5,7 @@ public enum State: Equatable {
     none,
     create,
     view(Int),
-    new(Path),
+    column(Int),
+    card(Int),
     edit(Path)
 }
