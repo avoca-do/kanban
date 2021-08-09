@@ -2,9 +2,14 @@ import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
-    public func newBoard() {
+    public func new(board: String) {
         mutating {
             $0.items.insert(.init(), at: 0)
+            $0
+                .items
+                .mutate(index: 0) {
+                    $0.with(name: board)
+                }
         }
     }
     
