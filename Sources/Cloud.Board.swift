@@ -21,7 +21,23 @@ extension Cloud where A == Archive {
                         .with(snaps: $0
                                 .snaps
                                 .adding(action: .column)
-                                .adding(action: .name($0.count, column)))
+                                .adding(action: .name($0.count, column
+                                                        .trimmingCharacters(in: .whitespacesAndNewlines))))
+                }
+        }
+    }
+    
+    public func add(board: Int, card: String) {
+        mutating {
+            $0
+                .items
+                .mutate(index: board) {
+                    $0
+                        .with(snaps: $0
+                                .snaps
+                                .adding(action: .card)
+                                .adding(action: .content($0.snaps.last!.counter, card
+                                                            .trimmingCharacters(in: .whitespacesAndNewlines))))
                 }
         }
     }
@@ -39,19 +55,6 @@ extension Cloud where A == Archive {
                         .with(snaps: $0
                                 .snaps
                                 .adding(action: .drop(column)))
-                }
-        }
-    }
-    
-    public func addCard(board: Int) {
-        mutating {
-            $0
-                .items
-                .mutate(index: board) {
-                    $0
-                        .with(snaps: $0
-                                .snaps
-                                .adding(action: .card))
                 }
         }
     }

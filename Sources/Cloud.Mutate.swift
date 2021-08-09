@@ -8,7 +8,8 @@ extension Cloud where A == Archive {
             $0
                 .items
                 .mutate(index: 0) {
-                    $0.with(name: board)
+                    $0.with(name: board
+                                .trimmingCharacters(in: .whitespacesAndNewlines))
                 }
         }, completion: completion)
     }

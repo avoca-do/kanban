@@ -41,7 +41,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "Lol", completion: { })
+        cloud.new(board: "Lol ", completion: { })
         waitForExpectations(timeout: 1)
     }
     
@@ -101,7 +101,7 @@ final class CloudTests: XCTestCase {
             }
             .store(in: &subs)
         cloud.new(board: "", completion: { })
-        cloud.add(board: 0, column: "Avo")
+        cloud.add(board: 0, column: "Avo ")
         waitForExpectations(timeout: 1)
     }
     
@@ -127,11 +127,29 @@ final class CloudTests: XCTestCase {
             .dropFirst(2)
             .sink {
                 XCTAssertEqual(1, $0[0][0].count)
+                XCTAssertEqual("Lol", $0[0][0][0].content)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.new(board: "", completion: { })
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "Lol ")
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testAddSecondCard() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(3)
+            .sink {
+                XCTAssertEqual("Mop", $0[0][0][0].content)
+                XCTAssertEqual("Lol", $0[0][0][1].content)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.new(board: "", completion: { })
+        cloud.add(board: 0, card: "Lol ")
+        cloud.add(board: 0, card: " Mop ")
         waitForExpectations(timeout: 1)
     }
     
@@ -142,15 +160,15 @@ final class CloudTests: XCTestCase {
             .dropFirst(6)
             .sink {
                 XCTAssertEqual("hello world", $0[0][0][2].content)
-                XCTAssertEqual(6, $0[0].snaps.last!.state.actions.count)
+                XCTAssertEqual(9, $0[0].snaps.last!.state.actions.count)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.new(board: "", completion: { })
-        cloud.addCard(board: 0)
-        cloud.addCard(board: 0)
-        cloud.addCard(board: 0)
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "")
+        cloud.add(board: 0, card: "")
+        cloud.add(board: 0, card: "")
+        cloud.add(board: 0, card: "")
         cloud.update(board: 0, column: 0, card: 2, content: "hello world")
         waitForExpectations(timeout: 1)
     }
@@ -162,15 +180,15 @@ final class CloudTests: XCTestCase {
             .dropFirst(5)
             .sink {
                 XCTAssertEqual("hello world", $0[0][0][0].content)
-                XCTAssertEqual(5, $0[0].snaps.last!.state.actions.count)
+                XCTAssertEqual(6, $0[0].snaps.last!.state.actions.count)
                 XCTAssertEqual(2, $0[0][0].count)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.new(board: "", completion: { })
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "")
         cloud.update(board: 0, column: 0, card: 0, content: "hello world")
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "")
         cloud.move(board: 0, column: 0, card: 1, vertical: 0)
         waitForExpectations(timeout: 1)
     }
@@ -182,15 +200,15 @@ final class CloudTests: XCTestCase {
             .dropFirst(4)
             .sink {
                 XCTAssertEqual("hello world", $0[0][0][1].content)
-                XCTAssertEqual(4, $0[0].snaps.last!.state.actions.count)
+                XCTAssertEqual(5, $0[0].snaps.last!.state.actions.count)
                 XCTAssertEqual(2, $0[0][0].count)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.new(board: "", completion: { })
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "")
         cloud.update(board: 0, column: 0, card: 0, content: "hello world")
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "")
         cloud.move(board: 0, column: 0, card: 1, vertical: 1)
         waitForExpectations(timeout: 1)
     }
@@ -201,14 +219,14 @@ final class CloudTests: XCTestCase {
             .archive
             .dropFirst(3)
             .sink {
-                XCTAssertEqual(3, $0[0].snaps.last!.state.actions.count)
+                XCTAssertEqual(4, $0[0].snaps.last!.state.actions.count)
                 XCTAssertTrue($0[0][0].isEmpty)
                 XCTAssertFalse($0[0][1].isEmpty)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.new(board: "", completion: { })
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "")
         cloud.move(board: 0, column: 0, card: 0, horizontal: 1)
         waitForExpectations(timeout: 1)
     }
@@ -219,14 +237,14 @@ final class CloudTests: XCTestCase {
             .archive
             .dropFirst(2)
             .sink {
-                XCTAssertEqual(2, $0[0].snaps.last!.state.actions.count)
+                XCTAssertEqual(3, $0[0].snaps.last!.state.actions.count)
                 XCTAssertFalse($0[0][0].isEmpty)
                 XCTAssertTrue($0[0][1].isEmpty)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.new(board: "", completion: { })
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "")
         cloud.move(board: 0, column: 0, card: 0, horizontal: 0)
         waitForExpectations(timeout: 1)
     }
@@ -242,7 +260,7 @@ final class CloudTests: XCTestCase {
             }
             .store(in: &subs)
         cloud.new(board: "", completion: { })
-        cloud.addCard(board: 0)
+        cloud.add(board: 0, card: "")
         cloud.delete(board: 0, column: 0, card: 0)
         waitForExpectations(timeout: 1)
     }
