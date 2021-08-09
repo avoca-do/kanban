@@ -12,7 +12,7 @@ extension Cloud where A == Archive {
         }
     }
     
-    public func addColumn(board: Int) {
+    public func add(board: Int, column: String) {
         mutating {
             $0
                 .items
@@ -20,7 +20,8 @@ extension Cloud where A == Archive {
                     $0
                         .with(snaps: $0
                                 .snaps
-                                .adding(action: .column))
+                                .adding(action: .column)
+                                .adding(action: .name($0.count, column)))
                 }
         }
     }

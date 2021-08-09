@@ -95,11 +95,12 @@ final class CloudTests: XCTestCase {
             .dropFirst(2)
             .sink {
                 XCTAssertEqual(4, $0[0].count)
+                XCTAssertEqual("Avo", $0[0][3].name)
                 expect.fulfill()
             }
             .store(in: &subs)
         cloud.newBoard()
-        cloud.addColumn(board: 0)
+        cloud.add(board: 0, column: "Avo")
         waitForExpectations(timeout: 1)
     }
     
