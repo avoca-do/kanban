@@ -2,15 +2,15 @@ import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
-    public func new(board: String) {
-        mutating {
+    public func new(board: String, completion: @escaping () -> Void) {
+        mutating(transform: {
             $0.items.insert(.init(), at: 0)
             $0
                 .items
                 .mutate(index: 0) {
                     $0.with(name: board)
                 }
-        }
+        }, completion: completion)
     }
     
     public func delete(board: Int) {

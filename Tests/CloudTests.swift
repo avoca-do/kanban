@@ -41,7 +41,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "Lol")
+        cloud.new(board: "Lol", completion: { })
         waitForExpectations(timeout: 1)
     }
     
@@ -69,7 +69,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.delete(board: 0)
         waitForExpectations(timeout: 1)
     }
@@ -84,7 +84,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.rename(board: 0, name: "hello world")
         waitForExpectations(timeout: 1)
     }
@@ -100,7 +100,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.add(board: 0, column: "Avo")
         waitForExpectations(timeout: 1)
     }
@@ -115,7 +115,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.rename(board: 0, column: 0, name: "hello world")
         waitForExpectations(timeout: 1)
     }
@@ -130,7 +130,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.addCard(board: 0)
         waitForExpectations(timeout: 1)
     }
@@ -146,7 +146,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.addCard(board: 0)
         cloud.addCard(board: 0)
         cloud.addCard(board: 0)
@@ -167,7 +167,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.addCard(board: 0)
         cloud.update(board: 0, column: 0, card: 0, content: "hello world")
         cloud.addCard(board: 0)
@@ -187,7 +187,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.addCard(board: 0)
         cloud.update(board: 0, column: 0, card: 0, content: "hello world")
         cloud.addCard(board: 0)
@@ -207,7 +207,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.addCard(board: 0)
         cloud.move(board: 0, column: 0, card: 0, horizontal: 1)
         waitForExpectations(timeout: 1)
@@ -225,7 +225,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.addCard(board: 0)
         cloud.move(board: 0, column: 0, card: 0, horizontal: 0)
         waitForExpectations(timeout: 1)
@@ -241,7 +241,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.addCard(board: 0)
         cloud.delete(board: 0, column: 0, card: 0)
         waitForExpectations(timeout: 1)
@@ -257,7 +257,7 @@ final class CloudTests: XCTestCase {
                 expect.fulfill()
             }
             .store(in: &subs)
-        cloud.new(board: "")
+        cloud.new(board: "", completion: { })
         cloud.delete(board: 0, column: 1)
         waitForExpectations(timeout: 1)
     }
