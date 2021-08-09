@@ -2,7 +2,7 @@ import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
-    public mutating func rename(board: Int, column: Int, name: String) {
+    public func rename(board: Int, column: Int, name: String) {
         let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else { return }
         mutating {

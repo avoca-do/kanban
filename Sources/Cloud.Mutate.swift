@@ -8,7 +8,7 @@ extension Cloud where A == Archive {
         }
     }
     
-    public mutating func delete(board: Int) {
+    public func delete(board: Int) {
         mutating {
             $0
                 .items

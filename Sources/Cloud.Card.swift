@@ -2,7 +2,7 @@ import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
-    public mutating func update(board: Int, column: Int, card: Int, content: String) {
+    public func update(board: Int, column: Int, card: Int, content: String) {
         let content = content.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !content.isEmpty else { return }
         mutating {
@@ -18,7 +18,7 @@ extension Cloud where A == Archive {
         }
     }
     
-    public mutating func move(board: Int, column: Int, card: Int, vertical: Int) {
+    public func move(board: Int, column: Int, card: Int, vertical: Int) {
         guard card != vertical else { return }
         mutating {
             $0
@@ -32,7 +32,7 @@ extension Cloud where A == Archive {
         }
     }
     
-    public mutating func move(board: Int, column: Int, card: Int, horizontal: Int) {
+    public func move(board: Int, column: Int, card: Int, horizontal: Int) {
         guard column != horizontal else { return }
         mutating {
             $0
@@ -46,7 +46,7 @@ extension Cloud where A == Archive {
         }
     }
     
-    public mutating func delete(board: Int, column: Int, card: Int) {
+    public func delete(board: Int, column: Int, card: Int) {
         mutating {
             guard
                 $0.count > board,

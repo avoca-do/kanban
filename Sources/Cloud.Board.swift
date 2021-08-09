@@ -2,7 +2,7 @@ import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
-    public mutating func rename(board: Int, name: String) {
+    public func rename(board: Int, name: String) {
         mutating {
             $0
                 .items
@@ -12,7 +12,7 @@ extension Cloud where A == Archive {
         }
     }
     
-    public mutating func addColumn(board: Int) {
+    public func addColumn(board: Int) {
         mutating {
             $0
                 .items
@@ -25,7 +25,7 @@ extension Cloud where A == Archive {
         }
     }
     
-    public mutating func delete(board: Int, column: Int) {
+    public func delete(board: Int, column: Int) {
         mutating {
             guard
                 $0.count > board,
@@ -42,7 +42,7 @@ extension Cloud where A == Archive {
         }
     }
     
-    public mutating func addCard(board: Int) {
+    public func addCard(board: Int) {
         mutating {
             $0
                 .items
