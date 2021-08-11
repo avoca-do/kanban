@@ -73,4 +73,10 @@ public struct Archive: Archived, Pather {
             }
         }
     }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.date.timestamp == rhs.date.timestamp
+            && lhs.capacity == rhs.capacity
+            && lhs.items == rhs.items
+    }
 }
