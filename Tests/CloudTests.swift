@@ -288,6 +288,32 @@ final class CloudTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
     
+    func testMoveHorizontalVerticalMore() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(8)
+            .sink {
+                XCTAssertEqual(1, $0[0][0].count)
+                XCTAssertEqual(3, $0[0][1].count)
+                XCTAssertEqual("ipsum", $0[0][0][0].content)
+                XCTAssertEqual("hello", $0[0][1][0].content)
+                XCTAssertEqual("lorem", $0[0][1][1].content)
+                XCTAssertEqual("world", $0[0][1][2].content)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.new(board: "", completion: { })
+        cloud.add(board: 0, card: "hello")
+        cloud.add(board: 0, card: "world")
+        cloud.move(board: 0, column: 0, card: 1, horizontal: 1, vertical: 0)
+        cloud.move(board: 0, column: 0, card: 0, horizontal: 1, vertical: 1)
+        cloud.add(board: 0, card: "lorem")
+        cloud.add(board: 0, card: "ipsum")
+        cloud.move(board: 0, column: 0, card: 1, horizontal: 1, vertical: 1)
+        waitForExpectations(timeout: 1)
+    }
+    
     func testMoveHorizontalSameIndexVertical() {
         let expect = expectation(description: "")
         cloud
