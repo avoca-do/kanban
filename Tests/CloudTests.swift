@@ -288,7 +288,7 @@ final class CloudTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
     
-    func testMoveHorizontalSameIndex() {
+    func testMoveHorizontalSameIndexVertical() {
         let expect = expectation(description: "")
         cloud
             .archive
@@ -324,6 +324,46 @@ final class CloudTests: XCTestCase {
         cloud.add(board: 0, card: "world")
         cloud.move(board: 0, column: 0, card: 0, horizontal: 1)
         cloud.move(board: 0, column: 0, card: 0, horizontal: 1, vertical: 0)
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testMoveHorizontalVerticalSame() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(3)
+            .sink {
+                XCTAssertEqual(5, $0[0].snaps.last!.state.actions.count)
+                XCTAssertTrue($0[0][1].isEmpty)
+                XCTAssertEqual(2, $0[0][0].count)
+                XCTAssertEqual("hello", $0[0][0][1].content)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.new(board: "", completion: { })
+        cloud.add(board: 0, card: "hello")
+        cloud.add(board: 0, card: "world")
+        cloud.move(board: 0, column: 0, card: 1, horizontal: 0, vertical: 1)
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testMoveHorizontalVerticalSameColumn() {
+        let expect = expectation(description: "")
+        cloud
+            .archive
+            .dropFirst(4)
+            .sink {
+                XCTAssertEqual(6, $0[0].snaps.last!.state.actions.count)
+                XCTAssertTrue($0[0][1].isEmpty)
+                XCTAssertEqual(2, $0[0][0].count)
+                XCTAssertEqual("hello", $0[0][0][0].content)
+                expect.fulfill()
+            }
+            .store(in: &subs)
+        cloud.new(board: "", completion: { })
+        cloud.add(board: 0, card: "hello")
+        cloud.add(board: 0, card: "world")
+        cloud.move(board: 0, column: 0, card: 1, horizontal: 0, vertical: 0)
         waitForExpectations(timeout: 1)
     }
     
