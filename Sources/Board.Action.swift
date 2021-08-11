@@ -98,6 +98,12 @@ extension Board {
                                 snap[$0.column][$0.card].content == content
                             }
                     }
+                    ?? to
+                    .items
+                    .position(for: id)
+                    .map {
+                        to[$0.column][$0.card].content == content
+                    }
                     ?? false
             case let .horizontal(id, column):
                 if let previous = from?.items.position(for: id)?.column {
@@ -108,14 +114,18 @@ extension Board {
                     }
                 }
             case let .vertical(id, card):
-                let next = to.items.position(for: id)!.column
-                if let previous = from?.items.position(for: id) {
-                    return previous.column == next && previous.card == card
-                } else if next == 0 && card == 0 && to.counter == id + 1 {
+                let next = to.items.position(for: id)!
+                if next.card == card {
+                    return true
+                } else if let previous = from?.items.position(for: id) {
+                    return previous.column == next.column && previous.card == card
+                } else if next.column == 0 && card == 0 && to.counter == id + 1 {
                     return true
                 }
             case let .name(column, name):
-                if let from = from,
+                if to[column].name == name {
+                    return true
+                } else if let from = from,
                    from.count > column,
                    from[column].name == name {
                     return true

@@ -46,6 +46,21 @@ extension Cloud where A == Archive {
         }
     }
     
+    public func move(board: Int, column: Int, card: Int, horizontal: Int, vertical: Int) {
+        guard column != horizontal else { return }
+        mutating {
+            $0
+                .items
+                .mutate(index: board) {
+                    $0
+                        .with(snaps: $0
+                                .snaps
+                                .adding(action: .horizontal($0[column][card].id, horizontal))
+                                .adding(action: .vertical($0[column][card].id, vertical)))
+                }
+        }
+    }
+    
     public func delete(board: Int, column: Int, card: Int) {
         mutating {
             guard
