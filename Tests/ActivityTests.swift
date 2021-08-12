@@ -2,93 +2,46 @@ import XCTest
 @testable import Kanban
 
 final class ActivityTests: XCTestCase {
-    private var archive: Archive!
-    
-    override func setUp() {
-        archive = .new
+    func testBoardEmpty() {
+        XCTAssertEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], Board()
+                        .with(snaps: [])
+                        .activity(period: .week))
     }
     
-    func testEmpty() {
-        XCTAssertEqual([], archive[activity: .week])
+    func testBoardInitial() {
+        XCTAssertEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], Board().activity(period: .week))
     }
     
-    func testWeek() {
-        archive.items = [.init(), .init(), .init()]
-        
+    func testBoardWeek() {
+        var board = Board()
         var data0 = Data()
-            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 6).timestamp)
-            .adding(UInt8(archive.items[0].snaps[0].state.actions.count))
-            .adding(archive.items[0].snaps[0].state.actions.flatMap(\.data))
+            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 6.9).timestamp)
+            .adding(UInt8(0))
         var data1 = Data()
-            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 5).timestamp)
+            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 6.1).timestamp)
             .adding(UInt8(0))
-        archive
-            .items
-            .mutate(index: 0) {
-                $0
-                    .with(snaps: [.init(data: &data0, after: nil)])
-            }
-        archive
-            .items
-            .mutate(index: 0) {
-                $0.with(snaps: $0
-                                .snaps
-                                .adding(action: .card))
-            }
-        archive
-            .items
-            .mutate(index: 0) {
-                $0
-                    .with(snaps: [$0.snaps[0], .init(data: &data1, after: nil)])
-            }
-        
-        data0 = Data()
-            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 3).timestamp)
-            .adding(UInt8(archive.items[1].snaps[0].state.actions.count))
-            .adding(archive.items[1].snaps[0].state.actions.flatMap(\.data))
-        data1 = Data()
-            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 2).timestamp)
+        var data2 = Data()
+            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 5.5).timestamp)
             .adding(UInt8(0))
-        archive
-            .items
-            .mutate(index: 1) {
-                $0
-                    .with(snaps: [.init(data: &data0, after: nil)])
-            }
-        archive
-            .items
-            .mutate(index: 1) {
-                $0.with(snaps: $0
-                                .snaps
-                                .adding(action: .card))
-            }
-        archive
-            .items
-            .mutate(index: 1) {
-                $0
-                    .with(snaps: [$0.snaps[0], .init(data: &data1, after: nil)])
-            }
+        board = board
+            .with(snaps: [.init(data: &data0, after: nil), .init(data: &data1, after: nil), .init(data: &data2, after: nil)])
         
-        XCTAssertEqual([
-                        [1, 1, 0, 0, 0],
-                        [0, 0, 1, 1, 0],
-                        [0, 0, 0, 0, 1]], archive[activity: .week])
+        XCTAssertEqual([1, 1, 1, 0, 0, 0, 0, 0, 0, 0], board.activity(period: .week))
     }
     
-    func testIgnoreOlder() {
-        archive.items = [.init()]
-        
+    func testBoardIgnoreOlder() {
+        var board = Board()
         var data = Data()
-            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 2).timestamp)
-            .adding(UInt8(archive[0].snaps[0].state.actions.count))
-            .adding(archive[0].snaps[0].state.actions.flatMap(\.data))
-        archive
-            .items
-            .mutate(index: 0) {
-                $0
-                    .with(snaps: [.init(data: &data, after: nil)])
-            }
+            .adding(Date(timeIntervalSinceNow: -60 * 60 * 24 * 8).timestamp)
+            .adding(UInt8(board.snaps[0].state.actions.count))
+            .adding(board.snaps[0].state.actions.flatMap(\.data))
+        board = board
+            .with(snaps: [.init(data: &data, after: nil)])
+        board =  board
+            .with(snaps: board
+                    .snaps
+                    .adding(action: .card))
         
-        XCTAssertEqual([[0, 0, 0, 0, 0]], archive[activity: .day])
+        XCTAssertEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 1], board.activity(period: .week))
     }
 }

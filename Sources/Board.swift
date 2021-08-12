@@ -49,6 +49,12 @@ public struct Board: Property, Pather, PatherItem {
         self.snaps = snaps
     }
     
+    public func activity(period: Period) -> [Double] {
+        snaps
+            .map(\.state.date.timeIntervalSince1970)
+            .plot(period: period)
+    }
+    
     func with(name: String) -> Self {
         .init(name: name, snaps: snaps)
     }
