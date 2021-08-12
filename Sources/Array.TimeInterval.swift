@@ -14,6 +14,7 @@ extension Array where Element == TimeInterval {
         let array = filter {
             $0 >= start
         }
+        .sorted()
         .reduce(into: Array(repeating: .init(), count: divisions)) {
             while index < divisions - 1 && ranges[index + 1] < $1 {
                 index += 1

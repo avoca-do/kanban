@@ -43,35 +43,10 @@ public struct Archive: Archived, Pather {
         }
     }
     
-    public subscript(activity period: Period) -> [[Double]] {
-//        let start = period.date.timeIntervalSince1970
-//        let interval = (Date().timeIntervalSince1970 - start) / .init(Period.divisions)
-//        let ranges = (0 ..< Period.divisions).map {
-//            (.init($0) * interval) + start
-//        }
-//
-//        let array = items.map {
-//            $0.snaps
-//                .map(\.state.date.timeIntervalSince1970)
-//                .reduce(into: (Array(repeating: Double(), count: Period.divisions), 0)) {
-//                    while $0.1 < Period.divisions - 1 && ranges[$0.1 + 1] < $1 {
-//                        $0.1 += 1
-//                    }
-//                    if $1 >= ranges[$0.1] {
-//                        $0.0[$0.1] += 1
-//                    }
-//                }.0
-//        }
-//
-//        let maximum = max(array.map {
-//            $0.max() ?? 1
-//        }.max() ?? 1, 1)
-//
-//        return array.map {
-//            $0.map {
-//                $0 / maximum
-//            }
-//        }
-        []
+    public func activity(period: Period) -> [Double] {
+        items
+            .flatMap(\.snaps)
+            .map(\.state.date.timeIntervalSince1970)
+            .plot(period: period)
     }
 }
