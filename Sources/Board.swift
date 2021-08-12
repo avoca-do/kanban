@@ -15,6 +15,13 @@ public struct Board: Property, Pather, PatherItem {
             .adding(snaps.map(\.state).flatMap(\.data))
     }
     
+    public var start: Date {
+        snaps
+            .first
+            .map(\.state.date)
+            ?? .distantPast
+    }
+    
     public var date: Date {
         snaps
             .last
