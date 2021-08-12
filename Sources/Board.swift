@@ -22,10 +22,12 @@ public struct Board: Property, Pather, PatherItem {
             ?? .distantPast
     }
     
-    var progress: Progress {
+    public var progress: Progress {
         {
             Progress(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
-        } (items.map(\.count).reduce(0, +), items.last!.count)
+        } (items
+            .map(\.count)
+            .reduce(0, +), items.last?.count ?? 0)
     }
     
     let snaps: [Snap]
