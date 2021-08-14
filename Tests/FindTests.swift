@@ -109,4 +109,35 @@ final class FindTests: XCTestCase {
             }
         waitForExpectations(timeout: 1)
     }
+    
+    func testColumn() {
+        let expect = expectation(description: "")
+        cloud.new(board: "hello world", completion: { })
+        cloud.add(board: 0, column: "lol dsa")
+        cloud
+            .find(search: "lol") {
+                XCTAssertEqual("hello world :", $0.first?.breadcrumbs)
+                XCTAssertEqual("lol dsa", $0.first?.content)
+                XCTAssertEqual(.column(.board(0), 3), $0.first?.path)
+                XCTAssertEqual(1, $0.count)
+                expect.fulfill()
+            }
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testCard() {
+        let expect = expectation(description: "")
+        cloud.new(board: "hello world", completion: { })
+        cloud.add(board: 0, card: "avocado fox")
+        cloud.add(board: 0, card: "something")
+        cloud
+            .find(search: "fo") {
+                XCTAssertEqual("hello world : DO :", $0.first?.breadcrumbs)
+                XCTAssertEqual("avocado fox", $0.first?.content)
+                XCTAssertEqual(.card(.column(.board(0), 0), 1), $0.first?.path)
+                XCTAssertEqual(1, $0.count)
+                expect.fulfill()
+            }
+        waitForExpectations(timeout: 1)
+    }
 }

@@ -21,12 +21,12 @@ public indirect enum Path: Identifiable, Hashable {
     
     public var column: Int {
         switch self {
+        case .board:
+            return 0
         case let .column(_, column):
             return column
         case let .card(parent, _):
             return parent.column
-        default:
-            return 0
         }
     }
     
@@ -36,6 +36,17 @@ public indirect enum Path: Identifiable, Hashable {
             return card
         default:
             return 0
+        }
+    }
+    
+    func child(index: Int) -> Self {
+        switch self {
+        case .board:
+            return .column(self, index)
+        case .column:
+            return .card(self, index)
+        case .card:
+            return self
         }
     }
 }
