@@ -1,6 +1,14 @@
 import Foundation
 
-public struct Found {
+public struct Found: Comparable {
     public let path: Path
-    public let value: String
+    public let breadcrumbs: String
+    public let content: String
+    let rating: Int
+    
+    public static func < (lhs: Found, rhs: Found) -> Bool {
+        lhs.rating == rhs.rating
+            ? lhs.content.localizedCaseInsensitiveCompare(rhs.content) == .orderedAscending
+            : lhs.rating > rhs.rating
+    }
 }

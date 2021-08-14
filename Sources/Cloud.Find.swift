@@ -3,37 +3,41 @@ import Archivable
 
 extension Cloud where A == Archive {
     public func find(search: String, completion: @escaping ([Found]) -> Void) {
-        mutating(transform: { _ in
-            []
+        mutating(transform: { archive in
+            search
+                .components { components in
+                    archive
+                        .items
+                        .enumerated()
+                        .map {
+                            .init(path: .board($0.0),
+                                  breadcrumbs: "",
+                                  content: $0.1.name,
+                                  rating: $0.1.name.rating(components: components))
+                        }
+                        .filter {
+                            $0.rating > 0
+                        }
+                        .sorted()
+                }
         }, completion: completion)
     }
 }
 
-
-/*
- public func filter(_ string: String) -> [Filtered] {
-     .init(self[string]
-             .prefix(2))
- }
- 
- subscript(_ string: String) -> [Filtered] {
-     string
-         .isEmpty
-         ? map {
-             .init(page: $0, matches: 0)
-         }
-         : Set({ components in
-             map {
-                 (page: $0, matches: $0
-                     .matches(components))
-             }
-             .filter {
-                 $0.matches > 0
-             }
-             .map {
-                 .init(page: $0.page, matches: $0.matches)
-             }
-         } (string.components(separatedBy: " ")))
-         .sorted()
- }
- */
+private extension String {
+    func components<T>(transform: ([Self]) -> [T]) -> [T] {
+        {
+            $0.isEmpty ? [] : transform($0)
+        } (trimmingCharacters(in: .whitespacesAndNewlines)
+            .components(separatedBy: " ")
+            .filter {
+                !$0.isEmpty
+            })
+    }
+    
+    func rating(components: [String]) -> Int {
+        components
+            .filter(localizedCaseInsensitiveContains)
+            .count
+    }
+}
