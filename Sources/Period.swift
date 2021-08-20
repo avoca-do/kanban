@@ -1,6 +1,6 @@
 import Foundation
 
-public enum Period {
+public enum Period: Hashable {
     case
     year,
     month,
