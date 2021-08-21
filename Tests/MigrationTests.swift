@@ -19,13 +19,13 @@ final class MigrationTests: XCTestCase {
 private struct Legacy: Archived {
     public static let new = Self()
     
-    public var date: Date {
+    public var timestamp: UInt32 {
         get {
             items
                 .compactMap(\.snaps.last)
-                .map(\.state.date)
+                .map(\.state.date.timestamp)
                 .max()
-                ?? .distantPast
+                ?? 0
         }
         set {
             

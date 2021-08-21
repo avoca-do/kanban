@@ -30,7 +30,7 @@ final class CloudTests: XCTestCase {
                 XCTAssertEqual(1, $0[0].snaps.first!.state.actions.count)
                 XCTAssertEqual(.create, $0[0].snaps.first!.state.actions.first!)
                 XCTAssertGreaterThanOrEqual($0[0].snaps.first!.state.date, date)
-                XCTAssertGreaterThanOrEqual($0.date, date)
+                XCTAssertGreaterThanOrEqual($0.timestamp, date.timestamp)
                 XCTAssertFalse($0[0].isEmpty)
                 XCTAssertTrue($0[0][0].isEmpty)
                 XCTAssertEqual("Lol", $0[0].name)

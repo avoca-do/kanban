@@ -3,7 +3,7 @@ import Archivable
 
 public struct Archive: Archived, Pather {
     public static let new = Self()
-    public var date: Date
+    public var timestamp: UInt32
     
     public var available: Bool {
         capacity > items.count
@@ -16,7 +16,7 @@ public struct Archive: Archived, Pather {
             .adding(UInt8(items.count))
             .adding(items.flatMap(\.data))
             .adding(UInt16(capacity))
-            .adding(date)
+            .adding(timestamp)
             .compressed
     }
     
@@ -24,7 +24,7 @@ public struct Archive: Archived, Pather {
     
     private init() {
         items = []
-        date = .init()
+        timestamp = Date().timestamp
     }
     
     public init(data: inout Data) {
@@ -34,12 +34,12 @@ public struct Archive: Archived, Pather {
         }
         capacity = .init(data.uInt16())
         if data.isEmpty {
-            date = items
-                .map(\.date)
+            timestamp = items
+                .map(\.date.timestamp)
                 .max()
-                ?? .distantPast
+                ?? 0
         } else {
-            date = .init(timestamp: data.uInt32())
+            timestamp = data.uInt32()
         }
     }
     

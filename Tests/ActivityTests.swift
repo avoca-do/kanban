@@ -1,7 +1,7 @@
 import XCTest
 @testable import Kanban
 
-final class ActivityTests: XCTestCase {
+final class ActivityTests: XCTestCase {    
     func testBoardEmpty() {
         XCTAssertEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], Board()
                         .with(snaps: [])
