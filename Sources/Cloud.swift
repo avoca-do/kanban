@@ -1,18 +1,10 @@
-import Foundation
 import Archivable
 
 extension Cloud where A == Archive {
     public static var new: Self {
         .init(manifest: .init(
-                file: file,
+                file: "avocado",
                 container: "iCloud.avoca.do",
-                prefix: "archive_",
-                title: "Avocado"))
+                prefix: "archive_"))
     }
 }
-
-#if DEBUG
-    private let file = "avocado.debug.archive"
-#else
-    private let file = "avocado.archive"
-#endif
