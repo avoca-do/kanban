@@ -31,10 +31,14 @@ public struct Board: Property, Pather, PatherItem {
     
     public var progress: Progress {
         {
-            Progress(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
-        } (items
+            .init(cards: $0, done: $1, percentage: $0 > 0 ? .init($1) / .init($0) : 0)
+        } (total, items.last?.count ?? 0)
+    }
+    
+    public var total: Int {
+        items
             .map(\.count)
-            .reduce(0, +), items.last?.count ?? 0)
+            .reduce(0, +)
     }
     
     let snaps: [Snap]
