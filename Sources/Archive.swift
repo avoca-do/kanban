@@ -20,7 +20,7 @@ public struct Archive: Archived, Pather {
             .compressed
     }
     
-    public var items: [Board]
+    public internal(set) var items: [Board]
     
     private init() {
         items = []
