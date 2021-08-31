@@ -15,7 +15,7 @@ let package = Package(
             targets: ["Kanban"]),
     ],
     dependencies: [
-        .package(name: "Archivable", url: "https://github.com/archivable/package.git", .branch("main"))
+        .package(name: "Archivable", url: "https://github.com/archivable/package.git", .branch("Swift5.4"))
     ],
     targets: [
         .target(

@@ -5,7 +5,7 @@
         "package": "Archivable",
         "repositoryURL": "https://github.com/archivable/package.git",
         "state": {
-          "branch": "main",
+          "branch": "Swift5.4",
           "revision": "dbddc4aaf8dba9b5d0b3ed9d341058dc97f8b425",
           "version": null
         }
