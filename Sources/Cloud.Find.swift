@@ -63,7 +63,7 @@ private extension Pather {
         items
             .enumerated()
             .map {
-                (path: parent == nil ? .board($0.0) : parent!.child(index: $0.0), breadcrumbs: breadcrumbs, items: $0.1)
+                (path: parent == nil ? .board($0.0) : parent!.child(index: $0.0), breadcrumbs: breadcrumbs, item: $0.1)
             }
     }
 }
