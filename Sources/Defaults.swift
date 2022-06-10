@@ -12,9 +12,14 @@ public final class Defaults: UserDefaults {
         }
     }
     
-    public class var rated: Bool {
-        get { self[.rated] as? Bool ?? false }
-        set { self[.rated] = newValue }
+    public class var rate: Bool {
+        if let created = created {
+            let days = Calendar.current.dateComponents([.day], from: created, to: .init()).day!
+            return days > 1
+        } else {
+            created = .init()
+        }
+        return false
     }
     
     public class var created: Date? {
